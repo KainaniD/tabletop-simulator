@@ -21,23 +21,15 @@ function App() {
 
   return (
     <div>
-      <nav>
-        <ul>
-          <li><Link to="/">Home</Link></li>
-          <br />
-          <li><Link to="/Rooms">Rooms</Link></li>
-          <br />
-          <li><Link to="/testPage">testPage</Link></li>
-        </ul>
-      </nav>
+      <div class="flex justify-evenly bg-gray-100 py-5 mb-5 border border-gray-300">
+        <Link to="/" class="nav-button">Home</Link>
+        <Link to="/Rooms" class="nav-button">Rooms</Link>
+        <Link to="/TestPage" class="nav-button">Test Page</Link>
+        <Link to="/Profile" class="nav-button">Profile</Link>
+      </div>
+      <div class="main">
       <MyRoutes />
-      {(typeof backendData.users === 'undefined') ? (
-        <p>Loading...</p>
-      ): (
-        backendData.users.map((user, i) => (
-          <p key={i}>{user}</p>
-        ))
-      )}
+      </div>
     </div>
   )
 }

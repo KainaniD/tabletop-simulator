@@ -4,6 +4,7 @@ import { Room } from './pages/Room'
 import { GameRooms } from './pages/GameRooms'
 import { NotFound } from './pages/NotFound'
 import { TestPage } from './pages/TestPage'
+import { Profile } from './pages/Profile'
 import { NewRoom } from './pages/NewRoom'
 
 export const MyRoutes = () => {
@@ -17,6 +18,7 @@ export const MyRoutes = () => {
                 <Route path="NewRoom" element={<NewRoom />} />   
             </Route>
             <Route path="/TestPage" element={<TestPage />} />
+            <Route path="/Profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
         </>
