@@ -21,13 +21,13 @@ function App() {
 
   return (
     <div>
-      <div class="flex justify-evenly bg-gray-100 py-5 mb-5 border border-gray-300">
-        <Link to="/" class="nav-button">Home</Link>
-        <Link to="/Rooms" class="nav-button">Rooms</Link>
-        <Link to="/TestPage" class="nav-button">Test Page</Link>
-        <Link to="/Profile" class="nav-button">Profile</Link>
+      <div className="flex justify-evenly bg-gray-100 py-5 mb-5 border border-gray-300">
+        <Link to="/" className="nav-button">Home</Link>
+        <Link to="/Rooms" className="nav-button">Rooms</Link>
+        <Link to="/TestPage" className="nav-button">Test Page</Link>
+        <Link to="/Profile" className="nav-button">Profile</Link>
       </div>
-      <div class="main">
+      <div className="main">
       <MyRoutes />
       </div>
     </div>

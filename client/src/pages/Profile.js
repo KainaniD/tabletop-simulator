@@ -1,5 +1,17 @@
+import io from "socket.io-client";
+
+let socket = io.connect('http://localhost:3000'); 
+var clientID;
+
+socket.on('connect', () => {
+   clientID = socket.id;
+});
+
 export const Profile = () => {
     return (
-        <h1> Your Profile </h1>
+        <div>
+            <h1> Your Profile </h1>
+            <p>Guest User: {clientID}</p>
+        </div>
     );
 }
