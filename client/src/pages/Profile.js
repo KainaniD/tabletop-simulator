@@ -1,10 +1,10 @@
 import io from "socket.io-client";
 
-let socket = io.connect('http://localhost:3000'); 
+let socket = io.connect('http://localhost:4000'); 
 var clientID;
 
 socket.on('connect', () => {
-   clientID = socket.id;
+    clientID = socket.id;
 });
 
 export const Profile = () => {

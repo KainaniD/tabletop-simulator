@@ -1,7 +1,10 @@
 {
   "name": "client",
   "version": "0.1.0",
+  "options": {
   "proxy": "http://localhost:4000",
+  "allowedHosts": ["localhost", ".localhost"]
+  },
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",

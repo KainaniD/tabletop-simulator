@@ -2,22 +2,21 @@ import React, { useEffect, useState } from 'react'
 import io from "socket.io-client";
 import { MyRoutes } from './MyRoutes';
 import { Link } from 'react-router-dom';
-const socket = io.connect("http://localhost:4000");
 
 
 function App() {
 
-  const [backendData, setBackendData] = useState([{}])
+  // const [backendData, setBackendData] = useState([{}])
 
-  useEffect(() => {
-    fetch("/api").then(
-      response => response.json()
-    ).then(
-      data => {
-        setBackendData(data)
-      }
-    )
-  }, [])
+  // useEffect(() => {
+  //   fetch("/api").then(
+  //     response => response.json()
+  //   ).then(
+  //     data => {
+  //       setBackendData(data)
+  //     }
+  //   )
+  // }, [])
 
   return (
     <div>
