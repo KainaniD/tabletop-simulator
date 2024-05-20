@@ -6,6 +6,8 @@ import { NotFound } from './pages/NotFound'
 import { TestPage } from './pages/TestPage'
 import { Profile } from './pages/Profile'
 import { NewRoom } from './pages/NewRoom'
+import { Register } from './pages/Register'
+import { Login } from './pages/Login'
 
 export const MyRoutes = () => {
     return (
@@ -19,6 +21,8 @@ export const MyRoutes = () => {
             </Route>
             <Route path="/TestPage" element={<TestPage />} />
             <Route path="/Profile" element={<Profile />} />
+            <Route path="/Register" element={<Register />} />
+            <Route path="/Login" element={<Login />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
         </>

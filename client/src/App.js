@@ -25,6 +25,8 @@ function App() {
         <Link to="/Rooms" className="nav-button">Rooms</Link>
         <Link to="/TestPage" className="nav-button">Test Page</Link>
         <Link to="/Profile" className="nav-button">Profile</Link>
+        <Link to="/Register" className="nav-button">Register</Link>
+        <Link to="/Login" className="nav-button">Login</Link>
       </div>
       <div className="main">
       <MyRoutes />

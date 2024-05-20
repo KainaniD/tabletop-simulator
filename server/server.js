@@ -1,12 +1,38 @@
 const express = require('express');
 const app = express();
 const PORT = 4000;
-
+const mongoose = require('mongoose')
+const userModel = require('./model/User')
 
 const http = require('http');
 const { Server } = require("socket.io");
 const cors = require('cors');
+
+mongoose.connect('mongodb+srv://keelanhu01:yjX6GhQTrZhNDkJs@tabletop-simulator.g6o2qfy.mongodb.net/?retryWrites=true&w=majority&appName=Tabletop-Simulator')
+app.use(express.json())
 app.use(cors());
+
+app.post("/login", (req, res) => {
+    const {name, password} = req.body;
+    userModel.findOne({name : name})
+    .then(user => {
+        if(user) {
+            if(user.password === password){
+                res.json("Success")
+            }else{
+                res.json("The password is incorrect")
+            }
+        }else{
+            res.json("No record existed")
+        }
+    })
+})
+
+app.post("/register", (req, res) => {
+    userModel.create(req.body)
+    .then(users => res.json(users))
+    .catch(err => res.json(err))
+})
 
 app.get("/api", (req, res) => {
     res.json({"users": ["userOne", "userTwo", "userThree"]})
