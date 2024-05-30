@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import io from "socket.io-client";
+import React from 'react'
 import { MyRoutes } from './MyRoutes';
 import { Link } from 'react-router-dom';
 

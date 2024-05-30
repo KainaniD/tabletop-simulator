@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios'
-import { useNavigate } from "react-router-dom";
-import { MyRoutes } from '../MyRoutes';
 
 export function Login() {    
     const [name, setName] = useState()
     const [password, setPassword] = useState()
-    const navigate = useNavigate()
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        axios.post("http://localhost:4000/login", { name, password })
+        axios.get("http://localhost:4000/users", {params: { name, password }})
         .then(result => {
             console.log(result)
             if(result.data === "Success"){

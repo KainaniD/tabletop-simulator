@@ -5,6 +5,6 @@ const RoomSchema = new mongoose.Schema({
    users:Number
 })
 
-const RoomModel = mongoose.model("rooms", RoomSchema)
+const RoomModel = mongoose.model("rooms", RoomSchema, "rooms")
 
 module.exports = RoomModel

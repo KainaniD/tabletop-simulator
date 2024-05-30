@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import axios from 'axios'
-import { useNavigate } from "react-router-dom";
-import { MyRoutes } from '../MyRoutes';
 
 export function NewRoom() {    
     const [name, setName] = useState()
@@ -11,7 +8,6 @@ export function NewRoom() {
         e.preventDefault()
         axios.post("http://localhost:4000/rooms", { name })
         .then(result => {
-            console.log(result)
             if(result.status === 200){
                 alert("You created a new room!")
             }else{
@@ -30,7 +26,7 @@ export function NewRoom() {
                         <label htmlFor="name" className="input-label"><strong>Room Name</strong></label>
                         <input
                             type="name"
-                            placeholder="Enter Password"
+                            placeholder="Enter Room Name"
                             name="name"
                             className="input-box"
                             onChange={(e) => setName(e.target.value)}
