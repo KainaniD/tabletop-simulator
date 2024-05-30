@@ -15,16 +15,14 @@ export function Login() {
         .then(result => {
             console.log(result)
             if(result.data === "Success"){
-                navigate("/Home")
+                alert("You are logged in!")
             }else{
-                navigate("/Register")
                 alert("You are not registered to this service")
-
             }
-       
         })
         .catch(err => console.log(err))
     }
+    
     return (
         <div>
             <div>

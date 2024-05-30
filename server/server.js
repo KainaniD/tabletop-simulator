@@ -3,6 +3,7 @@ const app = express();
 const PORT = 4000;
 const mongoose = require('mongoose')
 const userModel = require('./model/User')
+const roomModel = require('./model/Rooms')
 
 const http = require('http');
 const { Server } = require("socket.io");
@@ -34,8 +35,19 @@ app.post("/register", (req, res) => {
     .catch(err => res.json(err))
 })
 
-app.get("/api", (req, res) => {
-    res.json({"users": ["userOne", "userTwo", "userThree"]})
+app.post("/rooms", (req, res) => {
+    roomModel.create(req.body)
+    .then(rooms => res.json(rooms))
+    .catch(err => res.json(err))
+})
+
+app.get("/rooms", (req, res) => {
+    var rooms = {}
+    roomModel.find({}, function (err, room) {
+        console.log(room)
+        rooms[room.name] = room
+    })
+    res.send(rooms)
 })
 
 const server = http.createServer(app);

@@ -3,7 +3,6 @@ import { Home } from './pages/Home'
 import { Room } from './pages/Room'
 import { GameRooms } from './pages/GameRooms'
 import { NotFound } from './pages/NotFound'
-import { TestPage } from './pages/TestPage'
 import { Profile } from './pages/Profile'
 import { NewRoom } from './pages/NewRoom'
 import { Register } from './pages/Register'
@@ -19,7 +18,6 @@ export const MyRoutes = () => {
                 <Route path=":id" element={<Room />} />
                 <Route path="NewRoom" element={<NewRoom />} />   
             </Route>
-            <Route path="/TestPage" element={<TestPage />} />
             <Route path="/Profile" element={<Profile />} />
             <Route path="/Register" element={<Register />} />
             <Route path="/Login" element={<Login />} />

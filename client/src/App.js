@@ -11,7 +11,6 @@ function App() {
       <div className="flex justify-evenly bg-gray-100 py-5 mb-5 border border-gray-300">
         <Link to="/" className="nav-button">Home</Link>
         <Link to="/Rooms" className="nav-button">Rooms</Link>
-        <Link to="/TestPage" className="nav-button">Test Page</Link>
         <Link to="/Profile" className="nav-button">Profile</Link>
         <Link to="/Register" className="nav-button">Register</Link>
         <Link to="/Login" className="nav-button">Login</Link>
