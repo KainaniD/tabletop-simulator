@@ -23,43 +23,46 @@ export function Register() {
     return (
         <div>
           <div>
-            <h2 style={{ textAlign: 'center' }}>Sign Up</h2>
+            <h1>Sign Up Here</h1> 
             <form onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="name"><strong>Username</strong></label>
+                <label htmlFor="name" className="input-label"><strong>Username</strong></label>
                 <input
                   type="text"
                   placeholder="Enter Username"
                   autoComplete="off"
                   name="name"
+                  className="input-box"
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
               <div>
-                <label htmlFor="email"><strong>Email</strong></label>
+                <label htmlFor="email" className="input-label"><strong>Email</strong></label>
                 <input
                   type="text"
                   placeholder="Enter Email"
                   autoComplete="off"
                   name="email"
+                  className="input-box"
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div>
-                <label htmlFor="password"><strong>Password</strong></label>
+                <label htmlFor="password" className="input-label"><strong>Password</strong></label>
                 <input
                   type="password"
                   placeholder="Enter Password"
                   name="password"
+                  className="input-box"
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              <button type="submit" style={{ width: '100%' }}>
+              <button type="submit" className="py-5 px-10 my-1 rounded-lg bg-purple-300 transition duration-300 ease-in-out motion-safe:hover:bg-purple-400">
                 Sign Up
               </button>
             </form>
-            <p>Already have an account?</p>
-            <a href="/Login">Login</a>
+            <p className="mb-5">Already have an account?</p>
+            <Link to="/Login" className="py-5 px-10 my-1 rounded-lg bg-purple-300 transition duration-300 ease-in-out motion-safe:hover:bg-purple-400">Login</Link>
           </div>
         </div>
       );

@@ -6,18 +6,6 @@ import { Link } from 'react-router-dom';
 
 function App() {
 
-  // const [backendData, setBackendData] = useState([{}])
-
-  // useEffect(() => {
-  //   fetch("/api").then(
-  //     response => response.json()
-  //   ).then(
-  //     data => {
-  //       setBackendData(data)
-  //     }
-  //   )
-  // }, [])
-
   return (
     <div>
       <div className="flex justify-evenly bg-gray-100 py-5 mb-5 border border-gray-300">
