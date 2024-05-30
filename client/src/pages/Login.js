@@ -1,30 +1,25 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios'
-import { useNavigate } from "react-router-dom";
-import { MyRoutes } from '../MyRoutes';
 
 export function Login() {    
     const [name, setName] = useState()
     const [password, setPassword] = useState()
-    const navigate = useNavigate()
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        axios.post("http://localhost:4000/login", { name, password })
+        axios.get("http://localhost:4000/users", {params: { name, password }})
         .then(result => {
             console.log(result)
             if(result.data === "Success"){
-                navigate("/Home")
+                alert("You are logged in!")
             }else{
-                navigate("/Register")
                 alert("You are not registered to this service")
-
             }
-       
         })
         .catch(err => console.log(err))
     }
+    
     return (
         <div>
             <div>

@@ -3,6 +3,7 @@ const app = express();
 const PORT = 4000;
 const mongoose = require('mongoose')
 const userModel = require('./model/User')
+const roomModel = require('./model/Rooms')
 
 const http = require('http');
 const { Server } = require("socket.io");
@@ -12,15 +13,31 @@ mongoose.connect('mongodb+srv://keelanhu01:yjX6GhQTrZhNDkJs@tabletop-simulator.g
 app.use(express.json())
 app.use(cors());
 
-app.post("/login", (req, res) => {
+app.post("/users", (req, res) => {
+
     const {name, password} = req.body;
+    
     userModel.findOne({name : name})
-    .then(user => {
+    .then((user) => {
+        if(user) {
+            res.json("Failed")
+        }else{
+            userModel.create(req.body)
+            .then(users => res.json(users))
+            .catch(err => res.json(err))
+        }
+    })
+})
+
+app.get("/users", (req, res) => {
+    const {name, password} = req.query;
+    userModel.findOne({name : name})
+    .then((user) => {
         if(user) {
             if(user.password === password){
                 res.json("Success")
             }else{
-                res.json("The password is incorrect")
+                res.json("Failed")
             }
         }else{
             res.json("No record existed")
@@ -28,14 +45,18 @@ app.post("/login", (req, res) => {
     })
 })
 
-app.post("/register", (req, res) => {
-    userModel.create(req.body)
-    .then(users => res.json(users))
+app.post("/rooms", (req, res) => {
+    roomModel.create(req.body)
+    .then(rooms => res.json(rooms))
     .catch(err => res.json(err))
 })
 
-app.get("/api", (req, res) => {
-    res.json({"users": ["userOne", "userTwo", "userThree"]})
+app.get("/rooms", (req, res) => {
+    console.log(res)
+    roomModel.find({})
+    .then((room) => {
+        res.json(room)
+    })
 })
 
 const server = http.createServer(app);

@@ -1,21 +1,22 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios'
-import { useNavigate } from "react-router-dom";
-import { MyRoutes } from '../MyRoutes';
 
 export function Register() {    
 
     const [name, setName] = useState()
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
-    const navigate = useNavigate()
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        axios.post("http://localhost:4000/register", { name, email, password })
+        axios.post("http://localhost:4000/users", { name, email, password })
         .then(result => {console.log(result)
-        navigate("/login")
+          if (result.data === "Failed") {
+            alert("Sorry the username " + name + " is taken :(")
+          } else {
+            alert("Hello, " + name + " You have been added as a new user!")
+          }
         })
         .catch(err => console.log(err))
     }
