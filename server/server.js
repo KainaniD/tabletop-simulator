@@ -15,7 +15,7 @@ app.use(cors());
 
 app.post("/users", (req, res) => {
 
-    const {name, password} = req.body;
+    const {name} = req.body;
     
     userModel.findOne({name : name})
     .then((user) => {
@@ -30,7 +30,7 @@ app.post("/users", (req, res) => {
 })
 
 app.get("/users", (req, res) => {
-    const {name, password} = req.query;
+    const {name, password} = req.query
     userModel.findOne({name : name})
     .then((user) => {
         if(user) {
@@ -52,11 +52,18 @@ app.post("/rooms", (req, res) => {
 })
 
 app.get("/rooms", (req, res) => {
-    console.log(res)
-    roomModel.find({})
-    .then((room) => {
-        res.json(room)
-    })
+    const {id, condition} = req.query
+    if (condition === "delete") {
+        roomModel.deleteOne({name : id})
+        .then(res.json("successfully deleted"))
+        .catch(err => res.json(err))
+    } else if (condition === "query") {
+        roomModel.find({})
+        .then((room) => {
+            res.json(room)
+        })
+        .catch(err => res.json(err))
+    }
 })
 
 const server = http.createServer(app);
