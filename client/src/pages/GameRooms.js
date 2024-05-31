@@ -5,9 +5,10 @@ import { Link } from "react-router-dom";
 export const GameRooms = () => {
 
     const [backendData, setBackendData] = useState({})
+    const condition = "query"
 
     useEffect(() => {
-        axios.get("http://localhost:4000/rooms")
+        axios.get("http://localhost:4000/rooms", { params: { condition} })
         .then((result) => {
             let rooms = {}
             for (let i = 0; i < result.data.length; i++){
