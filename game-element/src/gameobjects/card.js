@@ -16,15 +16,13 @@ class Card extends Phaser.GameObjects.Image {
         this.scene.input.setDraggable(this);
         this.on('drag', 
             function(pointer, dragX, dragY) {
+                this.scene.children.bringToTop(this);
                 this.x = dragX;
                 this.y = dragY    
             }
-        )
+        );
         this.on('pointerup', 
             function(pointer, gameObject) {
-                console.log(pointer.rightButtonReleased())
-                console.log(this.cardFront);
-                console.log(this.cardBack)
                 if (! pointer.rightButtonReleased()) {
                     return;
                 }
@@ -37,7 +35,13 @@ class Card extends Phaser.GameObjects.Image {
                     this.facedown = true
                 }
             }
+        );
+        this.on('pointerdown', 
+            function(pointer, gameObject) {
+                this.scene.children.bringToTop(this);
+            }
         )
+
     }
 
 
