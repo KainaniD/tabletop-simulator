@@ -15,10 +15,15 @@ const roomModel = require('./model/Rooms')
 const http = require('http');
 const { Server } = require("socket.io");
 const cors = require('cors');
+const corsOptions ={
+    origin:'http://localhost:3000',
+    credentials:true,
+    optionSuccessStatus:200
+}
 
 mongoose.connect('mongodb+srv://keelanhu01:yjX6GhQTrZhNDkJs@tabletop-simulator.g6o2qfy.mongodb.net/?retryWrites=true&w=majority&appName=Tabletop-Simulator')
 app.use(express.json())
-app.use(cors({origin: '*', credentials: true}));
+app.use(cors(corsOptions));
 
 
 app.use(session({
