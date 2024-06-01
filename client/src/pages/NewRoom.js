@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import axios from '../axiosConfig'
-import { redirect } from "react-router-dom";
 
-export function NewRoom() {    
+export function NewRoom() {
+
+    
     const [name, setName] = useState()
+    const users = 0
+    const condition = "create room"
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        axios.post("http://localhost:4000/rooms", { name })
+        axios.post("http://localhost:4000/rooms", { name, users, condition})
         .then(result => {
             if(result.data.success === true){
                 //room created case
