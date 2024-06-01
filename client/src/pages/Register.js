@@ -22,7 +22,7 @@ export function Register() {
     }
 
     return (
-        <div>
+        <div className="flex justify-center items-center">
           <div>
             <h1>Sign Up Here</h1> 
             <form onSubmit={handleSubmit}>
