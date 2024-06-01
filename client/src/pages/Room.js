@@ -1,5 +1,5 @@
-import { useParams } from "react-router-dom"
-import axios from 'axios'
+import { useParams, redirect } from "react-router-dom"
+import axios from '../axiosConfig'
 
 export const Room = () => {
     const { id } = useParams()
@@ -9,11 +9,13 @@ export const Room = () => {
         e.preventDefault()        
         axios.get("http://localhost:4000/rooms", { params: {id, condition} })
         .then(result => {
-            console.log(result)
-            if(result.data === "successfully deleted"){
-                alert("You deleted this room!")
-            }else{
-                alert("Oops! Something wrong happened :(")
+            if(result.data.success === true){
+                //Successfully deleted room
+                alert(result.data.message)
+                window.location.replace("http://localhost:3000/rooms");
+            }else if (result.data.success === false){
+                //Failed to delete room
+                alert(result.data.message)
             }
         })
         .catch(err => console.log(err))
@@ -25,7 +27,7 @@ export const Room = () => {
         <form onSubmit={handleSubmit}>
             <button type="submit" className="py-5 px-10 my-1 rounded-lg bg-purple-300 transition duration-300 ease-in-out motion-safe:hover:bg-purple-400">
             Delete this Room
-        </button>
+            </button>
         </form>
         </div>
     );
