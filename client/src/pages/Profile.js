@@ -15,12 +15,12 @@ socket.on('connect', () => {
 
 function logout() {
     axios.post("http://localhost:4000/session")
-    .then((result) => {
-        console.log(result)
-        alert("you have logged out!")
-        window.location.replace("http://localhost:3000/login")
-    })
-    .catch(err => console.log(err))
+        .then((result) => {
+            console.log(result)
+            alert("you have logged out!")
+            window.location.replace("http://localhost:3000/login")
+        })
+        .catch(err => console.log(err))
 }
 
 export const Profile = () => {
@@ -30,35 +30,35 @@ export const Profile = () => {
 
     useEffect(() => {
         axios.get("http://localhost:4000/session")
-        .then((result) => {
-            console.log(result)
-            setUsername(result.data.username)
-            setSessionID(result.data._id)
-        })
-        .catch(err => console.log(err))
+            .then((result) => {
+                console.log(result)
+                setUsername(result.data.username)
+                setSessionID(result.data._id)
+            })
+            .catch(err => console.log(err))
     }, [])
 
     return (
         <div className="flex pb-5 min-h-[calc(100vh-198px)] gap-5">
             <div className="flex flex-col w-1/3 bg-gray-100 p-5 rounded-lg shadow-md items-center">
-                <h1 className="px-5 py-5">{username}'s Profile </h1>
-                <p>Socket Session ID: {clientID}</p>
+                <h1 className="px-2 py-0">{username}'s Profile </h1>
+                <p>Socket Session ID: {clientID} {sessionID}</p>
                 <p>Express Session ID: {sessionID}</p>
-                <button onClick={logout} className="py-5 px-10 my-1 rounded-lg bg-purple-300 transition duration-300 ease-in-out motion-safe:hover:bg-purple-400">
-            Logout
-            <   /button>
                 <div className="py-5 px-5">
                     <img src={pfp} width="200" height="auto" className="border border-gray-300 rounded-lg border-4" />
                 </div>
                 <button type="submit"
-                    className="py-2 px-4 rounded-lg bg-blue-400 transition duration-300 ease-in-out motion-safe:hover:bg-blue-500"
+                    className="py-2 px-4 rounded-lg bg-blue-400 motion-safe:hover:bg-blue-500"
                 >
                     Change/Add Profile Picture
                 </button>
-                <p className="py-5 px-5 ">Guest User: {clientID}</p>
-                <h1 className="text-center pb-0 pl-0">Friends</h1>
+                <div className='py-2' />
+                <button onClick={logout} className="py-2 px-10 my-1 rounded-lg bg-blue-400 motion-safe:hover:bg-blue-500">
+                    Logout
+                </button>
+                <h1 className="text-center pb-0 pl-0 pt-3">Friends</h1>
                 <div className="">
-                    <div className="mt-5">
+                    <div className="mt-3">
                         <div className="overflow-y-auto h-48 px-2 py-2 rounded-lg border-4 border-gray-300">
                             <Friend />
                             <Friend />
