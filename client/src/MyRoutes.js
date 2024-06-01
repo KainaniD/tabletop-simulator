@@ -7,6 +7,7 @@ import { Profile } from './pages/Profile'
 import { NewRoom } from './pages/NewRoom'
 import { Register } from './pages/Register'
 import { Login } from './pages/Login'
+import { Friends } from './pages/Friends'
 
 export const MyRoutes = () => {
     return (
@@ -21,6 +22,7 @@ export const MyRoutes = () => {
             <Route path="/Profile" element={<Profile />} />
             <Route path="/Register" element={<Register />} />
             <Route path="/Login" element={<Login />} />
+            <Route path="/Friends" element={<Friends />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
         </>
