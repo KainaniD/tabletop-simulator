@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react'
+import axios from '../axiosConfig'
 import io from "socket.io-client";
 import pfp from '../assets/pfp.png'
 import { FriendCard } from '../pages/FriendCard'
@@ -11,11 +13,40 @@ socket.on('connect', () => {
     clientID = socket.id;
 });
 
+function logout() {
+    axios.post("http://localhost:4000/session")
+    .then((result) => {
+        console.log(result)
+        alert("you have logged out!")
+        window.location.replace("http://localhost:3000/login")
+    })
+    .catch(err => console.log(err))
+}
+
 export const Profile = () => {
+
+    const [sessionID, setSessionID] = useState()
+    const [username, setUsername] = useState()
+
+    useEffect(() => {
+        axios.get("http://localhost:4000/session")
+        .then((result) => {
+            console.log(result)
+            setUsername(result.data.username)
+            setSessionID(result.data._id)
+        })
+        .catch(err => console.log(err))
+    }, [])
+
     return (
         <div className="flex pb-5 min-h-[calc(100vh-198px)] gap-5">
             <div className="flex flex-col w-1/3 bg-gray-100 p-5 rounded-lg shadow-md items-center">
-                <h1 className="px-5 py-5">Your Profile</h1>
+                <h1 className="px-5 py-5">{username}'s Profile </h1>
+                <p>Socket Session ID: {clientID}</p>
+                <p>Express Session ID: {sessionID}</p>
+                <button onClick={logout} className="py-5 px-10 my-1 rounded-lg bg-purple-300 transition duration-300 ease-in-out motion-safe:hover:bg-purple-400">
+            Logout
+            <   /button>
                 <div className="py-5 px-5">
                     <img src={pfp} width="200" height="auto" className="border border-gray-300 rounded-lg border-4" />
                 </div>
