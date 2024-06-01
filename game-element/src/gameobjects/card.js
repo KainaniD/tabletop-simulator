@@ -22,7 +22,9 @@ class Card extends Phaser.GameObjects.Image {
         )
         this.on('pointerup', 
             function(pointer, gameObject) {
-                console.log(this.facedown)
+                console.log(pointer.rightButtonReleased())
+                console.log(this.cardFront);
+                console.log(this.cardBack)
                 if (! pointer.rightButtonReleased()) {
                     return;
                 }
@@ -32,7 +34,7 @@ class Card extends Phaser.GameObjects.Image {
                 }
                 else {
                     this.setTexture(this.cardBack)
-                    this.facedown = false
+                    this.facedown = true
                 }
             }
         )
