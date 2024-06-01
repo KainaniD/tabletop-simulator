@@ -28,7 +28,7 @@ code {
     @apply px-5
   }
   .input-label {
-    @apply block mb-2 text-sm font-medium text-gray-900
+    @apply block mb-2 text-sm font-medium text-gray-900 text-center
   }
   .input-box {
     @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 mb-2
@@ -37,6 +37,6 @@ code {
     @apply flex justify-evenly
   }
   .title-text {
-    @apply flex items-center justify-center py-5 px-5
+    @apply flex items-center justify-center py-0 px-0
   }
 }

@@ -23,7 +23,7 @@ export const Room = () => {
 
     return (
         <div>
-        <h1>Room this is id -> {id}</h1>
+        <h1>Room {id}</h1>
         <form onSubmit={handleSubmit}>
             <button type="submit" className="py-5 px-10 my-1 rounded-lg bg-purple-300 transition duration-300 ease-in-out motion-safe:hover:bg-purple-400">
             Delete this Room
