@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from 'axios'
+import axios from '../axiosConfig'
+import { redirect } from "react-router-dom";
 
 export function NewRoom() {    
     const [name, setName] = useState()
@@ -8,11 +9,16 @@ export function NewRoom() {
         e.preventDefault()
         axios.post("http://localhost:4000/rooms", { name })
         .then(result => {
-            if(result.status === 200){
-                alert("You created a new room!")
-            }else{
-                alert("Oops! Something wrong happened :(")
+            if(result.data.success === true){
+                //room created case
+                alert(result.data.message)
+                window.location.replace("http://localhost:3000/rooms");
+
+            } else if(result.data.success === false){
+                //room failed case
+                alert(result.data.message)
             }
+
         })
         .catch(err => console.log(err))
     }

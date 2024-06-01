@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import axios from '../axiosConfig'
 import { Link } from "react-router-dom";
 
 export const GameRooms = () => {
@@ -30,7 +30,7 @@ export const GameRooms = () => {
                 <Link key={id} to={`/Rooms/${room}`} className='py-5 px-10 my-1 rounded-lg bg-purple-300 transition duration-300 ease-in-out motion-safe:hover:bg-purple-400'>Room Name: {room}<br />People In Room: {backendData.room}</Link>
             ) )
         )}
-        <Link to="/Rooms/NewRoom" className='py-5 px-10 my-1 rounded-lg bg-purple-300 transition duration-300 ease-in-out motion-safe:hover:bg-purple-400}'>Create a New Room!</Link>
+        <Link to="/Rooms/NewRoom" className='py-5 px-10 my-1 rounded-lg bg-purple-300 transition duration-300 ease-in-out motion-safe:hover:bg-purple-400'>Create a New Room!</Link>
         </div>
         </>
     );

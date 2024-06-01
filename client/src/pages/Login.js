@@ -1,20 +1,20 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
 import { Link } from "react-router-dom";
-import axios from 'axios'
+import axios from '../axiosConfig'
 
 export function Login() {    
-    const [name, setName] = useState()
+    const [username, setUsername] = useState()
     const [password, setPassword] = useState()
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        axios.get("http://localhost:4000/users", {params: { name, password }})
+        axios.get("http://localhost:4000/users", {params: { username, password }})
         .then(result => {
-            console.log(result)
-            if(result.data === "Success"){
-                alert("You are logged in!")
-            }else{
-                alert("You are not registered to this service")
+            if(result.data.success === true){
+                alert(result.data.message)
+                window.location.replace("http://localhost:3000/");
+            }else if(result.data.success === false){
+                alert(result.data.message)
             }
         })
         .catch(err => console.log(err))
@@ -26,14 +26,14 @@ export function Login() {
                 <h1>Login Here</h1>
                 <form onSubmit={handleSubmit}>
                     <div>
-                        <label htmlFor="name" className="input-label"><strong>Username</strong></label>
+                        <label htmlFor="username" className="input-label"><strong>Username</strong></label>
                         <input
                             type="text"
                         placeholder="Enter Username"
                         autoComplete="off"
-                        name="name"
+                        name="username"
                         className="input-box"
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={(e) => setUsername(e.target.value)}
                     />
                     </div>
                     <div>
