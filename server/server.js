@@ -76,25 +76,27 @@ app.get("/users", (req, res) => {
 
 app.post("/rooms", (req, res) => {
 
-    const {name} = req.body;
+    const {name, condition} = req.body;
     
     roomModel.findOne({name : name})
     .then((room) => {
-        if(room) {
-            res.json({success: false, message: "there already exists a room with this name"})
-        }else{
-            roomModel.create(req.body)
-            .then(res.json({success: true, message: "room created"}))
-            .catch(err => res.json(err))
+        if (condition === "create room") {
+            if(room) {
+                res.json({success: false, message: "there already exists a room with this name"})
+            }else{
+                roomModel.create(req.body)
+                .then(res.json({success: true, message: "room created"}))
+                .catch(err => res.json(err))
+            }
         }
     })
 
 })
 
 app.get("/rooms", (req, res) => {
-    const {id, condition} = req.query
+    const {name, condition} = req.query
     if (condition === "delete") {
-        roomModel.deleteOne({name : id})
+        roomModel.deleteOne({name : name})
         .then(() => {
             res.json({ success: true, message: "successfully deleted"})
         })

@@ -37,12 +37,10 @@ export const MyRoutes = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/rooms">
                     <Route index element={<GameRooms />} />
-                    <Route path=":id" element={<Room />} />
+                    <Route path=":name" element={<Room />} />
                     <Route path="newroom" element={<NewRoom />} />   
                 </Route>
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/login" element={<Login />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
           </>
