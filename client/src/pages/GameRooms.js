@@ -5,11 +5,9 @@ import { Link } from "react-router-dom";
 export const GameRooms = () => {
 
     const [backendData, setBackendData] = useState({})
-    const [searchQuery, setSearchQuery] = useState()
     const condition = "query"
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
+    function searchRooms(searchQuery) {
         axios.get("http://localhost:4000/rooms", { params: { searchQuery, condition } })
             .then((result) => {
                 let rooms = {}
@@ -21,16 +19,26 @@ export const GameRooms = () => {
             .catch(err => console.log(err))
     }
 
-    useEffect(() => {
+    function getAllRooms() {
         axios.get("http://localhost:4000/rooms", { params: { condition } })
-            .then((result) => {
-                let rooms = {}
-                for (let i = 0; i < result.data.length; i++) {
-                    rooms[result.data[i].name] = result.data[i];
-                }
-                setBackendData(rooms);
-            })
-            .catch(err => console.log(err))
+        .then((result) => {
+            let rooms = {}
+            for (let i = 0; i < result.data.length; i++) {
+                rooms[result.data[i].name] = result.data[i];
+            }
+            setBackendData(rooms);
+        })
+        .catch(err => console.log(err))
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        getAllRooms()
+        
+    }
+
+    useEffect(() => {
+        getAllRooms()
     }, [])
 
     return (
@@ -42,13 +50,16 @@ export const GameRooms = () => {
                     <div>Search:</div>
                     <input 
                         type="roomid" 
+                        autoComplete="off"
                         placeholder="Enter Room ID" 
                         name="roomid" 
                         className="bg-gray-50 border border-gray-300 text-gray-900 py-2 px-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64"
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={(e) => {
+                            searchRooms(e.target.value)
+                        }}
                         />
                     <button type="submit" className="py-2 px-4 rounded-lg bg-blue-400 transition duration-300 ease-in-out motion-safe:hover:bg-blue-500">
-                        Search
+                        reset filters
                     </button>
                     <div>
                         or
