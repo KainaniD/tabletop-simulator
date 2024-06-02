@@ -30,14 +30,15 @@ export const Room = () => {
 
     return (
         <div id="app">
+            <h1 className="text-center">{name}</h1>
+            <PhaserGame ref={phaserRef} />
             
-            <h1>{name}</h1>
             <form onSubmit={handleSubmit}>
                 <button type="submit" className="py-5 px-10 my-1 rounded-lg bg-purple-300 transition duration-300 ease-in-out motion-safe:hover:bg-purple-400">
                 Delete this Room
                 </button>
             </form>
-            <PhaserGame ref={phaserRef} />
+            
         </div>
     );
 }

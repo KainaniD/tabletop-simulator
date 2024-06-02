@@ -7,12 +7,11 @@ import Game from "./scenes/game.js"
 const config = {
   parent: "game-container",
   type: Phaser.AUTO,
+  autoCenter: Phaser.Scale.Center.CENTER_HORIZONTALLY,
   useTicker: true,
   scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: 1280,
-    height: 720,
+    width: 1600,
+    height: 900,
   },
   physics: {
     default: "arcade",

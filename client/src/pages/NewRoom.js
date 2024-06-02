@@ -13,7 +13,7 @@ export function NewRoom() {
             if(result.data.success === true){
                 //room created case
                 alert(result.data.message)
-                window.location.replace("http://localhost:3000/rooms");
+                window.location.replace("http://localhost:3000/rooms" + name);
 
                 } else if (result.data.success === false) {
                     //room failed case
