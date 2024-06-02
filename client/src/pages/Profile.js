@@ -32,23 +32,18 @@ export const Profile = () => {
     function sendFriendRequest(targetuser) {
         axios.get("http://localhost:4000/sendfriendrequest", { params: { targetuser } })
         .then(result => {
-            console.log(result)
             if (result.data.success === true) {
                 alert(result.data.message)
             } else if (result.data.success === false) {
                 alert(result.data.message)
             }
+            window.location.reload()
         })
         .catch(err => console.log(err))
     }
 
     function removeFriend(targetuser) {
-        console.log(targetuser)
-        console.log("REMOVE FRIEND TRIGGER")
-    }
-
-    function acceptFriendRequest(targetuser) {
-        axios.get("http://localhost:4000/acceptfriendrequest", { params: { targetuser } })
+        axios.get("http://localhost:4000/removefriend", { params: { targetuser } })
         .then(result => {
             console.log(result)
             if (result.data.success === true) {
@@ -56,13 +51,35 @@ export const Profile = () => {
             } else if (result.data.success === false) {
                 alert(result.data.message)
             }
+            window.location.reload()
+        })
+        .catch(err => console.log(err))
+    }
+
+    function acceptFriendRequest(targetuser) {
+        axios.get("http://localhost:4000/acceptfriendrequest", { params: { targetuser } })
+        .then(result => {
+            if (result.data.success === true) {
+                alert(result.data.message)
+            } else if (result.data.success === false) {
+                alert(result.data.message)
+            }
+            window.location.reload()
         })
         .catch(err => console.log(err))
     }
 
     function denyFriendRequest(targetuser) {
-        console.log(targetuser)
-        console.log("DENY FRIEND REQUEST TRIGGER")
+        axios.get("http://localhost:4000/removefriend", { params: { targetuser } })
+        .then(result => {
+            if (result.data.success === true) {
+                alert(result.data.message)
+            } else if (result.data.success === false) {
+                alert(result.data.message)
+            }
+            window.location.reload()
+        })
+        .catch(err => console.log(err))
     }
 
     useEffect(() => {
@@ -86,7 +103,6 @@ export const Profile = () => {
 
         axios.get("http://localhost:4000/currentRequests")
             .then((result) => {
-                console.log(result)
                 let users = {}
                 for (let i = 0; i < result.data.length; i++) {
                     users[result.data[i].username] = result.data[i];
@@ -201,7 +217,7 @@ export const Profile = () => {
 
 
 
-                <h1 className="text-center pb-0 pt-5 ">Friends Requests </h1>
+                <h1 className="text-center pb-0 pt-5 ">Friend Requests</h1>
                 <div className="mt-5">
                     <div className="overflow-y-auto h-60 border-4 px-2 py-2 border-gray-300 rounded-lg">
                         <div>

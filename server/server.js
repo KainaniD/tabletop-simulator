@@ -325,6 +325,40 @@ app.get("/acceptfriendrequest", (req, res) => {
         .catch(err => res.json(err))
 })
 
+app.get("/removefriend", async (req, res) => {
+    try {
+        const targetusername = req.query.targetuser.username;
+        const currentusername = req.user.username;
+
+        const currentuser = await userModel.findOne({ username: currentusername });
+        if (!currentuser) {
+            return res.json({ success: false, message: "Something went wrong :(" });
+        }
+
+        const targetuser = await userModel.findOne({ username: targetusername });
+        if (!targetuser) {
+            return res.json({ success: false, message: "Target user not found" });
+        }
+
+        for (let i = 0; i < currentuser.friends.length; i++) {
+            const friendId = currentuser.friends[i];
+            if (targetuser.friends.includes(friendId)) {
+                await friendsModel.findByIdAndDelete(friendId);
+                await userModel.updateMany(
+                    { _id: { $in: [currentuser._id, targetuser._id] } },
+                    { $pull: { friends: friendId } }
+                );
+            }
+        }
+
+        res.json({ success: true, message: `You have denied ${targetusername} as a friend!` });
+    } catch (error) {
+        console.error("Error denying friend request:", error);
+        res.status(500).json({ success: false, message: "An error occurred while denying friend request" });
+    }
+});
+
+
 const server = http.createServer(app);
 
 const io = new Server(server, {
