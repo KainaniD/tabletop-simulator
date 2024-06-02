@@ -45,7 +45,7 @@ export const Profile = () => {
                 <p>Socket Session ID: {clientID} {sessionID}</p>
                 <p>Express Session ID: {sessionID}</p>
                 <div className="py-5 px-5">
-                    <img src={pfp} width="200" height="auto" className="border border-gray-300 rounded-lg border-4" />
+                    <img src={pfp} width="200" height="auto" className="x border-gray-300 rounded-lg border-4" />
                 </div>
                 <button type="submit"
                     className="py-2 px-4 rounded-lg bg-blue-400 motion-safe:hover:bg-blue-500"
