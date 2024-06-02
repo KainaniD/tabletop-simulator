@@ -17,7 +17,7 @@ export default class Bootloader extends Phaser.Scene {
         }
         
         for (var card_name of card_names) {
-            console.log(card_name)
+            //console.log(card_name)
             this.load.image(card_name, '/assets/Cards/' + card_name+'.png') 
             
         } 
