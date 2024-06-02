@@ -22,6 +22,7 @@ const config = {
     },
   },
   scene: [Bootloader, Game],
+  backgroundColor: 0xffffff
 };
 
 const game = new Phaser.Game(config);

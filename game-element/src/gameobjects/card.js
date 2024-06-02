@@ -18,12 +18,12 @@ class Card extends Phaser.GameObjects.Image {
             function(pointer, dragX, dragY) {
                 this.scene.children.bringToTop(this);
                 this.x = dragX;
-                this.y = dragY    
+                this.y = dragY;    
             }
         );
-        this.on('pointerup', 
+        this.on('pointerdown', 
             function(pointer, gameObject) {
-                if (! pointer.rightButtonReleased()) {
+                if (! pointer.rightButtonDown()) {
                     return;
                 }
                 if (this.facedown) {
@@ -40,9 +40,10 @@ class Card extends Phaser.GameObjects.Image {
             function(pointer, gameObject) {
                 this.scene.children.bringToTop(this);
             }
-        )
-
+        );
+        
     }
+
 
 
 
