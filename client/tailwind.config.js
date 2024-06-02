@@ -8,6 +8,15 @@ module.exports = {
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
       },
+      spacing: {
+        '200': '50rem',
+      },
+      width: {
+        '1/8': '200px',
+      },
+      height: {
+        '1/8': '50px',
+      },
     },
   },
   plugins: [],

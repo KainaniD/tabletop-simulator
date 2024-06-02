@@ -39,4 +39,8 @@ code {
   .title-text {
     @apply flex items-center justify-center py-0 px-0
   }
+  canvas {
+    display: block;
+    margin: auto;
+}
 }
