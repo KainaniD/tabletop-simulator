@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import axios from '../axiosConfig'
+import io from "socket.io-client";
 import { Link } from "react-router-dom";
 
-export const GameRooms = () => {
+let socket = io.connect('http://localhost:4000');
+var clientID;
 
+socket.on('connect', () => {
+    clientID = socket.id;
+    console.log('connected to server with client id:', clientID)
+});
+
+export const GameRooms = () => {
+    const [sessionID, setSessionID] = useState()
+    const [username, setUsername] = useState()
     const [backendData, setBackendData] = useState({})
     const condition = "query"
 
@@ -21,24 +31,44 @@ export const GameRooms = () => {
 
     function getAllRooms() {
         axios.get("http://localhost:4000/rooms", { params: { condition } })
-        .then((result) => {
-            let rooms = {}
-            for (let i = 0; i < result.data.length; i++) {
-                rooms[result.data[i].name] = result.data[i];
-            }
-            setBackendData(rooms);
-        })
-        .catch(err => console.log(err))
+            .then((result) => {
+                let rooms = {}
+                for (let i = 0; i < result.data.length; i++) {
+                    rooms[result.data[i].name] = result.data[i];
+                }
+                setBackendData(rooms);
+            })
+            .catch(err => console.log(err))
     }
 
     const handleSubmit = (e) => {
         e.preventDefault()
         getAllRooms()
-        
     }
+
+    const handleJoin = (room) => {
+        console.log('Joining room', room);
+        if (socket) {
+          socket.emit('joinRoom', room, (response) => {
+            if (response.status === 'ok') {
+              console.log('Successfully joined room', room);
+            } else {
+              console.error('Failed to join room', room);
+            }
+          });
+        }
+        console.log('Socket Function Called (join room)');
+    };
+
 
     useEffect(() => {
         getAllRooms()
+        axios.get("http://localhost:4000/session")
+            .then((result) => {
+                setUsername(result.data.username)
+                setSessionID(result.data._id)
+            })
+            .catch(err => console.log(err))
     }, [])
 
     return (
@@ -48,16 +78,16 @@ export const GameRooms = () => {
                 <h1 className='text-center px-0 py-4'> GameRooms </h1>
                 <form onSubmit={handleSubmit} className="flex justify-center items-center space-x-3 py-3">
                     <div>Search:</div>
-                    <input 
-                        type="roomid" 
+                    <input
+                        type="roomid"
                         autoComplete="off"
-                        placeholder="Enter Room ID" 
-                        name="roomid" 
+                        placeholder="Enter Room ID"
+                        name="roomid"
                         className="bg-gray-50 border border-gray-300 text-gray-900 py-2 px-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64"
                         onChange={(e) => {
                             searchRooms(e.target.value)
                         }}
-                        />
+                    />
                     <button type="submit" className="py-2 px-4 rounded-lg bg-blue-400 transition duration-300 ease-in-out motion-safe:hover:bg-blue-500">
                         reset filters
                     </button>
@@ -74,7 +104,7 @@ export const GameRooms = () => {
                             <p>Loading...</p>
                         ) : (
                             Object.keys(backendData).map((room, id) => (
-                                <div>                                
+                                <div>
                                     <div className="py-2">
                                         <div className="py-2 px-2 bg-blue-400 rounded-lg">
                                             <div className="flex">
@@ -90,7 +120,7 @@ export const GameRooms = () => {
                                                     <div className="flex gap-5">
                                                         <div className="flex-col w-1/2 px-2 py-2">
                                                         </div>
-                                                        <Link key={id} to={`/Rooms/${room}`} className='text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400'>
+                                                        <Link key={id} to={`/Rooms/${room}`} onClick={() => handleJoin(room)} className='text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400'>
                                                             Join
                                                         </Link>
                                                     </div>
