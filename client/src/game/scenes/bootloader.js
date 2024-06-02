@@ -1,3 +1,4 @@
+import Phaser from 'phaser'
 export default class Bootloader extends Phaser.Scene {
     constructor() {
         super({key: "bootloader"});

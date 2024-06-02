@@ -1,3 +1,4 @@
+import Phaser from 'phaser'
 class Card extends Phaser.GameObjects.Image {
     constructor(scene, x, y, cardFront, cardBack) {
         super(scene, x, y, cardFront)

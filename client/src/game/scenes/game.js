@@ -3,7 +3,7 @@ import Card from "../gameobjects/card"
 //import Bootloader from "./bootloader";
 import PlayerHand from "../gameobjects/playerHand";
 
-export default class Game extends Phaser.Scene {
+class Game extends Phaser.Scene {
     constructor() {
         super({key : 'game'});
         
@@ -65,3 +65,5 @@ export default class Game extends Phaser.Scene {
     }
 
 }
+
+export default Game;

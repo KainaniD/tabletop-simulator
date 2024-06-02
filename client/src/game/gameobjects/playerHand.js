@@ -1,3 +1,4 @@
+import Phaser from 'phaser'
 class PlayerHand extends Phaser.GameObjects.Zone{
     cards_in_hand = {};
     number_of_cards = 0;
