@@ -75,14 +75,14 @@ export const GameRooms = () => {
                             <p>Loading...</p>
                         ) : (
                             Object.keys(backendData).map((room, id) => (
-                                <div>
+                                <div key={id}>
                                     <div className="flex py-2 px-2 bg-blue-400 rounded-lg mb-3">
                                         <div className="w-1/3 px-2 py-2 bg-blue-200 rounded-lg align-middle text-xl">
                                             {room}
                                         </div>
 
                                         <div className="w-1/2" />
-                                        <Link key={id} to={`/Rooms/${room}`} className='text-center bg-green-300 rounded-lg w-1/6 px-2 py-2 motion-safe:hover:bg-green-400'>
+                                        <Link to={`/Rooms/${room}`} className='text-center bg-green-300 rounded-lg w-1/6 px-2 py-2 motion-safe:hover:bg-green-400'>
                                             Join
                                         </Link>
                                     </div>

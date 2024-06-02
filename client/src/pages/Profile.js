@@ -25,24 +25,36 @@ export const Profile = () => {
     const [sessionID, setSessionID] = useState()
     const [username, setUsername] = useState()
     const [allUsers, setAllUsers] = useState({})
+    const [currentRequests, setCurrentRequests] = useState({})
+    const [allFriends, setAllFriends] = useState({})
 
-    function sendFriendRequest(user) {
-        console.log(user)
+
+    function sendFriendRequest(targetuser) {
         console.log("SEND FRIEND REQUEST TRIGGER")
+        axios.get("http://localhost:4000/sendfriendrequest", { params: { targetuser } })
+        .then(result => {
+            console.log(result)
+            if (result.data.success === true) {
+                alert(result.data.message)
+            } else if (result.data.success === false) {
+                alert(result.data.message)
+            }
+        })
+        .catch(err => console.log(err))
     }
 
-    function removeFriend(user) {
-        console.log(user)
+    function removeFriend(targetuser) {
+        console.log(targetuser)
         console.log("REMOVE FRIEND TRIGGER")
     }
 
-    function acceptFriendRequest(user) {
-        console.log(user)
+    function acceptFriendRequest(targetuser) {
+        console.log(targetuser)
         console.log("ACCEPT FRIEND REQUEST TRIGGER")
     }
 
-    function denyFriendRequest(user) {
-        console.log(user)
+    function denyFriendRequest(targetuser) {
+        console.log(targetuser)
         console.log("DENY FRIEND REQUEST TRIGGER")
     }
 
@@ -63,6 +75,28 @@ export const Profile = () => {
                 }
                 setAllUsers(users)
             })
+            .catch(err => console.log(err))
+
+        axios.get("http://localhost:4000/currentRequests")
+            .then((result) => {
+                console.log(result)
+                let users = {}
+                for (let i = 0; i < result.data.length; i++) {
+                    users[result.data[i].username] = result.data[i];
+                }
+                setCurrentRequests(users)
+            })
+            .catch(err => console.log(err))
+
+        axios.get("http://localhost:4000/allfriends")
+            .then((result) => {
+                let users = {}
+                for (let i = 0; i < result.data.length; i++) {
+                    users[result.data[i].username] = result.data[i];
+                }
+                setAllFriends(users)
+            })
+            .catch(err => console.log(err))
     }, [])
 
     return (
@@ -164,10 +198,10 @@ export const Profile = () => {
                 <div className="mt-5">
                     <div className="overflow-y-auto h-60 border-4 px-2 py-2 border-gray-300 rounded-lg">
                         <div>
-                            {(typeof Object.keys(allUsers) == 'undefined') ? (
+                            {(typeof Object.keys(currentRequests) == 'undefined') ? (
                                 <p>Loading...</p>
                             ) : (
-                                Object.keys(allUsers).map((user, id) => (
+                                Object.keys(currentRequests).map((user, id) => (
                                     <div key={id} className="flex py-2 px-2 bg-blue-400 rounded-lg mb-3">
                                         <div className="w-1/3 px-2 py-2 bg-blue-200 rounded-lg align-middle text-xl">
                                             {user}
@@ -175,12 +209,12 @@ export const Profile = () => {
                                         <div className="w-1/3" />
                                         <div className="flex flex-row gap-5 w-1/3 justify-center">
                                             <button onClick={() => {
-                                                acceptFriendRequest(allUsers[user])
+                                                acceptFriendRequest(currentRequests[user])
                                             }} className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
                                                 Accept
                                             </button>
                                             <button onClick={() => {
-                                                denyFriendRequest(allUsers[user])
+                                                denyFriendRequest(currentRequests[user])
                                             }} className="text-center bg-red-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-red-400">
                                                 Deny
                                             </button>
