@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import PlayerHand from './playerHand';
 class Card extends Phaser.GameObjects.Image {
     constructor(scene, x, y, cardFront, cardBack, cardSuite, cardValue) {
         super(scene, x, y, cardFront)
@@ -9,8 +10,9 @@ class Card extends Phaser.GameObjects.Image {
         this.suite = cardSuite;
         this.value = cardValue;
         this.init()
-    }
     
+    }
+    playerHand;
     card_to_value = {};
 
     init() {
@@ -49,10 +51,14 @@ class Card extends Phaser.GameObjects.Image {
 
         this.on('drop', 
             function(pointer, target) {
-                console.log('hello')
                 target.addCard(this);
+                this.playerHand=target;
             }
         )
+
+        //taking card out of hand
+
+        
         
     }
 
