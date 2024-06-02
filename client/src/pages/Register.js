@@ -16,7 +16,16 @@ export function Register() {
 
         if (result.data.success === true) {
           alert(result.data.message)
-          window.location.replace("http://localhost:3000/login");
+          axios.get("http://localhost:4000/users", { params: { username, password } })
+          .then(result => {
+              if (result.data.success === true) {
+                  alert(result.data.message)
+                  window.location.replace("http://localhost:3000/profile");
+              } else if (result.data.success === false) {
+                  alert(result.data.message)
+              }
+          })
+          .catch(err => console.log(err))
         } else if (result.data.success === false) {
           alert(result.data.message)
         }

@@ -45,9 +45,9 @@ function App() {
         <div className="flex justify-center items-center">
           <div className="title-head">
             <h1 className="title-text flex items-center">
-            <img src={logo} width="70" height="auto" />
+            <img src={logo} alt="logo" width="70" height="auto" />
               TableTop Simulator
-              <img src={logo} width="70" height="auto" />
+              <img src={logo} alt="logo" width="70" height="auto" />
             </h1>
           </div>
         </div>
