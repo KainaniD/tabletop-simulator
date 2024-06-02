@@ -3,6 +3,8 @@ import Card from "../gameobjects/card"
 //import Bootloader from "./bootloader";
 import PlayerHand from "../gameobjects/playerHand";
 import Deck from "../gameobjects/deck.js"
+import io from 'socket.io-client'
+
 
 class Game extends Phaser.Scene {
     constructor() {
@@ -27,6 +29,9 @@ class Game extends Phaser.Scene {
 
 
     create() {
+        this.socket = io('http://localhost:4000')
+
+        this.socket.on('connect', () => console.log('Connected!'))
         this.input.mouse.disableContextMenu()
         var playerHand_list = [];
         //card_objects_group = newGroup(this, )
