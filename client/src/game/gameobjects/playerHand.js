@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
+import Card from './card';
 class PlayerHand extends Phaser.GameObjects.Zone{
     cards_in_hand = [];
-    number_of_cards = 0;
     constructor(scene, x, y, name, width, height){
         super(scene, x, y, width, height);
         this.name = name;
@@ -24,14 +24,12 @@ class PlayerHand extends Phaser.GameObjects.Zone{
 
     addCard(card_object){
         this.cards_in_hand.push(card_object);
-        this.number_of_cards += 1;
         this.handRender()
         
     }
     removeCard(card_object) {
-        var removal_index = this.cards_in_hand.indexOf(card_object);
-        delete this.cards_in_hand[removal_index];
-        this.number_of_cards -= 1;
+        let removal_index = this.cards_in_hand.indexOf(card_object);
+        this.cards_in_hand.splice(removal_index,1);
         this.handRender();
     }
 
@@ -53,12 +51,12 @@ class PlayerHand extends Phaser.GameObjects.Zone{
     }
 
     handRender() {
-        var spacing = this.width/(this.number_of_cards + 1)
-        console.log(this.cards_in_hand)
-        var multiplier = 1
-        
-        for (var i=0; i<this.cards_in_hand.length; i++){
-            var card_object = this.cards_in_hand[i]
+        this.orderCards()
+        let number_of_cards = this.cards_in_hand.length
+        let spacing = this.width/(number_of_cards + 1)
+        let multiplier = 1
+        for (let i=0; i<number_of_cards; i++){
+            let card_object = this.cards_in_hand[i]
             console.log(this.x - this.width/2 + spacing*multiplier)
             card_object.setX(this.x - this.width/2 + spacing*multiplier);
             card_object.setY(this.y)

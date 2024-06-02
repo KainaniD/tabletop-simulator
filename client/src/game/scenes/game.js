@@ -40,7 +40,7 @@ class Game extends Phaser.Scene {
 
 
     loadPlayerHands() {
-        this.playerHand1 = new PlayerHand(this, 200, 200, 'hello', 200, 200)
+        this.playerHand1 = new PlayerHand(this, 200, 800, 'hello', 400, 200)
     }
 
     update() {
