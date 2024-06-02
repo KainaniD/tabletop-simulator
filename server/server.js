@@ -110,6 +110,36 @@ app.get("/allusers", (req, res) => {
         });
 });
 
+app.get("/queryallusers", (req, res) => {
+    const { searchQuery } = req.query
+
+    userModel.findOne({ username: req.user.username })
+        .then((currentuser) => {
+            userModel.find({username: new RegExp(searchQuery, 'i')})
+                .then((users) => {
+                    var availableUsers = users.filter((user) => {
+                        // Check if the user is not the current user
+                        if (user.username !== currentuser.username) {
+                            // Check if any of the current user's friends match the user
+                            return !currentuser.friends.some((friendId) => {
+                                return user.friends.includes(friendId);
+                            });
+                        }
+                        return false;
+                    });
+                    res.json(availableUsers);
+                })
+                .catch((err) => {
+                    console.error("Error finding users:", err);
+                    res.status(500).json({ error: "An error occurred while finding users." });
+                });
+        })
+        .catch((err) => {
+            console.error("Error finding current user:", err);
+            res.status(500).json({ error: "An error occurred while finding the current user." });
+        });
+});
+
 app.get("/currentrequests", (req, res) => {
     userModel.findOne({ username: req.user.username })
         .then((user) => {

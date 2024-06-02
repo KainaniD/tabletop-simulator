@@ -82,15 +82,20 @@ export const Profile = () => {
         .catch(err => console.log(err))
     }
 
-    useEffect(() => {
-        axios.get("http://localhost:4000/currentuser")
-            .then((result) => {
-                setUsername(result.data.username)
-                setSessionID(result.data._id)
-            })
-            .catch(err => console.log(err))
+    function searchUsers(searchQuery) {
+        axios.get("http://localhost:4000/queryallusers", { params: { searchQuery } })
+        .then((result) => {
+            console.log(result)
+            let users = {}
+            for (let i = 0; i < result.data.length; i++) {
+                users[result.data[i].username] = result.data[i];
+            }
+            setAllUsers(users);
+        })
+        .catch(err => console.log(err))
+    }
 
-
+    function getAllUsers() {
         axios.get("http://localhost:4000/allusers")
             .then((result) => {
                 let users = {}
@@ -100,6 +105,26 @@ export const Profile = () => {
                 setAllUsers(users)
             })
             .catch(err => console.log(err))
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        let form = document.getElementById("userSearch")
+        form.reset()
+        getAllUsers()
+
+    }
+
+    useEffect(() => {
+        axios.get("http://localhost:4000/currentuser")
+            .then((result) => {
+                setUsername(result.data.username)
+                setSessionID(result.data._id)
+            })
+            .catch(err => console.log(err))
+
+
+        getAllUsers()
 
         axios.get("http://localhost:4000/currentRequests")
             .then((result) => {
@@ -172,21 +197,25 @@ export const Profile = () => {
 
             <div className="flex flex-col w-2/3 bg-gray-100 p-5 rounded-lg shadow-md">
                 <h1 className="text-center pb-0">Find Friends</h1>
-                <div className="flex justify-center items-center space-x-3 pt-3">
+                <form onSubmit={handleSubmit} id="userSearch" className="flex justify-center items-center space-x-3 pt-3">
+
                     <div>Search:</div>
                     <input
                         type="username"
                         placeholder="Enter Username"
                         name="username"
                         className="bg-gray-50 border border-gray-300 text-gray-900 py-2 px-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64"
+                        onChange={(e) => {
+                            searchUsers(e.target.value)
+                        }}
                     />
                     <button
                         type="submit"
                         className="py-2 px-4 rounded-lg bg-blue-400 transition duration-300 ease-in-out motion-safe:hover:bg-blue-500"
                     >
-                        Submit
+                        Reset Filter
                     </button>
-                </div>
+                </form>
                 <div className="mt-5">
                     <div className="overflow-y-auto h-60 border-4 px-2 py-2 border-gray-300 rounded-lg">
                         {(typeof Object.keys(allUsers) == 'undefined') ? (
