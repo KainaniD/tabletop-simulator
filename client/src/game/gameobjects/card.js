@@ -1,13 +1,17 @@
 import Phaser from 'phaser'
 class Card extends Phaser.GameObjects.Image {
-    constructor(scene, x, y, cardFront, cardBack) {
+    constructor(scene, x, y, cardFront, cardBack, cardSuite, cardValue) {
         super(scene, x, y, cardFront)
         this.scene = scene;
         this.cardFront = cardFront;
         this.facedown = true;
         this.cardBack = cardBack;
+        this.suite = cardSuite;
+        this.value = cardValue;
         this.init()
     }
+    
+    card_to_value = {};
 
     init() {
         this.setTexture(this.cardBack)
@@ -51,9 +55,6 @@ class Card extends Phaser.GameObjects.Image {
         )
         
     }
-
-
-
 
 
 

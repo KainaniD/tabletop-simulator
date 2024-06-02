@@ -32,7 +32,9 @@ class PlayerHand extends Phaser.GameObjects.Zone{
         this.number_of_cards -= 1;
     }
 
-
+    orderCards(){
+        
+    }
 }
 
 export default PlayerHand
