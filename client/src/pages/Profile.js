@@ -16,7 +16,6 @@ socket.on('connect', () => {
 function logout() {
     axios.post("http://localhost:4000/session")
         .then((result) => {
-            console.log(result)
             alert("you have logged out!")
             window.location.replace("http://localhost:3000/login")
         })
@@ -30,12 +29,11 @@ export const Profile = () => {
 
     useEffect(() => {
         axios.get("http://localhost:4000/session")
-            .then((result) => {
-                console.log(result)
-                setUsername(result.data.username)
-                setSessionID(result.data._id)
-            })
-            .catch(err => console.log(err))
+        .then((result) => {
+            setUsername(result.data.username)
+            setSessionID(result.data._id)
+        })
+        .catch(err => console.log(err))
     }, [])
 
     return (

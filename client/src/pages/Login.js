@@ -12,7 +12,7 @@ export function Login() {
             .then(result => {
                 if (result.data.success === true) {
                     alert(result.data.message)
-                    window.location.replace("http://localhost:3000/");
+                    window.location.replace("http://localhost:3000/profile");
                 } else if (result.data.success === false) {
                     alert(result.data.message)
                 }
