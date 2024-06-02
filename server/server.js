@@ -110,7 +110,7 @@ app.get("/rooms", (req, res) => {
         });
     } else if (condition === "query") {
         if (searchQuery) {
-            roomModel.find({name: searchQuery})
+        roomModel.find({name: new RegExp(searchQuery, 'i')})
             .then((room) => {
                 res.json(room)
             })
