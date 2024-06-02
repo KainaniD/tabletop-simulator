@@ -70,7 +70,7 @@ export const GameRooms = () => {
                     </div>
                 </form>
                 <div>
-                    <div className='overflow-y-auto h-60 border-4 bg-gray-100 border-gray-300 rounded-lg px-2 py-2'>
+                    <div className='overflow-y-auto h-100 border-4 bg-gray-100 border-gray-300 rounded-lg px-2 py-2'>
                         {(typeof Object.keys(backendData) == 'undefined') ? (
                             <p>Loading...</p>
                         ) : (
@@ -89,13 +89,6 @@ export const GameRooms = () => {
                                 </div>
                             ))
                         )}
-                    </div>
-                </div>
-
-
-                <h1 className='text-center px-0 py-4'> Invited Rooms </h1>
-                <div>
-                    <div className='overflow-y-auto h-60 border-4 bg-gray-100 border-gray-300 rounded-lg px-2'>
                     </div>
                 </div>
             </div>

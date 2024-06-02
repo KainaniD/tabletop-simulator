@@ -48,7 +48,7 @@ app.post("/register", (req, res) => {
     userModel.findOne({ username: username })
         .then((user) => {
             if (user) {
-                res.json({ success: false, message: "a user with the name " + username + " already exists" })
+                return res.json({ success: false, message: "a user with the name " + username + " already exists" })
             } else {
                 userModel.register(new userModel({ username: username, email: email }), password)
                     .then(res.json({ success: true, message: "Hi " + username + " you've registered your account!" }))
@@ -63,18 +63,18 @@ app.get("/login", (req, res) => {
     req.body = { username: username, password: password }
     passport.authenticate("local", function (err, user) {
         if (err) {
-            res.json({ success: false, message: "something wrong happened :(" });
+            return res.json({ success: false, message: "something wrong happened :(" });
         }
         else {
             if (!user) {
-                res.json({ success: false, message: "username or password incorrect" });
+                return res.json({ success: false, message: "username or password incorrect" });
             } else {
                 req.login(user, function (err) {
                     if (err) {
-                        res.json({ success: false, message: "something wrong happened :(" });
+                        return res.json({ success: false, message: "something wrong happened :(" });
                     } else {
                         req.session.save()
-                        res.json({ success: true, message: "you logged in", user: user })
+                        return res.json({ success: true, message: "you logged in", user: user })
                     }
                 })
             }
@@ -97,7 +97,7 @@ app.get("/allusers", (req, res) => {
                         }
                         return false;
                     });
-                    res.json(availableUsers);
+                    return res.json(availableUsers);
                 })
                 .catch((err) => {
                     console.error("Error finding users:", err);
@@ -127,7 +127,7 @@ app.get("/queryallusers", (req, res) => {
                         }
                         return false;
                     });
-                    res.json(availableUsers);
+                    return res.json(availableUsers);
                 })
                 .catch((err) => {
                     console.error("Error finding users:", err);
@@ -168,7 +168,7 @@ app.get("/currentrequests", (req, res) => {
 
             Promise.all(promises)
                 .then(() => {
-                    res.json(requests);
+                    return res.json(requests);
                 })
                 .catch((err) => {
                     console.error("Error processing friend requests:", err);
@@ -215,7 +215,7 @@ app.get("/allfriends", (req, res) => {
 
             Promise.all(promises)
                 .then(() => {
-                    res.json(requests);
+                    return res.json(requests);
                 })
                 .catch((err) => {
                     console.error("Error processing friend requests:", err);
@@ -235,7 +235,7 @@ app.post("/createroom", (req, res) => {
     roomModel.findOne({ name: name })
         .then((room) => {
             if (room) {
-                res.json({ success: false, message: "there already exists a room with this name" })
+                return res.json({ success: false, message: "there already exists a room with this name" })
             } else {
                 roomModel.create(req.body)
                     .then(res.json({ success: true, message: "room created" }))
@@ -249,17 +249,18 @@ app.get("/deleteroom", (req, res) => {
     const { name } = req.query
     roomModel.deleteOne({ name: name })
         .then(() => {
-            res.json({ success: true, message: "successfully deleted" })
+            return res.json({ success: true, message: "successfully deleted" })
+            
         })
         .catch((err) => {
-            res.json({ success: false, message: "failed to delete", error: err });
+            return res.json({ success: false, message: "failed to delete", error: err });
         });
 })
 
 app.get("/allrooms", (req, res) => {
     roomModel.find({})
         .then((room) => {
-            res.json(room)
+            return res.json(room)
         })
         .catch(err => res.json(err))
 })
@@ -269,18 +270,18 @@ app.get("/queryrooms", (req, res) => {
 
     roomModel.find({ name: new RegExp(searchQuery, 'i') })
         .then((room) => {
-            res.json(room)
+            return res.json(room)
         })
         .catch(err => res.json(err))
 })
 
 app.get("/currentuser", (req, res) => {
-    res.json(req.user)
+    return res.json(req.user)
 })
 
 app.post("/session", (req, res) => {
     req.session.destroy(function (err) {
-        res.json(err)
+        return res.json(err)
     })
 })
 
@@ -298,8 +299,7 @@ app.get("/sendfriendrequest", (req, res) => {
                         
                         for(let i = 0; i < currentuser.friends.length; i ++) {
                             if (targetuser.friends.includes(currentuser.friends[i])) {
-                                res.json({success: false, message: "there already exists a request between users"})
-                                return
+                                return res.json({success: false, message: "there already exists a request between users"})
                             }
                         }
 
@@ -310,7 +310,7 @@ app.get("/sendfriendrequest", (req, res) => {
                             userModel.findOneAndUpdate({ username: targetuser.username }, { "$push": { "friends": request}})
                             .then(() => {
                                 request.save()
-                                res.json({ success: true, message: "your friend request to " + targetuser.username + " has been sent" })
+                                returnres.json({ success: true, message: "your friend request to " + targetuser.username + " has been sent" })
                             })
                             .catch((err) => res.json(err))
                         })
@@ -319,7 +319,7 @@ app.get("/sendfriendrequest", (req, res) => {
                     })
                     .catch(err => res.json(err))
             } else {
-                res.json({ success: false, message: "something went wrong :(" })
+                return res.json({ success: false, message: "something went wrong :(" })
             }
         })
         .catch(err => res.json(err))
@@ -340,7 +340,7 @@ app.get("/acceptfriendrequest", (req, res) => {
                             if (targetuser.friends.includes(currentuser.friends[i])) {
                                 friendsModel.findByIdAndUpdate(currentuser.friends[i], {status: 4})
                                 .then(() => {
-                                    res.json({success: true, message: "you have added " + targetuser.username + " as a friend!"})
+                                    return res.json({success: true, message: "you have added " + targetuser.username + " as a friend!"})
                                 })
                                 .catch((err) => res.json(err))
                             }
@@ -349,7 +349,7 @@ app.get("/acceptfriendrequest", (req, res) => {
                     })
                     .catch(err => res.json(err))
             } else {
-                res.json({ success: false, message: "something went wrong :(" })
+                return res.json({ success: false, message: "something went wrong :(" })
             }
         })
         .catch(err => res.json(err))
@@ -381,7 +381,7 @@ app.get("/removefriend", async (req, res) => {
             }
         }
 
-        res.json({ success: true, message: `You have denied ${targetusername} as a friend!` });
+        return res.json({ success: true, message: `You have denied ${targetusername} as a friend!` });
     } catch (error) {
         console.error("Error denying friend request:", error);
         res.status(500).json({ success: false, message: "An error occurred while denying friend request" });
