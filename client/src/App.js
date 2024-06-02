@@ -24,18 +24,18 @@ function App() {
 
 
   function routes(){
-    // if (isLoggedIn === true){
+    if (isLoggedIn === true){
       return <div className="flex justify-evenly bg-gray-100 py-5 mb-5 border border-gray-300">
       <Link to="/" className="nav-button">Home</Link>
       <Link to="/rooms" className="nav-button">Rooms</Link>
       <Link to="/profile" className="nav-button">Profile</Link>
       </div>
-    // } else {
-    //   // return <div className="flex justify-evenly bg-gray-100 py-5 mb-5 border border-gray-300">
-    //   // <Link to="/register" className="nav-button">Register</Link>
-    //   // <Link to="/login" className="nav-button">Login</Link>
-    //   // </div>
-    // }
+    } else {
+      return <div className="flex justify-evenly bg-gray-100 py-5 mb-5 border border-gray-300">
+      <Link to="/register" className="nav-button">Register</Link>
+      <Link to="/login" className="nav-button">Login</Link>
+      </div>
+    }
   }
 
   

@@ -26,18 +26,15 @@ export function Register() {
 
   return (
     <div className="flex justify-center items-center pt-20">
-      <div className="flex flex-col w-1/4">
-        <div className="flex">
-          <div className="flex flex-col px-5 py-5 w-1/2">
-          </div>
-          <h1 className="flex flex-col px-0 py-5 w-1/4 text-center">
+        <div>
+          <div className="px-5 py-5">
+          <h1 className="px-0 py-5 text-center">
             Sign-Up
           </h1>
         </div>
-        <form onSubmit={handleSubmit} className="flex text-center">
-          <div className="flex flex-col w-1/4"></div>
-          <div className="flex flex-col w-1/2">
-            <div className="flex items-center">
+        <form onSubmit={handleSubmit} className="text-center">
+          <div className="w-1/2">
+            <div className="items-center">
               <label htmlFor="username" className="input-label px-5"><strong>Username</strong></label>
               <input
                 type="text"
@@ -48,7 +45,7 @@ export function Register() {
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
-            <div className="flex items-center pl-7">
+            <div className="items-center">
               <label htmlFor="email" className="input-label px-5"><strong>Email</strong></label>
               <input
                 type="text"
@@ -59,7 +56,7 @@ export function Register() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="flex items-center pl-1">
+            <div className="items-center">
               <label htmlFor="password" className="input-label px-5"><strong>Password</strong></label>
               <input
                 type="password"
@@ -70,20 +67,15 @@ export function Register() {
               />
             </div>
           </div>
-        </form>
-        <div className="flex justify-center items-center">
-          <div className="flex flex-col w-1/4"></div>
+          <div className="justify-center items-center">
           <div>
             <button type="submit" className="py-5 px-10 my-1 rounded-lg bg-blue-400 motion-safe:hover:bg-blue-500">
               Sign Up
             </button>
           </div>
         </div>
+        </form>
       </div>
-      <div className="flex flex-col">
-
-      </div>
-
       <div className="flex flex-col w-1/4 justify-center items-center">
         <p className="mb-5">Already have an account?</p>
         <Link to="/Login" className="py-5 px-10 my-1 rounded-lg bg-blue-400 motion-safe:hover:bg-blue-500">Login</Link>
