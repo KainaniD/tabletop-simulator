@@ -37,6 +37,9 @@ export default class Game extends Phaser.Scene {
         this.input.mouse.disableContextMenu()
         var playerHand_list = [];
         //card_objects_group = newGroup(this, )
+        var table_outline = this.add.graphics()
+        table_outline.lineStyle(4, 0x000000)
+        table_outline.strokeRect(0,0, this.scale.width, this.scale.height)
         this.loadCards();
         this.loadPlayerHands()
     }
@@ -54,7 +57,7 @@ export default class Game extends Phaser.Scene {
     }
 
     loadPlayerHands() {
-        this.playerHand1 = new PlayerHand(this, 0, 0, 'hello', 400, 200)
+        this.playerHand1 = new PlayerHand(this, 200, 200, 'hello', 200, 200)
     }
 
     update() {

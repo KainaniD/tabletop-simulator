@@ -41,6 +41,13 @@ class Card extends Phaser.GameObjects.Image {
                 this.scene.children.bringToTop(this);
             }
         );
+
+        this.on('drop', 
+            function(pointer, target) {
+                console.log('hello')
+                target.addCard(this);
+            }
+        )
         
     }
 
