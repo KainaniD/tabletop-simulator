@@ -33,6 +33,8 @@ export const GameRooms = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
+        let form = document.getElementById("roomSearch")
+        form.reset()
         getAllRooms()
         
     }
@@ -46,7 +48,7 @@ export const GameRooms = () => {
         <>
             <div>
                 <h1 className='text-center px-0 py-4'> GameRooms </h1>
-                <form onSubmit={handleSubmit} className="flex justify-center items-center space-x-3 py-3">
+                <form onSubmit={handleSubmit} id="roomSearch" className="flex justify-center items-center space-x-3 py-3">
                     <div>Search:</div>
                     <input 
                         type="roomid" 
