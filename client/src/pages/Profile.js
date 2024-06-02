@@ -168,7 +168,7 @@ export const Profile = () => {
                 <h1 className="text-center pb-0 pl-0 pt-3">Friends</h1>
                 <div className="">
                     <div className="mt-3">
-                        <div className="overflow-y-auto h-48 px-2 py-2 rounded-lg border-4 border-gray-300">
+                        <div className="overflow-y-auto h-48 px-2 py-2 min-w-96 rounded-lg border-4 border-gray-300">
                             {(typeof Object.keys(allFriends) == 'undefined') ? (
                                 <p>Loading...</p>
                             ) : (
@@ -177,16 +177,11 @@ export const Profile = () => {
                                         <div className="w-1/2 px-2 py-4 bg-blue-200 rounded-lg align-middle text-xl">
                                             {user}
                                         </div>
-                                        <div className="flex flex-row gap-5 justify-center">
-                                            <button className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
-                                                Invite To Room
-                                            </button>
                                             <button onClick={() => {
                                                 removeFriend(allFriends[user])
                                             }} className="text-center bg-red-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-red-400">
                                                 Remove Friend
                                             </button>
-                                        </div>
                                     </div>
                                 ))
                             )}
@@ -226,18 +221,12 @@ export const Profile = () => {
                                     <div className="w-1/3 px-2 py-2 bg-blue-200 rounded-lg align-middle text-xl">
                                         {user}
                                     </div>
-                                    <div className="w-1/3" />
-                                    <div className="flex flex-row gap-5 w-1/3 justify-center">
-                                        <button className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
-                                            Send Room Invite
-                                        </button>
+                                    <div className="w-1/2" />
                                         <button onClick={() => {
                                             sendFriendRequest(allUsers[user])
-                                        }
-                                        } className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
+                                        }} className="text-center bg-green-300 rounded-lg w-1/6 px-2 py-2 motion-safe:hover:bg-green-400">
                                             Send Friend Request
                                         </button>
-                                    </div>
                                 </div>
                             ))
                         )}
