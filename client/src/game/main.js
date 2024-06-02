@@ -1,15 +1,15 @@
 import Phaser from "phaser"
-import Bootloader from "./scenes/bootloader.js"
+//import Bootloader from "./scenes/bootloader.js"
 import Game from "./scenes/game.js"
 
 
 
 const config = {
+  parent: "game-container",
   type: Phaser.AUTO,
   useTicker: true,
   scale: {
     mode: Phaser.Scale.FIT,
-    parent: "phaser-example",
     autoCenter: Phaser.Scale.CENTER_BOTH,
     width: 1280,
     height: 720,
@@ -21,11 +21,15 @@ const config = {
       debug: false,
     },
   },
-  scene: [Bootloader, Game],
-  backgroundColor: 0xffffff
+  scene: [Game],
+  backgroundColor: 0xffffff,
+
 };
 
-const game = new Phaser.Game(config);
+const StartGame = (parent) => {
+  return new Phaser.Game({... config, parent});
+
+}
 
 
-export default game;
+export default StartGame;
