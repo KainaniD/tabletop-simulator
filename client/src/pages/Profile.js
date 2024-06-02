@@ -2,9 +2,6 @@ import React, { useEffect, useState } from 'react'
 import axios from '../axiosConfig'
 import io from "socket.io-client";
 import pfp from '../assets/pfp.png'
-import { FriendCard } from '../pages/FriendCard'
-import { FriendReq } from '../pages/FriendReq'
-import { Friend } from '../pages/Friend'
 
 let socket = io.connect('http://localhost:4000');
 var clientID;
@@ -29,7 +26,7 @@ export const Profile = () => {
     const [allUsers, setAllUsers] = useState({})
 
     useEffect(() => {
-        axios.get("http://localhost:4000/session")
+        axios.get("http://localhost:4000/currentuser")
             .then((result) => {
                 setUsername(result.data.username)
                 setSessionID(result.data._id)
@@ -54,7 +51,7 @@ export const Profile = () => {
                 <p>Socket Session ID: {clientID}</p>
                 <p>Express Session ID: {sessionID}</p>
                 <div className="py-5 px-5">
-                    <img src={pfp} width="200" height="auto" className="x border-gray-300 rounded-lg border-4" />
+                    <img src={pfp} alt="" width="200" height="auto" className="x border-gray-300 rounded-lg border-4" />
                 </div>
                 <button type="submit"
                     className="py-2 px-4 rounded-lg bg-blue-400 motion-safe:hover:bg-blue-500"

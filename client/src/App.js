@@ -10,7 +10,7 @@ function App() {
 
 
   useEffect(() => {
-    axios.get("http://localhost:4000/session")
+    axios.get("http://localhost:4000/currentuser")
     .then((result) => {
         if (result.data) {
           setIsLoggedIn(true)

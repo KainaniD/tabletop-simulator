@@ -12,20 +12,19 @@ export const Room = () => {
     const condition = "delete"
 
     const handleSubmit = (e) => {
-        e.preventDefault()
-        axios.get("http://localhost:4000/rooms", { params: { name, condition } })
-            .then(result => {
-                console.log(result)
-                if (result.data.success === true) {
-                    //Successfully deleted room
-                    alert(result.data.message)
-                    window.location.replace("http://localhost:3000/rooms");
-                } else if (result.data.success === false) {
-                    //Failed to delete room
-                    alert(result.data.message)
-                }
-            })
-            .catch(err => console.log(err))
+        e.preventDefault()        
+        axios.get("http://localhost:4000/deleteroom", { params: {name, condition} })
+        .then(result => {
+            if(result.data.success === true){
+                //Successfully deleted room
+                alert(result.data.message)
+                window.location.replace("http://localhost:3000/rooms");
+            }else if (result.data.success === false){
+                //Failed to delete room
+                alert(result.data.message)
+            }
+        })
+        .catch(err => console.log(err))
     }
 
     return (

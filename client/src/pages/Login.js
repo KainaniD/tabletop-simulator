@@ -8,7 +8,7 @@ export function Login() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        axios.get("http://localhost:4000/users", { params: { username, password } })
+        axios.get("http://localhost:4000/login", { params: { username, password } })
             .then(result => {
                 if (result.data.success === true) {
                     alert(result.data.message)

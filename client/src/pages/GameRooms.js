@@ -5,10 +5,9 @@ import { Link } from "react-router-dom";
 export const GameRooms = () => {
 
     const [backendData, setBackendData] = useState({})
-    const condition = "query"
 
     function searchRooms(searchQuery) {
-        axios.get("http://localhost:4000/rooms", { params: { searchQuery, condition } })
+        axios.get("http://localhost:4000/queryrooms", { params: { searchQuery } })
             .then((result) => {
                 let rooms = {}
                 for (let i = 0; i < result.data.length; i++) {
@@ -20,7 +19,7 @@ export const GameRooms = () => {
     }
 
     function getAllRooms() {
-        axios.get("http://localhost:4000/rooms", { params: { condition } })
+        axios.get("http://localhost:4000/allrooms" )
             .then((result) => {
                 let rooms = {}
                 for (let i = 0; i < result.data.length; i++) {
@@ -53,7 +52,7 @@ export const GameRooms = () => {
                     <input
                         type="roomid"
                         autoComplete="off"
-                        placeholder="Enter Room ID"
+                        placeholder="Enter Room Name"
                         name="roomid"
                         className="bg-gray-50 border border-gray-300 text-gray-900 py-2 px-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64"
                         onChange={(e) => {
@@ -71,7 +70,7 @@ export const GameRooms = () => {
                     </div>
                 </form>
                 <div>
-                    <div className='overflow-y-auto h-60 border-4 bg-gray-100 border-gray-300 rounded-lg px-2'>
+                    <div className='overflow-y-auto h-60 border-4 bg-gray-100 border-gray-300 rounded-lg px-2 py-2'>
                         {(typeof Object.keys(backendData) == 'undefined') ? (
                             <p>Loading...</p>
                         ) : (

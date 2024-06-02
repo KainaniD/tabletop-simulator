@@ -39,7 +39,7 @@ app.use(session({
 
 app.use(passport.session());
   
-app.post("/users", (req, res) => {
+app.post("/register", (req, res) => {
     const {username, email, password} = req.body;
     
     userModel.findOne({username : username})
@@ -54,7 +54,7 @@ app.post("/users", (req, res) => {
     })
 })
 
-app.get("/users", (req, res) => {
+app.get("/login", (req, res) => {
 
     const {username, password} = req.query
     req.body = {username: username, password: password}
@@ -80,7 +80,6 @@ app.get("/users", (req, res) => {
 })
 
 app.get("/allusers", (req, res) => {
-
     userModel.find({})
     .then((user) => {
         res.json(user)
@@ -88,28 +87,25 @@ app.get("/allusers", (req, res) => {
     .catch(err => res.json(err))
 })
 
-app.post("/rooms", (req, res) => {
+app.post("/createroom", (req, res) => {
 
-    const {name, condition} = req.body;
+    const {name} = req.body;
     
     roomModel.findOne({name : name})
     .then((room) => {
-        if (condition === "create room") {
-            if(room) {
-                res.json({success: false, message: "there already exists a room with this name"})
-            }else{
-                roomModel.create(req.body)
-                .then(res.json({success: true, message: "room created"}))
-                .catch(err => res.json(err))
-            }
+        if(room) {
+            res.json({success: false, message: "there already exists a room with this name"})
+        }else{
+            roomModel.create(req.body)
+            .then(res.json({success: true, message: "room created"}))
+            .catch(err => res.json(err))
         }
     })
 
 })
 
-app.get("/rooms", (req, res) => {
-    const {name, condition, searchQuery} = req.query
-    if (condition === "delete") {
+app.get("/deleteroom", (req, res) => {
+    const {name} = req.query
         roomModel.deleteOne({name : name})
         .then(() => {
             res.json({ success: true, message: "successfully deleted"})
@@ -117,26 +113,27 @@ app.get("/rooms", (req, res) => {
         .catch((err) => {
             res.json({ success: false, message: "failed to delete", error: err });
         });
-    } else if (condition === "query") {
-        if (searchQuery) {
-        roomModel.find({name: new RegExp(searchQuery, 'i')})
-            .then((room) => {
-                res.json(room)
-            })
-            .catch(err => res.json(err))
-        } else {
-            roomModel.find({})
-            .then((room) => {
-                res.json(room)
-            })
-            .catch(err => res.json(err))
-        }
-    } else {
-        res.status(400).json({ success: false, message: "Invalid condition" });    
-    }
 })
 
-app.get("/session", (req, res) => {
+app.get("/allrooms", (req, res) => {
+    roomModel.find({})
+    .then((room) => {
+        res.json(room)
+    })
+    .catch(err => res.json(err))
+})
+
+app.get("/queryrooms", (req, res) => {
+    const {searchQuery} = req.query
+
+    roomModel.find({name: new RegExp(searchQuery, 'i')})
+    .then((room) => {
+        res.json(room)
+    })
+    .catch(err => res.json(err))
+})
+
+app.get("/currentuser", (req, res) => {
     res.json(req.user)
 })
 

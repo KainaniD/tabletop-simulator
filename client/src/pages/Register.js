@@ -10,13 +10,13 @@ export function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    axios.post("http://localhost:4000/users", { username, email, password })
+    axios.post("http://localhost:4000/register", { username, email, password })
       .then(result => {
         console.log(result)
 
         if (result.data.success === true) {
           alert(result.data.message)
-          axios.get("http://localhost:4000/users", { params: { username, password } })
+          axios.get("http://localhost:4000/login", { params: { username, password } })
           .then(result => {
               if (result.data.success === true) {
                   alert(result.data.message)

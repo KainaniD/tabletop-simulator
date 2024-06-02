@@ -1,5 +1,3 @@
-import homepageimg from '../assets/Homepage.jpg'
-
 export const Home = () => {
     return (
         <>
