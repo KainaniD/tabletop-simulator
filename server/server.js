@@ -79,6 +79,15 @@ app.get("/users", (req, res) => {
     })(req, res); 
 })
 
+app.get("/allusers", (req, res) => {
+
+    userModel.find({})
+    .then((user) => {
+        res.json(user)
+    })
+    .catch(err => res.json(err))
+})
+
 app.post("/rooms", (req, res) => {
 
     const {name, condition} = req.body;
