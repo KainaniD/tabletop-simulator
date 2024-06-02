@@ -9,10 +9,11 @@ class Card extends Phaser.GameObjects.Image {
         this.cardBack = cardBack;
         this.suite = cardSuite;
         this.value = cardValue;
+        this.playerHand = null;
         this.init()
     
     }
-    playerHand;
+    
     card_to_value = {};
 
     init() {
@@ -51,20 +52,22 @@ class Card extends Phaser.GameObjects.Image {
 
         this.on('drop', 
             function(pointer, target) {
-                console.log('second')
-                target.addCard(this);
-                this.playerHand=target;
+                if (this.playerHand === null || target.name !== this.playerHand.name) {
+                    target.addCard(this);
+                    this.playerHand=target;
+                }
+                target.handRender()
+
+                
 
             }
         )
 
-        this.on('dragstart',
-            function(pointer, dragX, dragY) {
-                console.log('first')
-                if (this.playerHand){
-                    this.playerHand.removeCard(this);
-                    this.playerHand=null;
-                }
+        this.on('dragleave',
+            function(pointer, target) {
+                target.removeCard(this);
+                this.playerHand=null;
+
                 
             }
         
