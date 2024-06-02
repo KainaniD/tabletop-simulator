@@ -5,6 +5,7 @@ const FriendsSchema = new mongoose.Schema({
     recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'users'},
     status: {
       type: Number,
+      default: 0,
       enums: [
           0,    //'add friend',
           1,    //'requested',

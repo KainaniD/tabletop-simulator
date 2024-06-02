@@ -30,7 +30,6 @@ export const Profile = () => {
 
 
     function sendFriendRequest(targetuser) {
-        console.log("SEND FRIEND REQUEST TRIGGER")
         axios.get("http://localhost:4000/sendfriendrequest", { params: { targetuser } })
         .then(result => {
             console.log(result)
@@ -49,8 +48,16 @@ export const Profile = () => {
     }
 
     function acceptFriendRequest(targetuser) {
-        console.log(targetuser)
-        console.log("ACCEPT FRIEND REQUEST TRIGGER")
+        axios.get("http://localhost:4000/acceptfriendrequest", { params: { targetuser } })
+        .then(result => {
+            console.log(result)
+            if (result.data.success === true) {
+                alert(result.data.message)
+            } else if (result.data.success === false) {
+                alert(result.data.message)
+            }
+        })
+        .catch(err => console.log(err))
     }
 
     function denyFriendRequest(targetuser) {
@@ -121,10 +128,10 @@ export const Profile = () => {
                 <div className="">
                     <div className="mt-3">
                         <div className="overflow-y-auto h-48 px-2 py-2 rounded-lg border-4 border-gray-300">
-                            {(typeof Object.keys(allUsers) == 'undefined') ? (
+                            {(typeof Object.keys(allFriends) == 'undefined') ? (
                                 <p>Loading...</p>
                             ) : (
-                                Object.keys(allUsers).map((user, id) => (
+                                Object.keys(allFriends).map((user, id) => (
                                     <div key={id} className="flex py-2 px-2 bg-blue-400 rounded-lg gap-5 mb-3">
                                         <div className="w-1/2 px-2 py-4 bg-blue-200 rounded-lg align-middle text-xl">
                                             {user}
@@ -134,7 +141,7 @@ export const Profile = () => {
                                                 Invite To Room
                                             </button>
                                             <button onClick={() => {
-                                                removeFriend(allUsers[user])
+                                                removeFriend(allFriends[user])
                                             }} className="text-center bg-red-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-red-400">
                                                 Remove Friend
                                             </button>

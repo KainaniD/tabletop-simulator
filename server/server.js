@@ -83,12 +83,32 @@ app.get("/login", (req, res) => {
 })
 
 app.get("/allusers", (req, res) => {
-    userModel.find({})
-        .then((user) => {
-            res.json(user)
+    userModel.findOne({ username: req.user.username })
+        .then((currentuser) => {
+            userModel.find({})
+                .then((users) => {
+                    var availableUsers = users.filter((user) => {
+                        // Check if the user is not the current user
+                        if (user.username !== currentuser.username) {
+                            // Check if any of the current user's friends match the user
+                            return !currentuser.friends.some((friendId) => {
+                                return user.friends.includes(friendId);
+                            });
+                        }
+                        return false;
+                    });
+                    res.json(availableUsers);
+                })
+                .catch((err) => {
+                    console.error("Error finding users:", err);
+                    res.status(500).json({ error: "An error occurred while finding users." });
+                });
         })
-        .catch(err => res.json(err))
-})
+        .catch((err) => {
+            console.error("Error finding current user:", err);
+            res.status(500).json({ error: "An error occurred while finding the current user." });
+        });
+});
 
 app.get("/currentrequests", (req, res) => {
     userModel.findOne({ username: req.user.username })
@@ -100,12 +120,14 @@ app.get("/currentrequests", (req, res) => {
                 const friendId = user.friends[i];
                 const promise = friendsModel.findById(friendId)
                     .then((friend) => {
+                        if (friend.status != 4) {
                         return userModel.findById(friend.requester)
                             .then((requesterUser) => {
                                 if (requesterUser.username !== req.user.username) {
                                     requests.push(requesterUser);
                                 }
                             });
+                        }
                     })
                     .catch((err) => {
                         console.error("Error processing friend:", err);
@@ -130,11 +152,50 @@ app.get("/currentrequests", (req, res) => {
 });
 
 app.get("/allfriends", (req, res) => {
-    userModel.find({})
+    userModel.findOne({ username: req.user.username })
         .then((user) => {
-            res.json(user)
+            var requests = [];
+            var promises = [];
+
+            for (let i = 0; i < user.friends.length; i++) {
+                const friendId = user.friends[i];
+                const promise = friendsModel.findById(friendId)
+                    .then((friend) => {
+                        if (friend.status === 4) {
+                            if (friend.requester.toString() != user._id) {
+                                return userModel.findById(friend.requester)
+                                .then((requesterUser) => {
+                                    requests.push(requesterUser);
+                                });
+                            } else if (friend.recipient.toString() != user._id) {
+                                return userModel.findById(friend.recipient)
+                                .then((requesterUser) => {
+                                    requests.push(requesterUser);
+                                });
+                            }
+
+                        }
+                    })
+                    .catch((err) => {
+                        console.error("Error processing friend:", err);
+                    });
+
+                promises.push(promise);
+            }
+
+            Promise.all(promises)
+                .then(() => {
+                    res.json(requests);
+                })
+                .catch((err) => {
+                    console.error("Error processing friend requests:", err);
+                    res.status(500).json({ error: "An error occurred while processing friend requests." });
+                });
         })
-        .catch(err => res.json(err))
+        .catch((err) => {
+            console.error("Error finding user:", err);
+            res.status(500).json({ error: "An error occurred while finding the user." });
+        });
 })
 
 app.post("/createroom", (req, res) => {
@@ -234,6 +295,35 @@ app.get("/sendfriendrequest", (req, res) => {
         .catch(err => res.json(err))
 })
 
+app.get("/acceptfriendrequest", (req, res) => {
+    if (!req.query.targetuser.friends) { req.query.targetuser.friends = [] }
+    const targetusername = req.query.targetuser.username
+    const currentusername = req.user.username
+
+    userModel.findOne({ username: currentusername })
+        .then((currentuser) => {
+            if (currentuser) {
+                userModel.findOne({ username: targetusername })
+                    .then((targetuser) => {
+                        
+                        for(let i = 0; i < currentuser.friends.length; i ++) {
+                            if (targetuser.friends.includes(currentuser.friends[i])) {
+                                friendsModel.findByIdAndUpdate(currentuser.friends[i], {status: 4})
+                                .then(() => {
+                                    res.json({success: true, message: "you have added " + targetuser.username + " as a friend!"})
+                                })
+                                .catch((err) => res.json(err))
+                            }
+                        }
+
+                    })
+                    .catch(err => res.json(err))
+            } else {
+                res.json({ success: false, message: "something went wrong :(" })
+            }
+        })
+        .catch(err => res.json(err))
+})
 
 const server = http.createServer(app);
 
