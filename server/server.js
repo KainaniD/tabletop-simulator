@@ -99,7 +99,7 @@ app.post("/rooms", (req, res) => {
 })
 
 app.get("/rooms", (req, res) => {
-    const {name, condition} = req.query
+    const {name, condition, searchQuery} = req.query
     if (condition === "delete") {
         roomModel.deleteOne({name : name})
         .then(() => {
@@ -109,11 +109,19 @@ app.get("/rooms", (req, res) => {
             res.json({ success: false, message: "failed to delete", error: err });
         });
     } else if (condition === "query") {
-        roomModel.find({})
-        .then((room) => {
-            res.json(room)
-        })
-        .catch(err => res.json(err))
+        if (searchQuery) {
+            roomModel.find({name: searchQuery})
+            .then((room) => {
+                res.json(room)
+            })
+            .catch(err => res.json(err))
+        } else {
+            roomModel.find({})
+            .then((room) => {
+                res.json(room)
+            })
+            .catch(err => res.json(err))
+        }
     } else {
         res.status(400).json({ success: false, message: "Invalid condition" });    
     }
