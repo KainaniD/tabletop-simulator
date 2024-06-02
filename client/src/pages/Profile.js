@@ -6,7 +6,7 @@ import { FriendCard } from '../pages/FriendCard'
 import { FriendReq } from '../pages/FriendReq'
 import { Friend } from '../pages/Friend'
 
-let socket = io.connect('http://localhost:4000');
+let socket = (io.connect('http://localhost:4000'));
 var clientID;
 
 socket.on('connect', () => {

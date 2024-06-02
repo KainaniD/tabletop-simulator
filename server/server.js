@@ -167,22 +167,35 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
     console.log(`a user connected ${socket.id}`);
-  
+
     socket.on("createRoom", (room) => {
-      console.log(`Room created: ${room}`);
-      socket.join(room);
-      socket.emit('joinedRoom', room); // Notify the client that they have joined the room
+        console.log(`Room created: ${room}`);
+        socket.join(room);
+        socket.emit('joinedRoom', room); // Notify the client that they have joined the room
+        const clients = io.sockets.adapter.rooms.get(room);
+        const numClients = clients ? clients.size : 0;
+        console.log(numClients)
     });
-  
+
     socket.on("joinRoom", (room, callback) => {
-      console.log(`User ${socket.id} joining room ${room}`);
-      socket.join(room);
-      callback({ status: 'ok' });
+        console.log(`User ${socket.id} joining room ${room}`);
+        socket.join(room);
+        callback({ status: 'ok' });
+        const clients = io.sockets.adapter.rooms.get(room);
+        const numClients = clients ? clients.size : 0;
+        console.log('Clients: ' + numClients)
     });
-  
+
+    socket.on("sendMessage", (room, message) => {
+        io.to(room).emit("receiveMessage", message); // Broadcast the message to all clients in the room
+        console.log('broadcasting message ' + {message} + 'to room' + {room}) 
+        console.log(message)
+        console.log(room)
+    });
+
     socket.on('disconnect', () => {
-      console.log('user disconnected');
+        console.log('user disconnected');
     });
-  });
+});
 
 server.listen(PORT, () => { console.log(`Server started on port ${PORT}`) })

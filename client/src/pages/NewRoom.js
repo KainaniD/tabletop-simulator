@@ -33,6 +33,7 @@ export function NewRoom() {
                     //room created case
                     alert(result.data.message)
                     window.location.replace("http://localhost:3000/rooms/" + name);
+                    console.log("socket function not (createRoom)")
                     var socket = io.connect();
                     socket.emit('createRoom', name);
 
