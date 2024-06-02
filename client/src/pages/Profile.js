@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from '../axiosConfig'
 import io from "socket.io-client";
 import pfp from '../assets/pfp.png'
+import { all } from 'axios';
 
 let socket = io.connect('http://localhost:4000');
 var clientID;
@@ -24,6 +25,26 @@ export const Profile = () => {
     const [sessionID, setSessionID] = useState()
     const [username, setUsername] = useState()
     const [allUsers, setAllUsers] = useState({})
+
+    function sendFriendRequest(user) {
+        console.log(user)
+        console.log("SEND FRIEND REQUEST TRIGGER")
+    }
+
+    function removeFriend(user) {
+        console.log(user)
+        console.log("REMOVE FRIEND TRIGGER")
+    }
+
+    function acceptFriendRequest(user) {
+        console.log(user)
+        console.log("ACCEPT FRIEND REQUEST TRIGGER")
+    }
+
+    function denyFriendRequest(user) {
+        console.log(user)
+        console.log("DENY FRIEND REQUEST TRIGGER")
+    }
 
     useEffect(() => {
         axios.get("http://localhost:4000/currentuser")
@@ -70,7 +91,7 @@ export const Profile = () => {
                                 <p>Loading...</p>
                             ) : (
                                 Object.keys(allUsers).map((user, id) => (
-                                    <div className="flex py-2 px-2 bg-blue-400 rounded-lg gap-5 mb-3">
+                                    <div key={id} className="flex py-2 px-2 bg-blue-400 rounded-lg gap-5 mb-3">
                                         <div className="w-1/2 px-2 py-4 bg-blue-200 rounded-lg align-middle text-xl">
                                             {user}
                                         </div>
@@ -78,7 +99,9 @@ export const Profile = () => {
                                             <button className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
                                                 Invite To Room
                                             </button>
-                                            <button className="text-center bg-red-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-red-400">
+                                            <button onClick={() => {
+                                                removeFriend(allUsers[user])
+                                            }} className="text-center bg-red-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-red-400">
                                                 Remove Friend
                                             </button>
                                         </div>
@@ -113,7 +136,7 @@ export const Profile = () => {
                             <p>Loading...</p>
                         ) : (
                             Object.keys(allUsers).map((user, id) => (
-                                <div className="flex py-2 px-2 bg-blue-400 rounded-lg mb-3">
+                                <div key={id} className="flex py-2 px-2 bg-blue-400 rounded-lg mb-3">
                                     <div className="w-1/3 px-2 py-2 bg-blue-200 rounded-lg align-middle text-xl">
                                         {user}
                                     </div>
@@ -122,7 +145,10 @@ export const Profile = () => {
                                         <button className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
                                             Send Room Invite
                                         </button>
-                                        <button className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
+                                        <button onClick={() => {
+                                            sendFriendRequest(allUsers[user])
+                                        }
+                                        } className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
                                             Send Friend Request
                                         </button>
                                     </div>
@@ -142,16 +168,20 @@ export const Profile = () => {
                                 <p>Loading...</p>
                             ) : (
                                 Object.keys(allUsers).map((user, id) => (
-                                    <div className="flex py-2 px-2 bg-blue-400 rounded-lg mb-3">
+                                    <div key={id} className="flex py-2 px-2 bg-blue-400 rounded-lg mb-3">
                                         <div className="w-1/3 px-2 py-2 bg-blue-200 rounded-lg align-middle text-xl">
                                             {user}
                                         </div>
                                         <div className="w-1/3" />
                                         <div className="flex flex-row gap-5 w-1/3 justify-center">
-                                            <button className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
+                                            <button onClick={() => {
+                                                acceptFriendRequest(allUsers[user])
+                                            }} className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
                                                 Accept
                                             </button>
-                                            <button className="text-center bg-red-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-red-400">
+                                            <button onClick={() => {
+                                                denyFriendRequest(allUsers[user])
+                                            }} className="text-center bg-red-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-red-400">
                                                 Deny
                                             </button>
                                         </div>
