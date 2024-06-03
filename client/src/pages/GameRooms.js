@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import axios from '../axiosConfig'
+import io from "socket.io-client";
 import { Link } from "react-router-dom";
 
-export const GameRooms = () => {
 
+let socket = io('http://localhost:4000');
+// var clientID;
+
+// socket.on('connect', () => {
+//     clientID = socket.id;
+//     console.log('connected to server with client id:', clientID)
+// });
+
+export const GameRooms = () => {
+    const [sessionID, setSessionID] = useState()
+    const [username, setUsername] = useState()
     const [backendData, setBackendData] = useState({})
 
     function searchRooms(searchQuery) {
@@ -40,6 +51,12 @@ export const GameRooms = () => {
 
     useEffect(() => {
         getAllRooms()
+        axios.get("http://localhost:4000/currentuser")
+            .then((result) => {
+                setUsername(result.data.username)
+                setSessionID(result.data._id)
+            })
+            .catch(err => console.log(err))
     }, [])
 
     return (

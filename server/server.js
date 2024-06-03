@@ -7,6 +7,7 @@ const session = require('express-session')
 
 const userModel = require('./model/User')
 passport.use(userModel.createStrategy());
+passport.use(userModel.createStrategy());
 passport.serializeUser(userModel.serializeUser());
 passport.deserializeUser(userModel.deserializeUser());
 
@@ -41,20 +42,20 @@ app.use(session({
 }))
 
 app.use(passport.session());
-
+  
 app.post("/register", (req, res) => {
-    const { username, email, password } = req.body;
-
-    userModel.findOne({ username: username })
-        .then((user) => {
-            if (user) {
-                return res.json({ success: false, message: "a user with the name " + username + " already exists" })
-            } else {
-                userModel.register(new userModel({ username: username, email: email }), password)
-                    .then(res.json({ success: true, message: "Hi " + username + " you've registered your account!" }))
-                    .catch(err => res.json(err))
-            }
-        })
+    const {username, email, password} = req.body;
+    
+    userModel.findOne({username : username})
+    .then((user) => {
+        if(user) {
+            return res.json({success: false, message: "a user with the name " + username + " already exists"})
+        }else{
+            userModel.register(new userModel ({username: username, email: email}), password)
+            .then (res.json( {success: true, message: "Hi " + username + " you've registered your account!"}))
+            .catch (err => res.json(err))
+        }
+    })
 })
 
 app.get("/login", (req, res) => {
@@ -399,11 +400,52 @@ const io = new Server(server, {
     cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
 });
 
+const roomIO = io.of("/rooms")
+
+roomIO.on("connection", (socket) => {
+    socket.on("rooms:connection", () => {})
+    console.log(`connected to room user = ${socket.id}`)
+    socket.on("sendMessage", (room, message) => {
+        roomIO.to(room).emit("receiveMessage", message); // Broadcast the message to all clients in the room
+        console.log(`User ${socket.id} broadcasting from room ${room}`);
+        console.log('broadcasting message ' + {message} + 'to room' + {room}) 
+        console.log(message)
+        console.log(room)
+    });
+    socket.on("joinRoom", (room) => {           //, callback) => {
+        console.log(`User ${socket.id} joining room ${room}`);
+        socket.join(room);
+        //callback({ status: 'ok' });
+        const clients = io.sockets.adapter.rooms.get(room);
+        const numClients = clients ? clients.size : 0;
+        console.log('Clients: ' + numClients)
+    });
+});
+
 io.on("connection", (socket) => {
     console.log(`a user connected ${socket.id}`);
 
-    socket.on("send_message", (data) => {
-        socket.broadcast.emit("receive_message", data);
+    // socket.on("createRoom", (room) => {
+    //     console.log(`Room created: ${room}`);
+    //     socket.join(room);
+    //     socket.emit('joinedRoom', room); // Notify the client that they have joined the room
+    //     const clients = io.sockets.adapter.rooms.get(room);
+    //     const numClients = clients ? clients.size : 0;
+    //     console.log(numClients)
+    // });
+
+    
+
+    // socket.on("sendMessage", (room, message) => {
+    //     io.to(room).emit("receiveMessage", message); // Broadcast the message to all clients in the room
+    //     console.log(`User ${socket.id} broadcasting from room ${room}`);
+    //     console.log('broadcasting message ' + {message} + 'to room' + {room}) 
+    //     console.log(message)
+    //     console.log(room)
+    // });
+
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
     });
 });
 

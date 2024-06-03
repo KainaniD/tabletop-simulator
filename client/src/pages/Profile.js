@@ -4,7 +4,7 @@ import io from "socket.io-client";
 import pfp from '../assets/pfp.png'
 import { all } from 'axios';
 
-let socket = io.connect('http://localhost:4000');
+let socket = (io.connect('http://localhost:4000'));
 var clientID;
 
 socket.on('connect', () => {
