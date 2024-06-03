@@ -151,8 +151,8 @@ export const Profile = () => {
         <div className="flex pb-5 min-h-[calc(100vh-198px)] gap-5">
             <div className="flex flex-col w-1/3 bg-gray-100 p-5 rounded-lg shadow-md items-center">
                 <h1 className="px-2 py-0">{username}'s Profile </h1>
-                <p>Socket Session ID: {clientID}</p>
-                <p>Express Session ID: {sessionID}</p>
+                {/* <p>Socket Session ID: {clientID}</p>
+                <p>Express Session ID: {sessionID}</p> */}
                 <div className="py-5 px-5">
                     <img src={pfp} alt="" width="200" height="auto" className="x border-gray-300 rounded-lg border-4" />
                 </div>

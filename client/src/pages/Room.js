@@ -57,6 +57,13 @@ export const Room = () => {
         });
     }, []);
 
+    const handleKeyPress = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();  // Prevent the default form submission
+            sendMessage();
+        }
+    };
+
     return (
         <div id="app">
             <h1 className="text-center p-2">{name}</h1>
@@ -88,6 +95,7 @@ export const Room = () => {
                             name="text"
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
+                            onKeyPress={handleKeyPress}
                             className="bg-gray-50 border border-gray-300 text-gray-900 py-2 px-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 w-50"
                         />
                         <button
