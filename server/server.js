@@ -430,6 +430,12 @@ roomIO.on("connection", (socket) => {
         else{
             rooms_with_players[room].push(socket)
         }
+
+        socket.on("cardMoved", (card_name, x, y, facedown) => {
+            socket.to(room).emit("cardMoved", card_name, x, y, facedown)
+        })
+
+
     });
     socket.on("disconnect", () => {
         let _temp = findSocket(socket);
@@ -456,6 +462,10 @@ roomIO.on("connection", (socket) => {
         console.log("sync data received")
         roomIO.to(id).emit("getSync", game_data)
     })
+
+    // socket.on("cardMoved", (card_name, x, y) => {
+    //     socket.to(room).emit("cardMoved", card_name, x, y)
+    // }) //we will trying moving this inside joining room
 });
 
 function findRoom(socket) {

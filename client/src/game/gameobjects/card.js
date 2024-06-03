@@ -27,7 +27,7 @@ class Card extends Phaser.GameObjects.Image {
                 this.scene.children.bringToTop(this);
                 this.x = dragX;
                 this.y = dragY;    
-                //this.scene.socket.emit("cardMoved", [x, y, this])
+                this.send_changes()
             }
         );
         this.on('pointerdown', 
@@ -36,6 +36,7 @@ class Card extends Phaser.GameObjects.Image {
                     return;
                 }
                 this.flip_card();
+                this.send_changes();
             }
         );
         this.on('pointerdown', 
@@ -82,11 +83,23 @@ class Card extends Phaser.GameObjects.Image {
             this.facedown = true
         }
     }
+
+    send_changes() {
+        this.scene.socket.emit("cardMoved", this.cardFront, this.x, this.y, this.facedown)
+    }
+
+    make_changes (x, y, facedown) {
+        this.setX(x).setY(y);
+        if (this.facedown !== facedown) {
+            this.flip_card()
+        }
+    }
+
     update () {
   
     }
 
-
+    
 
 }
 

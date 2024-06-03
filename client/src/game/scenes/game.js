@@ -68,6 +68,9 @@ class Game extends Phaser.Scene {
             console.log(game_data)
             this.setCardData(game_data)
         })
+        this.socket.on("cardMoved", (card_name, x, y,facedown) => {
+            this.deck.card_objects[card_name].make_changes(x,y,facedown)
+        })
     }
 
     getCardData() {
@@ -89,9 +92,7 @@ class Game extends Phaser.Scene {
             let incoming_card_object = card_data[card_key]
             let current_card_object = this.deck.card_objects[card_key]
             current_card_object.setX(incoming_card_object['x']).setY(incoming_card_object['y'])
-            if (current_card_object.facedown !== incoming_card_object['facedown']) {
-                current_card_object.flip_card()
-            }
+            
         }
     }
 
