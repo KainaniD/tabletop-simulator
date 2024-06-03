@@ -11,10 +11,10 @@ export function Login() {
         axios.get("http://localhost:4000/login", { params: { username, password } })
             .then(result => {
                 if (result.data.success === true) {
-                    alert(result.data.message)
+                    //alert(result.data.message)
                     window.location.replace("http://localhost:3000/profile");
                 } else if (result.data.success === false) {
-                    alert(result.data.message)
+                    //alert(result.data.message)
                 }
             })
             .catch(err => console.log(err))
