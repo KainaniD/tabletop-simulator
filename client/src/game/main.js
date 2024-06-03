@@ -22,14 +22,17 @@ const config = {
   },
   scene: [Game],
   backgroundColor: 0xffffff,
+  
 
 };
 
-const StartGame = (parent, id) => {
+const StartGame = (parent, socket) => {
   let phaserGame =  new Phaser.Game({... config, parent});
-  console.log(phaserGame.scene.scenes)
-  let gamejs = phaserGame.scene.scenes.at(0);
-  console.log(gamejs)
+
+  setTimeout(
+    () => phaserGame.scene.getScene('game').setSocket(socket),
+    500
+  );
   return phaserGame;
 }
 

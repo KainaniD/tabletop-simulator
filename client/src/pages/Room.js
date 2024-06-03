@@ -84,7 +84,7 @@ export const Room = () => {
                 </button>
             </form>
             <div className="flex justify-center items-center gap-5 px-2 py-5">
-                <PhaserGame ref={phaserRef} id={ socket.id } />
+                <PhaserGame ref={phaserRef} socket={socket} />
                 <div className="flex-col w-1/3 justify-items-center">
                     <div className="text-center bg-blue-400 rounded-lg border-4 border-blue-500 mb-2">
                         ChatBox
