@@ -8,7 +8,7 @@ import io from 'socket.io-client'
 
 class Game extends Phaser.Scene {
     constructor() {
-        super({key : 'game'});
+        super('game');
         this.deck = new Deck(this);
     }
     card_names = [];

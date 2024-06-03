@@ -22,14 +22,20 @@ const config = {
   },
   scene: [Game],
   backgroundColor: 0xffffff,
+  
 
 };
 
 const StartGame = (parent, id) => {
   let phaserGame =  new Phaser.Game({... config, parent});
-  console.log(phaserGame.scene.scenes)
-  let gamejs = phaserGame.scene.scenes.at(0);
-  console.log(gamejs)
+  console.log(id)
+  console.log(phaserGame)
+  console.log(phaserGame.scene)
+  console.log(phaserGame.scene.keys)
+  setTimeout(
+    () => phaserGame.scene.getScene('game').grabID(id),
+    500
+  );
   return phaserGame;
 }
 
