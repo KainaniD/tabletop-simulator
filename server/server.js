@@ -150,10 +150,16 @@ let players = [];
 
 io.on("connection", (socket) => {
     console.log(`a user connected ${socket.id}`);
-    
+    players.push(socket.id);
+
+
     socket.on("send_message", (data) => {
       socket.broadcast.emit("receive_message", data);
     });
+
+    socket.on("cardMoved", (data) => {
+        socket.broadcast.emit("cardMoved", data)
+    })
 
     socket.on("disconnect", function () {
         console.log(`A user disconnected:${socket.id}` )

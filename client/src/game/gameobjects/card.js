@@ -27,6 +27,7 @@ class Card extends Phaser.GameObjects.Image {
                 this.scene.children.bringToTop(this);
                 this.x = dragX;
                 this.y = dragY;    
+                this.scene.socket.emit("cardMoved", [x, y, this])
             }
         );
         this.on('pointerdown', 

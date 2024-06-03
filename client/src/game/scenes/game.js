@@ -25,13 +25,15 @@ class Game extends Phaser.Scene {
         this.load.image('card_back', '/assets/Cards/cardBack_blue2.png') //pick card back style here
         //this.load.on("complete", () => {this.scene.start("game")}, this)
     }
-    
 
 
     create() {
         this.socket = io('http://localhost:4000')
-
         this.socket.on('connect', () => console.log('Connected!'))
+        this.socket.on("cardMoved", (data) => {
+            data[3].setX(data[0]).setY(data[1])
+        });
+
         this.input.mouse.disableContextMenu()
         var playerHand_list = [];
         //card_objects_group = newGroup(this, )
