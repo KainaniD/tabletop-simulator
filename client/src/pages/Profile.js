@@ -14,7 +14,7 @@ socket.on('connect', () => {
 function logout() {
     axios.post("http://localhost:4000/session")
         .then((result) => {
-            alert("you have logged out!")
+            //alert("you have logged out!")
             window.location.replace("http://localhost:3000/login")
         })
         .catch(err => console.log(err))
@@ -33,9 +33,9 @@ export const Profile = () => {
         axios.get("http://localhost:4000/sendfriendrequest", { params: { targetuser } })
         .then(result => {
             if (result.data.success === true) {
-                alert(result.data.message)
+                //alert(result.data.message)
             } else if (result.data.success === false) {
-                alert(result.data.message)
+                //alert(result.data.message)
             }
             window.location.reload()
         })
@@ -45,11 +45,11 @@ export const Profile = () => {
     function removeFriend(targetuser) {
         axios.get("http://localhost:4000/removefriend", { params: { targetuser } })
         .then(result => {
-            console.log(result)
+            //console.log(result)
             if (result.data.success === true) {
-                alert(result.data.message)
+                //alert(result.data.message)
             } else if (result.data.success === false) {
-                alert(result.data.message)
+                //alert(result.data.message)
             }
             window.location.reload()
         })
@@ -60,9 +60,9 @@ export const Profile = () => {
         axios.get("http://localhost:4000/acceptfriendrequest", { params: { targetuser } })
         .then(result => {
             if (result.data.success === true) {
-                alert(result.data.message)
+                //alert(result.data.message)
             } else if (result.data.success === false) {
-                alert(result.data.message)
+                //alert(result.data.message)
             }
             window.location.reload()
         })
@@ -73,9 +73,9 @@ export const Profile = () => {
         axios.get("http://localhost:4000/removefriend", { params: { targetuser } })
         .then(result => {
             if (result.data.success === true) {
-                alert(result.data.message)
+                //alert(result.data.message)
             } else if (result.data.success === false) {
-                alert(result.data.message)
+                //alert(result.data.message)
             }
             window.location.reload()
         })
@@ -168,7 +168,7 @@ export const Profile = () => {
                 <h1 className="text-center pb-0 pl-0 pt-3">Friends</h1>
                 <div className="">
                     <div className="mt-3">
-                        <div className="overflow-y-auto h-48 px-2 py-2 rounded-lg border-4 border-gray-300">
+                        <div className="overflow-y-auto h-48 px-2 py-2 min-w-96 rounded-lg border-4 border-gray-300">
                             {(typeof Object.keys(allFriends) == 'undefined') ? (
                                 <p>Loading...</p>
                             ) : (
@@ -177,16 +177,11 @@ export const Profile = () => {
                                         <div className="w-1/2 px-2 py-4 bg-blue-200 rounded-lg align-middle text-xl">
                                             {user}
                                         </div>
-                                        <div className="flex flex-row gap-5 justify-center">
-                                            <button className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
-                                                Invite To Room
-                                            </button>
                                             <button onClick={() => {
                                                 removeFriend(allFriends[user])
                                             }} className="text-center bg-red-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-red-400">
                                                 Remove Friend
                                             </button>
-                                        </div>
                                     </div>
                                 ))
                             )}
@@ -204,6 +199,7 @@ export const Profile = () => {
                         type="username"
                         placeholder="Enter Username"
                         name="username"
+                        autoComplete="off"
                         className="bg-gray-50 border border-gray-300 text-gray-900 py-2 px-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64"
                         onChange={(e) => {
                             searchUsers(e.target.value)
@@ -226,18 +222,12 @@ export const Profile = () => {
                                     <div className="w-1/3 px-2 py-2 bg-blue-200 rounded-lg align-middle text-xl">
                                         {user}
                                     </div>
-                                    <div className="w-1/3" />
-                                    <div className="flex flex-row gap-5 w-1/3 justify-center">
-                                        <button className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
-                                            Send Room Invite
-                                        </button>
+                                    <div className="w-1/2" />
                                         <button onClick={() => {
                                             sendFriendRequest(allUsers[user])
-                                        }
-                                        } className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
+                                        }} className="text-center bg-green-300 rounded-lg w-1/6 px-2 py-2 motion-safe:hover:bg-green-400">
                                             Send Friend Request
                                         </button>
-                                    </div>
                                 </div>
                             ))
                         )}

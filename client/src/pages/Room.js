@@ -17,11 +17,11 @@ export const Room = () => {
         .then(result => {
             if(result.data.success === true){
                 //Successfully deleted room
-                alert(result.data.message)
+                //alert(result.data.message)
                 window.location.replace("http://localhost:3000/rooms");
             }else if (result.data.success === false){
                 //Failed to delete room
-                alert(result.data.message)
+                //alert(result.data.message)
             }
         })
         .catch(err => console.log(err))

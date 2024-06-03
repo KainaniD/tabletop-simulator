@@ -10,12 +10,12 @@ export function NewRoom() {
         .then(result => {
             if(result.data.success === true){
                 //room created case
-                alert(result.data.message)
+                //alert(result.data.message)
                 window.location.replace("http://localhost:3000/rooms");
 
                 } else if (result.data.success === false) {
                     //room failed case
-                    alert(result.data.message)
+                    //alert(result.data.message)
                 }
 
             })
