@@ -21,13 +21,11 @@ const config = {
     },
   },
   scene: [Game],
-  backgroundColor: 0xffffff,
-  
-
+  backgroundColor: 0xffffff
 };
 
 const StartGame = (parent, socket) => {
-  let phaserGame =  new Phaser.Game({... config, parent});
+  let phaserGame =  new Phaser.Game({...config, parent});
 
   setTimeout(
     () => phaserGame.scene.getScene('game').setSocket(socket),

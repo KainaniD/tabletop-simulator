@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import Card from './card';
+// import Card from './card';
 class PlayerHand extends Phaser.GameObjects.Zone{
     cards_in_hand = [];
     constructor(scene, x, y, name, width, height){
