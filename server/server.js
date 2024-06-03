@@ -165,33 +165,49 @@ const io = new Server(server, {
     cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
 });
 
-io.on("connection", (socket) => {
-    console.log(`a user connected ${socket.id}`);
+const roomIO = io.of("/rooms")
 
-    socket.on("createRoom", (room) => {
-        console.log(`Room created: ${room}`);
-        socket.join(room);
-        socket.emit('joinedRoom', room); // Notify the client that they have joined the room
-        const clients = io.sockets.adapter.rooms.get(room);
-        const numClients = clients ? clients.size : 0;
-        console.log(numClients)
-    });
-
-    socket.on("joinRoom", (room, callback) => {
-        console.log(`User ${socket.id} joining room ${room}`);
-        socket.join(room);
-        callback({ status: 'ok' });
-        const clients = io.sockets.adapter.rooms.get(room);
-        const numClients = clients ? clients.size : 0;
-        console.log('Clients: ' + numClients)
-    });
-
+roomIO.on("connection", (socket) => {
+    socket.on("rooms:connection", () => {})
+    console.log(`connected to room user = ${socket.id}`)
     socket.on("sendMessage", (room, message) => {
-        io.to(room).emit("receiveMessage", message); // Broadcast the message to all clients in the room
+        roomIO.to(room).emit("receiveMessage", message); // Broadcast the message to all clients in the room
+        console.log(`User ${socket.id} broadcasting from room ${room}`);
         console.log('broadcasting message ' + {message} + 'to room' + {room}) 
         console.log(message)
         console.log(room)
     });
+    socket.on("joinRoom", (room) => {           //, callback) => {
+        console.log(`User ${socket.id} joining room ${room}`);
+        socket.join(room);
+        //callback({ status: 'ok' });
+        const clients = io.sockets.adapter.rooms.get(room);
+        const numClients = clients ? clients.size : 0;
+        console.log('Clients: ' + numClients)
+    });
+});
+
+io.on("connection", (socket) => {
+    console.log(`a user connected ${socket.id}`);
+
+    // socket.on("createRoom", (room) => {
+    //     console.log(`Room created: ${room}`);
+    //     socket.join(room);
+    //     socket.emit('joinedRoom', room); // Notify the client that they have joined the room
+    //     const clients = io.sockets.adapter.rooms.get(room);
+    //     const numClients = clients ? clients.size : 0;
+    //     console.log(numClients)
+    // });
+
+    
+
+    // socket.on("sendMessage", (room, message) => {
+    //     io.to(room).emit("receiveMessage", message); // Broadcast the message to all clients in the room
+    //     console.log(`User ${socket.id} broadcasting from room ${room}`);
+    //     console.log('broadcasting message ' + {message} + 'to room' + {room}) 
+    //     console.log(message)
+    //     console.log(room)
+    // });
 
     socket.on('disconnect', () => {
         console.log('user disconnected');

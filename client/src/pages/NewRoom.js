@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from '../axiosConfig'
 import io from "socket.io-client";
 
-let socket = io.connect('http://localhost:4000');
-var clientID;
+// let socket = io.connect('http://localhost:4000');
+// var clientID;
 
-socket.on('connect', () => {
-    clientID = socket.id;
-});
+// socket.on('connect', () => {
+//     clientID = socket.id;
+// });
 
 export function NewRoom() {
     const [sessionID, setSessionID] = useState()
@@ -33,11 +33,11 @@ export function NewRoom() {
                     //room created case
                     alert(result.data.message)
                     window.location.replace("http://localhost:3000/rooms/" + name);
-                    console.log("socket function not (createRoom)")
-                    var socket = io.connect();
-                    socket.emit('createRoom', name);
+                    // console.log("socket function not (createRoom)")
+                    // var socket = io.connect();
+                    // socket.emit('createRoom', name);
 
-                    console.log("socket function called (createRoom)")
+                    // console.log("socket function called (createRoom)")
 
                 } else if (result.data.success === false) {
                     //room failed case

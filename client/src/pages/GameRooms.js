@@ -3,13 +3,14 @@ import axios from '../axiosConfig'
 import io from "socket.io-client";
 import { Link } from "react-router-dom";
 
-let socket = io.connect('http://localhost:4000');
-var clientID;
 
-socket.on('connect', () => {
-    clientID = socket.id;
-    console.log('connected to server with client id:', clientID)
-});
+let socket = io('http://localhost:4000');
+// var clientID;
+
+// socket.on('connect', () => {
+//     clientID = socket.id;
+//     console.log('connected to server with client id:', clientID)
+// });
 
 export const GameRooms = () => {
     const [sessionID, setSessionID] = useState()
@@ -46,19 +47,19 @@ export const GameRooms = () => {
         getAllRooms()
     }
 
-    const handleJoin = (room) => {
-        console.log('Joining room', room);
-        if (socket) {
-          socket.emit('joinRoom', room, (response) => {
-            if (response.status === 'ok') {
-              console.log('Successfully joined room', room);
-            } else {
-              console.error('Failed to join room', room);
-            }
-          });
-        }
-        console.log('Socket Function Called (join room)');
-    };
+    // const handleJoin = (room) => {
+    //     console.log('Joining room', room);
+    //     if (socket) {
+    //       socket.emit('joinRoom', room, (response) => {
+    //         if (response.status === 'ok') {
+    //           console.log('Successfully joined room', room);
+    //         } else {
+    //           console.error('Failed to join room', room);
+    //         }
+    //       });
+    //     }
+    //     console.log('Socket Function Called (join room)');
+    // };
 
 
     useEffect(() => {
@@ -120,7 +121,9 @@ export const GameRooms = () => {
                                                     <div className="flex gap-5">
                                                         <div className="flex-col w-1/2 px-2 py-2">
                                                         </div>
-                                                        <Link key={id} to={`/Rooms/${room}`} onClick={() => handleJoin(room)} className='text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400'>
+                                                        <Link key={id} to={`/Rooms/${room}`} 
+                                                        // onClick={() => handleJoin(room)} 
+                                                        className='text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400'>
                                                             Join
                                                         </Link>
                                                     </div>
