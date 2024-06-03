@@ -115,7 +115,7 @@ app.get("/queryallusers", (req, res) => {
 
     userModel.findOne({ username: req.user.username })
         .then((currentuser) => {
-            userModel.find({username: new RegExp(searchQuery, 'i')})
+            userModel.find({ username: new RegExp(searchQuery, 'i') })
                 .then((users) => {
                     var availableUsers = users.filter((user) => {
                         // Check if the user is not the current user
@@ -150,13 +150,15 @@ app.get("/currentrequests", (req, res) => {
                 const friendId = user.friends[i];
                 const promise = friendsModel.findById(friendId)
                     .then((friend) => {
-                        if (friend.status != 4) {
-                        return userModel.findById(friend.requester)
-                            .then((requesterUser) => {
-                                if (requesterUser.username !== req.user.username) {
-                                    requests.push(requesterUser);
-                                }
-                            });
+                        if (friend) {
+                            if (friend.status != 4) {
+                                return userModel.findById(friend.requester)
+                                    .then((requesterUser) => {
+                                        if (requesterUser.username !== req.user.username) {
+                                            requests.push(requesterUser);
+                                        }
+                                    });
+                            }
                         }
                     })
                     .catch((err) => {
@@ -191,19 +193,21 @@ app.get("/allfriends", (req, res) => {
                 const friendId = user.friends[i];
                 const promise = friendsModel.findById(friendId)
                     .then((friend) => {
-                        if (friend.status === 4) {
-                            if (friend.requester.toString() != user._id) {
-                                return userModel.findById(friend.requester)
-                                .then((requesterUser) => {
-                                    requests.push(requesterUser);
-                                });
-                            } else if (friend.recipient.toString() != user._id) {
-                                return userModel.findById(friend.recipient)
-                                .then((requesterUser) => {
-                                    requests.push(requesterUser);
-                                });
-                            }
+                        if (friend) {
+                            if (friend.status === 4) {
+                                if (friend.requester.toString() != user._id) {
+                                    return userModel.findById(friend.requester)
+                                        .then((requesterUser) => {
+                                            requests.push(requesterUser);
+                                        });
+                                } else if (friend.recipient.toString() != user._id) {
+                                    return userModel.findById(friend.recipient)
+                                        .then((requesterUser) => {
+                                            requests.push(requesterUser);
+                                        });
+                                }
 
+                            }
                         }
                     })
                     .catch((err) => {
@@ -249,7 +253,8 @@ app.get("/deleteroom", (req, res) => {
     const { name } = req.query
     roomModel.deleteOne({ name: name })
         .then(() => {
-            res.json({ success: true, message: "successfully deleted" })
+            return res.json({ success: true, message: "successfully deleted" })
+
         })
         .catch((err) => {
             res.json({ success: false, message: "failed to delete", error: err });
@@ -295,26 +300,25 @@ app.get("/sendfriendrequest", (req, res) => {
 
                 userModel.findOne({ username: targetusername })
                     .then((targetuser) => {
-                        
-                        for(let i = 0; i < currentuser.friends.length; i ++) {
+
+                        for (let i = 0; i < currentuser.friends.length; i++) {
                             if (targetuser.friends.includes(currentuser.friends[i])) {
-                                res.json({success: false, message: "there already exists a request between users"})
-                                return
+                                return res.json({ success: false, message: "there already exists a request between users" })
                             }
                         }
 
                         var request = new friendsModel({ requester: currentuser, recipient: targetuser, status: 2 })
 
-                        userModel.findOneAndUpdate({ username: currentuser.username }, { "$push": { "friends": request}})
-                        .then(() => {
-                            userModel.findOneAndUpdate({ username: targetuser.username }, { "$push": { "friends": request}})
+                        userModel.findOneAndUpdate({ username: currentuser.username }, { "$push": { "friends": request } })
                             .then(() => {
-                                request.save()
-                                res.json({ success: true, message: "your friend request to " + targetuser.username + " has been sent" })
+                                userModel.findOneAndUpdate({ username: targetuser.username }, { "$push": { "friends": request } })
+                                    .then(() => {
+                                        request.save()
+                                        return res.json({ success: true, message: "your friend request to " + targetuser.username + " has been sent" })
+                                    })
+                                    .catch((err) => res.json(err))
                             })
                             .catch((err) => res.json(err))
-                        })
-                        .catch((err) => res.json(err))
 
                     })
                     .catch(err => res.json(err))
@@ -335,14 +339,14 @@ app.get("/acceptfriendrequest", (req, res) => {
             if (currentuser) {
                 userModel.findOne({ username: targetusername })
                     .then((targetuser) => {
-                        
-                        for(let i = 0; i < currentuser.friends.length; i ++) {
+
+                        for (let i = 0; i < currentuser.friends.length; i++) {
                             if (targetuser.friends.includes(currentuser.friends[i])) {
-                                friendsModel.findByIdAndUpdate(currentuser.friends[i], {status: 4})
-                                .then(() => {
-                                    res.json({success: true, message: "you have added " + targetuser.username + " as a friend!"})
-                                })
-                                .catch((err) => res.json(err))
+                                friendsModel.findByIdAndUpdate(currentuser.friends[i], { status: 4 })
+                                    .then(() => {
+                                        return res.json({ success: true, message: "you have added " + targetuser.username + " as a friend!" })
+                                    })
+                                    .catch((err) => res.json(err))
                             }
                         }
 
