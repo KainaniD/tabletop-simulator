@@ -199,6 +199,7 @@ export const Profile = () => {
                         type="username"
                         placeholder="Enter Username"
                         name="username"
+                        autoComplete="off"
                         className="bg-gray-50 border border-gray-300 text-gray-900 py-2 px-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64"
                         onChange={(e) => {
                             searchUsers(e.target.value)

@@ -48,14 +48,14 @@ export function Login() {
                             />
                         </div>
                     </div>
-                    <button type="submit" className="py-5 px-10 rounded-lg bg-blue-400 motion-safe:hover:bg-blue-500">
+                    <button type="submit" className="submit-button">
                         Login
                     </button>
                 </form>
             </div>
             <div className="flex flex-col w-1/4 items-center">
                 <p className="mb-5">Don't have an account?</p>
-                <Link to="/Register" className="py-5 px-10 my-1 rounded-lg bg-blue-400 motion-safe:hover:bg-blue-500">Sign-up</Link>
+                <Link to="/Register" className="submit-button">Sign-up</Link>
             </div>
         </div>
     );

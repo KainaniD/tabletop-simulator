@@ -73,7 +73,7 @@ export function Register() {
             </div>
           </div>
           <div>
-            <button type="submit" className="py-5 px-10 my-1 rounded-lg bg-blue-400 motion-safe:hover:bg-blue-500">
+            <button type="submit" className="submit-button">
               Sign Up
             </button>
           </div>
@@ -81,7 +81,7 @@ export function Register() {
       </div>
       <div className="flex flex-col w-1/4 items-center">
         <p className="mb-5">Already have an account?</p>
-        <Link to="/Login" className="py-5 px-10 my-1 rounded-lg bg-blue-400 motion-safe:hover:bg-blue-500">Login</Link>
+        <Link to="/Login" className="submit-button">Login</Link>
       </div>
     </div>
   );
