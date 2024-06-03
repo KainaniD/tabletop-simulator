@@ -66,6 +66,7 @@ class Game extends Phaser.Scene {
         this.socket.on("getSync", (game_data) => {
             console.log("client received sync data")
             console.log(game_data)
+            this.setCardData(game_data)
         })
     }
 
@@ -74,16 +75,24 @@ class Game extends Phaser.Scene {
         for (let card_key in this.deck.card_objects) {
             let card_object = this.deck.card_objects[card_key]
             data_map[card_object.cardFront] = {
-                x: card_object.x, 
-                y: card_object.y, 
-                facedown: card_object.facedown
+                'x': card_object.x, 
+                'y': card_object.y, 
+                'facedown': card_object.facedown
             };
         }
         return data_map;
     }
 
-    setCardData() {
-
+    setCardData(card_data) {
+        console.log(this.deck.card_objects)
+        for (let card_key in this.deck.card_objects) {
+            let incoming_card_object = card_data[card_key]
+            let current_card_object = this.deck.card_objects[card_key]
+            current_card_object.setX(incoming_card_object['x']).setY(incoming_card_object['y'])
+            if (current_card_object.facedown !== incoming_card_object['facedown']) {
+                current_card_object.flip_card()
+            }
+        }
     }
 
     update() {

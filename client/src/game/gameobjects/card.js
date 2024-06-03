@@ -35,14 +35,7 @@ class Card extends Phaser.GameObjects.Image {
                 if (! pointer.rightButtonDown()) {
                     return;
                 }
-                if (this.facedown) {
-                    this.setTexture(this.cardFront)
-                    this.facedown = false
-                }
-                else {
-                    this.setTexture(this.cardBack)
-                    this.facedown = true
-                }
+                this.flip_card();
             }
         );
         this.on('pointerdown', 
@@ -78,6 +71,17 @@ class Card extends Phaser.GameObjects.Image {
         
     }
     //may cause performance issues, if so do it a different way
+
+    flip_card() {
+        if (this.facedown) {
+            this.setTexture(this.cardFront)
+            this.facedown = false
+        }
+        else {
+            this.setTexture(this.cardBack)
+            this.facedown = true
+        }
+    }
     update () {
   
     }
