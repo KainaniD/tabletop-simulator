@@ -12,17 +12,17 @@ export function Register() {
     e.preventDefault()
     axios.post("http://localhost:4000/register", { username, email, password })
       .then(result => {
-        console.log(result)
+        //console.log(result)
 
         if (result.data.success === true) {
-          alert(result.data.message)
+          //alert(result.data.message)
           axios.get("http://localhost:4000/login", { params: { username, password } })
           .then(result => {
               if (result.data.success === true) {
-                  alert(result.data.message)
+                  //alert(result.data.message)
                   window.location.replace("http://localhost:3000/profile");
               } else if (result.data.success === false) {
-                  alert(result.data.message)
+                  //alert(result.data.message)
               }
           })
           .catch(err => console.log(err))

@@ -14,7 +14,7 @@ socket.on('connect', () => {
 function logout() {
     axios.post("http://localhost:4000/session")
         .then((result) => {
-            alert("you have logged out!")
+            //alert("you have logged out!")
             window.location.replace("http://localhost:3000/login")
         })
         .catch(err => console.log(err))
@@ -33,9 +33,9 @@ export const Profile = () => {
         axios.get("http://localhost:4000/sendfriendrequest", { params: { targetuser } })
         .then(result => {
             if (result.data.success === true) {
-                alert(result.data.message)
+                //alert(result.data.message)
             } else if (result.data.success === false) {
-                alert(result.data.message)
+                //alert(result.data.message)
             }
             window.location.reload()
         })
@@ -45,11 +45,11 @@ export const Profile = () => {
     function removeFriend(targetuser) {
         axios.get("http://localhost:4000/removefriend", { params: { targetuser } })
         .then(result => {
-            console.log(result)
+            //console.log(result)
             if (result.data.success === true) {
-                alert(result.data.message)
+                //alert(result.data.message)
             } else if (result.data.success === false) {
-                alert(result.data.message)
+                //alert(result.data.message)
             }
             window.location.reload()
         })
@@ -60,9 +60,9 @@ export const Profile = () => {
         axios.get("http://localhost:4000/acceptfriendrequest", { params: { targetuser } })
         .then(result => {
             if (result.data.success === true) {
-                alert(result.data.message)
+                //alert(result.data.message)
             } else if (result.data.success === false) {
-                alert(result.data.message)
+                //alert(result.data.message)
             }
             window.location.reload()
         })
@@ -73,9 +73,9 @@ export const Profile = () => {
         axios.get("http://localhost:4000/removefriend", { params: { targetuser } })
         .then(result => {
             if (result.data.success === true) {
-                alert(result.data.message)
+                //alert(result.data.message)
             } else if (result.data.success === false) {
-                alert(result.data.message)
+                //alert(result.data.message)
             }
             window.location.reload()
         })
