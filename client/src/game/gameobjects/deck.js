@@ -38,12 +38,12 @@ class Deck {
             }
         }
     }
-
+    card_objects = {};
     loadCards() {
         var xoffset = 10;
         for (var value of this.card_values) {
             for (var suite of this.card_suites) {
-                var temp_card = new Card(this.scene, 50+xoffset, 100, 'card'+suite+value, 'card_back', suite, this.card_to_value[value])
+                this.card_objects['card'+suite+value] = new Card(this.scene, 50+xoffset, 100, 'card'+suite+value, 'card_back', suite, this.card_to_value[value])
                 xoffset += 20;
             }
         }

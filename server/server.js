@@ -442,11 +442,31 @@ roomIO.on("connection", (socket) => {
     })
     socket.on("gameClientConnected", (message) => {
         console.log(message);
-        
+        let cur_room = findRoom(socket);
+        console.log(cur_room)
+        if (rooms_with_players[cur_room].length > 1){ //if there is more than one player, copy over the data
+            console.log("here before the disaster")
+            rooms_with_players[cur_room][0].emit("sendSync", socket.id)
+            console.log("game data request sent")
+        } //i hope sockets only have one room
         //socket.to(room).emit("")
         
     })
+    socket.on("sendSync", (id, game_data) => {
+        console.log("sync data received")
+        roomIO.to(id).emit("getSync", game_data)
+    })
 });
+
+function findRoom(socket) {
+    for (let item of socket.rooms) {
+        if (item !== socket.id) {
+            return item;
+        }   
+    }
+    throw new Error('Socket is not in a room!')
+}
+
 
 function findSocket(socket) {
     for (let room in rooms_with_players) {
