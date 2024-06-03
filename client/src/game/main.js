@@ -25,9 +25,12 @@ const config = {
 
 };
 
-const StartGame = (parent) => {
-  return new Phaser.Game({... config, parent});
-
+const StartGame = (parent, id) => {
+  let phaserGame =  new Phaser.Game({... config, parent});
+  console.log(phaserGame.scene.scenes)
+  let gamejs = phaserGame.scene.scenes.at(0);
+  console.log(gamejs)
+  return phaserGame;
 }
 
 

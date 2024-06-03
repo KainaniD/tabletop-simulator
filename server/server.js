@@ -396,11 +396,15 @@ app.get("/removefriend", async (req, res) => {
 
 const server = http.createServer(app);
 
+
+
 const io = new Server(server, {
     cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
 });
 
 const roomIO = io.of("/rooms")
+//var players = []
+
 
 roomIO.on("connection", (socket) => {
     socket.on("rooms:connection", () => {})
@@ -422,30 +426,26 @@ roomIO.on("connection", (socket) => {
     });
 });
 
+
+
+
+
+
 io.on("connection", (socket) => {
-    console.log(`a user connected ${socket.id}`);
+    // console.log(`a user connected ${socket.id}`);
+    // players.push(socket.id);
 
-    // socket.on("createRoom", (room) => {
-    //     console.log(`Room created: ${room}`);
-    //     socket.join(room);
-    //     socket.emit('joinedRoom', room); // Notify the client that they have joined the room
-    //     const clients = io.sockets.adapter.rooms.get(room);
-    //     const numClients = clients ? clients.size : 0;
-    //     console.log(numClients)
+
+    // socket.on("send_message", (data) => {
+    //   socket.broadcast.emit("receive_message", data);
     // });
 
-    
+    // socket.on("cardMoved", (data) => {
+    //     socket.broadcast.emit("cardMoved", data)
+    // })
 
-    // socket.on("sendMessage", (room, message) => {
-    //     io.to(room).emit("receiveMessage", message); // Broadcast the message to all clients in the room
-    //     console.log(`User ${socket.id} broadcasting from room ${room}`);
-    //     console.log('broadcasting message ' + {message} + 'to room' + {room}) 
-    //     console.log(message)
-    //     console.log(room)
-    // });
-
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
+    socket.on("disconnect", function () {
+        console.log(`A user disconnected:${socket.id}` )
     });
 });
 
