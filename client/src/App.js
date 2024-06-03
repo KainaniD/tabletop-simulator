@@ -10,7 +10,7 @@ function App() {
 
 
   useEffect(() => {
-    axios.get("http://localhost:4000/session")
+    axios.get("http://localhost:4000/currentuser")
     .then((result) => {
         if (result.data) {
           setIsLoggedIn(true)
@@ -29,6 +29,11 @@ function App() {
       <Link to="/" className="nav-button">Home</Link>
       <Link to="/rooms" className="nav-button">Rooms</Link>
       <Link to="/profile" className="nav-button">Profile</Link>
+      </div>
+    } else {
+      return <div className="flex justify-evenly bg-gray-100 py-5 mb-5 border border-gray-300">
+      <Link to="/login" className="nav-button">Login</Link>
+      <Link to="/register" className="nav-button">Register</Link>
       </div>
     }
   }

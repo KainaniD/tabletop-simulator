@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react'
 import axios from '../axiosConfig'
 import io from "socket.io-client";
 import pfp from '../assets/pfp.png'
-import { FriendCard } from '../pages/FriendCard'
-import { FriendReq } from '../pages/FriendReq'
-import { Friend } from '../pages/Friend'
+import { all } from 'axios';
 
-let socket = io.connect('http://localhost:4000');
+let socket = (io.connect('http://localhost:4000'));
 var clientID;
 
 socket.on('connect', () => {
@@ -16,7 +14,7 @@ socket.on('connect', () => {
 function logout() {
     axios.post("http://localhost:4000/session")
         .then((result) => {
-            alert("you have logged out!")
+            //alert("you have logged out!")
             window.location.replace("http://localhost:3000/login")
         })
         .catch(err => console.log(err))
@@ -26,14 +24,127 @@ export const Profile = () => {
 
     const [sessionID, setSessionID] = useState()
     const [username, setUsername] = useState()
+    const [allUsers, setAllUsers] = useState({})
+    const [currentRequests, setCurrentRequests] = useState({})
+    const [allFriends, setAllFriends] = useState({})
 
-    useEffect(() => {
-        axios.get("http://localhost:4000/session")
-        .then((result) => {
-            setUsername(result.data.username)
-            setSessionID(result.data._id)
+
+    function sendFriendRequest(targetuser) {
+        axios.get("http://localhost:4000/sendfriendrequest", { params: { targetuser } })
+        .then(result => {
+            if (result.data.success === true) {
+                //alert(result.data.message)
+            } else if (result.data.success === false) {
+                //alert(result.data.message)
+            }
+            window.location.reload()
         })
         .catch(err => console.log(err))
+    }
+
+    function removeFriend(targetuser) {
+        axios.get("http://localhost:4000/removefriend", { params: { targetuser } })
+        .then(result => {
+            //console.log(result)
+            if (result.data.success === true) {
+                //alert(result.data.message)
+            } else if (result.data.success === false) {
+                //alert(result.data.message)
+            }
+            window.location.reload()
+        })
+        .catch(err => console.log(err))
+    }
+
+    function acceptFriendRequest(targetuser) {
+        axios.get("http://localhost:4000/acceptfriendrequest", { params: { targetuser } })
+        .then(result => {
+            if (result.data.success === true) {
+                //alert(result.data.message)
+            } else if (result.data.success === false) {
+                //alert(result.data.message)
+            }
+            window.location.reload()
+        })
+        .catch(err => console.log(err))
+    }
+
+    function denyFriendRequest(targetuser) {
+        axios.get("http://localhost:4000/removefriend", { params: { targetuser } })
+        .then(result => {
+            if (result.data.success === true) {
+                //alert(result.data.message)
+            } else if (result.data.success === false) {
+                //alert(result.data.message)
+            }
+            window.location.reload()
+        })
+        .catch(err => console.log(err))
+    }
+
+    function searchUsers(searchQuery) {
+        axios.get("http://localhost:4000/queryallusers", { params: { searchQuery } })
+        .then((result) => {
+            console.log(result)
+            let users = {}
+            for (let i = 0; i < result.data.length; i++) {
+                users[result.data[i].username] = result.data[i];
+            }
+            setAllUsers(users);
+        })
+        .catch(err => console.log(err))
+    }
+
+    function getAllUsers() {
+        axios.get("http://localhost:4000/allusers")
+            .then((result) => {
+                let users = {}
+                for (let i = 0; i < result.data.length; i++) {
+                    users[result.data[i].username] = result.data[i];
+                }
+                setAllUsers(users)
+            })
+            .catch(err => console.log(err))
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        let form = document.getElementById("userSearch")
+        form.reset()
+        getAllUsers()
+
+    }
+
+    useEffect(() => {
+        axios.get("http://localhost:4000/currentuser")
+            .then((result) => {
+                setUsername(result.data.username)
+                setSessionID(result.data._id)
+            })
+            .catch(err => console.log(err))
+
+
+        getAllUsers()
+
+        axios.get("http://localhost:4000/currentRequests")
+            .then((result) => {
+                let users = {}
+                for (let i = 0; i < result.data.length; i++) {
+                    users[result.data[i].username] = result.data[i];
+                }
+                setCurrentRequests(users)
+            })
+            .catch(err => console.log(err))
+
+        axios.get("http://localhost:4000/allfriends")
+            .then((result) => {
+                let users = {}
+                for (let i = 0; i < result.data.length; i++) {
+                    users[result.data[i].username] = result.data[i];
+                }
+                setAllFriends(users)
+            })
+            .catch(err => console.log(err))
     }, [])
 
     return (
@@ -43,7 +154,7 @@ export const Profile = () => {
                 <p>Socket Session ID: {clientID}</p>
                 <p>Express Session ID: {sessionID}</p>
                 <div className="py-5 px-5">
-                    <img src={pfp} width="200" height="auto" className="x border-gray-300 rounded-lg border-4" />
+                    <img src={pfp} alt="" width="200" height="auto" className="x border-gray-300 rounded-lg border-4" />
                 </div>
                 <button type="submit"
                     className="py-2 px-4 rounded-lg bg-blue-400 motion-safe:hover:bg-blue-500"
@@ -57,20 +168,23 @@ export const Profile = () => {
                 <h1 className="text-center pb-0 pl-0 pt-3">Friends</h1>
                 <div className="">
                     <div className="mt-3">
-                        <div className="overflow-y-auto h-48 px-2 py-2 rounded-lg border-4 border-gray-300">
-                            <Friend />
-                            <Friend />
-                            <p>
-
-                                Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans? Not only are they in the field egg group, which is mostly comprised of mammals, Vaporeon are an average of 3”03’ tall and 63.9 pounds, this means they’re large enough to be able handle human dicks, and with their impressive Base Stats for HP and access to Acid Armor, you can be rough with one. Due to their mostly water based biology, there’s no doubt in my mind that an aroused Vaporeon would be incredibly wet, so wet that you could easily have sex with one for hours without getting sore. They can also learn the moves Attract, Baby-Doll Eyes, Captivate, Charm, and Tail Whip, along with not having fur to hide nipples, so it’d be incredibly easy for one to get you in the mood. With their abilities Water Absorb and Hydration, they can easily recover from fatigue with enough water. No other Pokémon comes close to this level of compatibility. Also, fun fact, if you pull out enough, you can make your Vaporeon turn white. Vaporeon is literally built for human dick. Ungodly defense stat+high HP pool+Acid Armor means it can take cock all day, all shapes and sizes and still come for more
-                            </p>
-                            <p>
-                                Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans? Not only are they in the field egg group, which is mostly comprised of mammals, Vaporeon are an average of 3”03’ tall and 63.9 pounds, this means they’re large enough to be able handle human dicks, and with their impressive Base Stats for HP and access to Acid Armor, you can be rough with one. Due to their mostly water based biology, there’s no doubt in my mind that an aroused Vaporeon would be incredibly wet, so wet that you could easily have sex with one for hours without getting sore. They can also learn the moves Attract, Baby-Doll Eyes, Captivate, Charm, and Tail Whip, along with not having fur to hide nipples, so it’d be incredibly easy for one to get you in the mood. With their abilities Water Absorb and Hydration, they can easily recover from fatigue with enough water. No other Pokémon comes close to this level of compatibility. Also, fun fact, if you pull out enough, you can make your Vaporeon turn white. Vaporeon is literally built for human dick. Ungodly defense stat+high HP pool+Acid Armor means it can take cock all day, all shapes and sizes and still come for more
-                            </p>
-                            <p>
-                                Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans? Not only are they in the field egg group, which is mostly comprised of mammals, Vaporeon are an average of 3”03’ tall and 63.9 pounds, this means they’re large enough to be able handle human dicks, and with their impressive Base Stats for HP and access to Acid Armor, you can be rough with one. Due to their mostly water based biology, there’s no doubt in my mind that an aroused Vaporeon would be incredibly wet, so wet that you could easily have sex with one for hours without getting sore. They can also learn the moves Attract, Baby-Doll Eyes, Captivate, Charm, and Tail Whip, along with not having fur to hide nipples, so it’d be incredibly easy for one to get you in the mood. With their abilities Water Absorb and Hydration, they can easily recover from fatigue with enough water. No other Pokémon comes close to this level of compatibility. Also, fun fact, if you pull out enough, you can make your Vaporeon turn white. Vaporeon is literally built for human dick. Ungodly defense stat+high HP pool+Acid Armor means it can take cock all day, all shapes and sizes and still come for more
-
-                            </p>
+                        <div className="overflow-y-auto h-48 px-2 py-2 min-w-96 rounded-lg border-4 border-gray-300">
+                            {(typeof Object.keys(allFriends) == 'undefined') ? (
+                                <p>Loading...</p>
+                            ) : (
+                                Object.keys(allFriends).map((user, id) => (
+                                    <div key={id} className="flex py-2 px-2 bg-blue-400 rounded-lg gap-5 mb-3">
+                                        <div className="w-1/2 px-2 py-4 bg-blue-200 rounded-lg align-middle text-xl">
+                                            {user}
+                                        </div>
+                                            <button onClick={() => {
+                                                removeFriend(allFriends[user])
+                                            }} className="text-center bg-red-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-red-400">
+                                                Remove Friend
+                                            </button>
+                                    </div>
+                                ))
+                            )}
                         </div>
                     </div>
                 </div>
@@ -78,61 +192,79 @@ export const Profile = () => {
 
             <div className="flex flex-col w-2/3 bg-gray-100 p-5 rounded-lg shadow-md">
                 <h1 className="text-center pb-0">Find Friends</h1>
-                <div className="flex justify-center items-center space-x-3 pt-3">
+                <form onSubmit={handleSubmit} id="userSearch" className="flex justify-center items-center space-x-3 pt-3">
+
                     <div>Search:</div>
                     <input
                         type="username"
                         placeholder="Enter Username"
                         name="username"
+                        autoComplete="off"
                         className="bg-gray-50 border border-gray-300 text-gray-900 py-2 px-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64"
+                        onChange={(e) => {
+                            searchUsers(e.target.value)
+                        }}
                     />
                     <button
                         type="submit"
                         className="py-2 px-4 rounded-lg bg-blue-400 transition duration-300 ease-in-out motion-safe:hover:bg-blue-500"
                     >
-                        Submit
+                        Reset Filter
                     </button>
-                </div>
+                </form>
                 <div className="mt-5">
                     <div className="overflow-y-auto h-60 border-4 px-2 py-2 border-gray-300 rounded-lg">
-                        <div>
-                            <FriendCard />
-                            <FriendCard />
-                        </div>
-                        <p>
-
-                            Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans? Not only are they in the field egg group, which is mostly comprised of mammals, Vaporeon are an average of 3”03’ tall and 63.9 pounds, this means they’re large enough to be able handle human dicks, and with their impressive Base Stats for HP and access to Acid Armor, you can be rough with one. Due to their mostly water based biology, there’s no doubt in my mind that an aroused Vaporeon would be incredibly wet, so wet that you could easily have sex with one for hours without getting sore. They can also learn the moves Attract, Baby-Doll Eyes, Captivate, Charm, and Tail Whip, along with not having fur to hide nipples, so it’d be incredibly easy for one to get you in the mood. With their abilities Water Absorb and Hydration, they can easily recover from fatigue with enough water. No other Pokémon comes close to this level of compatibility. Also, fun fact, if you pull out enough, you can make your Vaporeon turn white. Vaporeon is literally built for human dick. Ungodly defense stat+high HP pool+Acid Armor means it can take cock all day, all shapes and sizes and still come for more
-                        </p>
-                        <p>
-                            Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans? Not only are they in the field egg group, which is mostly comprised of mammals, Vaporeon are an average of 3”03’ tall and 63.9 pounds, this means they’re large enough to be able handle human dicks, and with their impressive Base Stats for HP and access to Acid Armor, you can be rough with one. Due to their mostly water based biology, there’s no doubt in my mind that an aroused Vaporeon would be incredibly wet, so wet that you could easily have sex with one for hours without getting sore. They can also learn the moves Attract, Baby-Doll Eyes, Captivate, Charm, and Tail Whip, along with not having fur to hide nipples, so it’d be incredibly easy for one to get you in the mood. With their abilities Water Absorb and Hydration, they can easily recover from fatigue with enough water. No other Pokémon comes close to this level of compatibility. Also, fun fact, if you pull out enough, you can make your Vaporeon turn white. Vaporeon is literally built for human dick. Ungodly defense stat+high HP pool+Acid Armor means it can take cock all day, all shapes and sizes and still come for more
-                        </p>
-                        <p>
-                            Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans? Not only are they in the field egg group, which is mostly comprised of mammals, Vaporeon are an average of 3”03’ tall and 63.9 pounds, this means they’re large enough to be able handle human dicks, and with their impressive Base Stats for HP and access to Acid Armor, you can be rough with one. Due to their mostly water based biology, there’s no doubt in my mind that an aroused Vaporeon would be incredibly wet, so wet that you could easily have sex with one for hours without getting sore. They can also learn the moves Attract, Baby-Doll Eyes, Captivate, Charm, and Tail Whip, along with not having fur to hide nipples, so it’d be incredibly easy for one to get you in the mood. With their abilities Water Absorb and Hydration, they can easily recover from fatigue with enough water. No other Pokémon comes close to this level of compatibility. Also, fun fact, if you pull out enough, you can make your Vaporeon turn white. Vaporeon is literally built for human dick. Ungodly defense stat+high HP pool+Acid Armor means it can take cock all day, all shapes and sizes and still come for more
-
-                        </p>
+                        {(typeof Object.keys(allUsers) == 'undefined') ? (
+                            <p>Loading...</p>
+                        ) : (
+                            Object.keys(allUsers).map((user, id) => (
+                                <div key={id} className="flex py-2 px-2 bg-blue-400 rounded-lg mb-3">
+                                    <div className="w-1/3 px-2 py-2 bg-blue-200 rounded-lg align-middle text-xl">
+                                        {user}
+                                    </div>
+                                    <div className="w-1/2" />
+                                        <button onClick={() => {
+                                            sendFriendRequest(allUsers[user])
+                                        }} className="text-center bg-green-300 rounded-lg w-1/6 px-2 py-2 motion-safe:hover:bg-green-400">
+                                            Send Friend Request
+                                        </button>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
 
 
 
-                <h1 className="text-center pb-0 pt-5 ">Friends Requests </h1>
+                <h1 className="text-center pb-0 pt-5 ">Friend Requests</h1>
                 <div className="mt-5">
                     <div className="overflow-y-auto h-60 border-4 px-2 py-2 border-gray-300 rounded-lg">
                         <div>
-                            <FriendReq />
-                            <FriendReq />
+                            {(typeof Object.keys(currentRequests) == 'undefined') ? (
+                                <p>Loading...</p>
+                            ) : (
+                                Object.keys(currentRequests).map((user, id) => (
+                                    <div key={id} className="flex py-2 px-2 bg-blue-400 rounded-lg mb-3">
+                                        <div className="w-1/3 px-2 py-2 bg-blue-200 rounded-lg align-middle text-xl">
+                                            {user}
+                                        </div>
+                                        <div className="w-1/3" />
+                                        <div className="flex flex-row gap-5 w-1/3 justify-center">
+                                            <button onClick={() => {
+                                                acceptFriendRequest(currentRequests[user])
+                                            }} className="text-center bg-green-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-green-400">
+                                                Accept
+                                            </button>
+                                            <button onClick={() => {
+                                                denyFriendRequest(currentRequests[user])
+                                            }} className="text-center bg-red-300 rounded-lg w-1/2 px-2 py-2 motion-safe:hover:bg-red-400">
+                                                Deny
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
                         </div>
-                        <p>
-
-                            Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans? Not only are they in the field egg group, which is mostly comprised of mammals, Vaporeon are an average of 3”03’ tall and 63.9 pounds, this means they’re large enough to be able handle human dicks, and with their impressive Base Stats for HP and access to Acid Armor, you can be rough with one. Due to their mostly water based biology, there’s no doubt in my mind that an aroused Vaporeon would be incredibly wet, so wet that you could easily have sex with one for hours without getting sore. They can also learn the moves Attract, Baby-Doll Eyes, Captivate, Charm, and Tail Whip, along with not having fur to hide nipples, so it’d be incredibly easy for one to get you in the mood. With their abilities Water Absorb and Hydration, they can easily recover from fatigue with enough water. No other Pokémon comes close to this level of compatibility. Also, fun fact, if you pull out enough, you can make your Vaporeon turn white. Vaporeon is literally built for human dick. Ungodly defense stat+high HP pool+Acid Armor means it can take cock all day, all shapes and sizes and still come for more
-                        </p>
-                        <p>
-                            Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans? Not only are they in the field egg group, which is mostly comprised of mammals, Vaporeon are an average of 3”03’ tall and 63.9 pounds, this means they’re large enough to be able handle human dicks, and with their impressive Base Stats for HP and access to Acid Armor, you can be rough with one. Due to their mostly water based biology, there’s no doubt in my mind that an aroused Vaporeon would be incredibly wet, so wet that you could easily have sex with one for hours without getting sore. They can also learn the moves Attract, Baby-Doll Eyes, Captivate, Charm, and Tail Whip, along with not having fur to hide nipples, so it’d be incredibly easy for one to get you in the mood. With their abilities Water Absorb and Hydration, they can easily recover from fatigue with enough water. No other Pokémon comes close to this level of compatibility. Also, fun fact, if you pull out enough, you can make your Vaporeon turn white. Vaporeon is literally built for human dick. Ungodly defense stat+high HP pool+Acid Armor means it can take cock all day, all shapes and sizes and still come for more
-                        </p>
-                        <p>
-                            Hey guys, did you know that in terms of male human and female Pokémon breeding, Vaporeon is the most compatible Pokémon for humans? Not only are they in the field egg group, which is mostly comprised of mammals, Vaporeon are an average of 3”03’ tall and 63.9 pounds, this means they’re large enough to be able handle human dicks, and with their impressive Base Stats for HP and access to Acid Armor, you can be rough with one. Due to their mostly water based biology, there’s no doubt in my mind that an aroused Vaporeon would be incredibly wet, so wet that you could easily have sex with one for hours without getting sore. They can also learn the moves Attract, Baby-Doll Eyes, Captivate, Charm, and Tail Whip, along with not having fur to hide nipples, so it’d be incredibly easy for one to get you in the mood. With their abilities Water Absorb and Hydration, they can easily recover from fatigue with enough water. No other Pokémon comes close to this level of compatibility. Also, fun fact, if you pull out enough, you can make your Vaporeon turn white. Vaporeon is literally built for human dick. Ungodly defense stat+high HP pool+Acid Armor means it can take cock all day, all shapes and sizes and still come for more
-
-                        </p>
                     </div>
                 </div>
             </div>

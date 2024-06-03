@@ -1,9 +1,9 @@
 const mongoose = require('mongoose')
 
 const RoomSchema = new mongoose.Schema({
-   name:String,
+   name: { type: String, required: true}
 })
 
-const RoomModel = mongoose.model("rooms", RoomSchema, "rooms")
+const roomModel = mongoose.model("rooms", RoomSchema, "rooms")
 
-module.exports = RoomModel
+module.exports = roomModel
