@@ -26,14 +26,14 @@ const config = {
 
 };
 
-const StartGame = (parent, id) => {
+const StartGame = (parent, socket) => {
   let phaserGame =  new Phaser.Game({... config, parent});
-  console.log(id)
+  console.log(socket)
   console.log(phaserGame)
   console.log(phaserGame.scene)
   console.log(phaserGame.scene.keys)
   setTimeout(
-    () => phaserGame.scene.getScene('game').grabID(id),
+    () => phaserGame.scene.getScene('game').setSocket(socket),
     500
   );
   return phaserGame;

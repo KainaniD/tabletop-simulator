@@ -424,6 +424,9 @@ roomIO.on("connection", (socket) => {
         const numClients = clients ? clients.size : 0;
         console.log('Clients: ' + numClients)
     });
+    socket.on("gameClientConnected", (message) => {
+        console.log(message);
+    })
 });
 
 
