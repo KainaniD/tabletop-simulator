@@ -3,8 +3,9 @@ import axios from '../axiosConfig'
 import io from "socket.io-client";
 import pfp from '../assets/pfp.png'
 import { all } from 'axios';
+import { SERVER_URL, CLIENT_URL } from "../urls";
 
-let socket = (io.connect('http://localhost:4000'));
+let socket = (io.connect(SERVER_URL));
 var clientID;
 
 socket.on('connect', () => {
@@ -12,10 +13,10 @@ socket.on('connect', () => {
 });
 
 function logout() {
-    axios.post("http://localhost:4000/session")
+    axios.post(SERVER_URL + "/session")
         .then((result) => {
             //alert("you have logged out!")
-            window.location.replace("http://localhost:3000/login")
+            window.location.replace(CLIENT_URL + "/login")
         })
         .catch(err => console.log(err))
 }
@@ -30,7 +31,7 @@ export const Profile = () => {
 
 
     function sendFriendRequest(targetuser) {
-        axios.get("http://localhost:4000/sendfriendrequest", { params: { targetuser } })
+        axios.get(SERVER_URL + "/sendfriendrequest", { params: { targetuser } })
         .then(result => {
             if (result.data.success === true) {
                 //alert(result.data.message)
@@ -43,7 +44,7 @@ export const Profile = () => {
     }
 
     function removeFriend(targetuser) {
-        axios.get("http://localhost:4000/removefriend", { params: { targetuser } })
+        axios.get(SERVER_URL + "/removefriend", { params: { targetuser } })
         .then(result => {
             //console.log(result)
             if (result.data.success === true) {
@@ -57,7 +58,7 @@ export const Profile = () => {
     }
 
     function acceptFriendRequest(targetuser) {
-        axios.get("http://localhost:4000/acceptfriendrequest", { params: { targetuser } })
+        axios.get(SERVER_URL + "/acceptfriendrequest", { params: { targetuser } })
         .then(result => {
             if (result.data.success === true) {
                 //alert(result.data.message)
@@ -70,7 +71,7 @@ export const Profile = () => {
     }
 
     function denyFriendRequest(targetuser) {
-        axios.get("http://localhost:4000/removefriend", { params: { targetuser } })
+        axios.get(SERVER_URL + "/removefriend", { params: { targetuser } })
         .then(result => {
             if (result.data.success === true) {
                 //alert(result.data.message)
@@ -83,7 +84,7 @@ export const Profile = () => {
     }
 
     function searchUsers(searchQuery) {
-        axios.get("http://localhost:4000/queryallusers", { params: { searchQuery } })
+        axios.get(SERVER_URL + "/queryallusers", { params: { searchQuery } })
         .then((result) => {
             console.log(result)
             let users = {}
@@ -96,7 +97,7 @@ export const Profile = () => {
     }
 
     function getAllUsers() {
-        axios.get("http://localhost:4000/allusers")
+        axios.get(SERVER_URL + "/allusers")
             .then((result) => {
                 let users = {}
                 for (let i = 0; i < result.data.length; i++) {
@@ -116,7 +117,7 @@ export const Profile = () => {
     }
 
     useEffect(() => {
-        axios.get("http://localhost:4000/currentuser")
+        axios.get(SERVER_URL + "/currentuser")
             .then((result) => {
                 setUsername(result.data.username)
                 setSessionID(result.data._id)
@@ -126,7 +127,7 @@ export const Profile = () => {
 
         getAllUsers()
 
-        axios.get("http://localhost:4000/currentRequests")
+        axios.get(SERVER_URL + "/currentRequests")
             .then((result) => {
                 let users = {}
                 for (let i = 0; i < result.data.length; i++) {
@@ -136,7 +137,7 @@ export const Profile = () => {
             })
             .catch(err => console.log(err))
 
-        axios.get("http://localhost:4000/allfriends")
+        axios.get(SERVER_URL + "/allfriends")
             .then((result) => {
                 let users = {}
                 for (let i = 0; i < result.data.length; i++) {

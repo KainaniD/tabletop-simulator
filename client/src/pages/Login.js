@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from "react-router-dom";
 import axios from '../axiosConfig'
+import { SERVER_URL, CLIENT_URL } from "../urls";
 
 export function Login() {
     const [username, setUsername] = useState()
@@ -8,11 +9,11 @@ export function Login() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        axios.get("http://localhost:4000/login", { params: { username, password } })
+        axios.get(SERVER_URL + "/login", { params: { username, password } })
             .then(result => {
                 if (result.data.success === true) {
                     //alert(result.data.message)
-                    window.location.replace("http://localhost:3000/profile");
+                    window.location.replace(CLIENT_URL + "/profile");
                 } else if (result.data.success === false) {
                     //alert(result.data.message)
                 }

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react'
 import axios from '../axiosConfig'
 import io from "socket.io-client";
 import { Link } from "react-router-dom";
+import { SERVER_URL } from "../urls";
 
 
-let socket = io('http://localhost:4000');
+let socket = io(SERVER_URL);
 // var clientID;
 
 // socket.on('connect', () => {
@@ -18,7 +19,7 @@ export const GameRooms = () => {
     const [backendData, setBackendData] = useState({})
 
     function searchRooms(searchQuery) {
-        axios.get("http://localhost:4000/queryrooms", { params: { searchQuery } })
+        axios.get(SERVER_URL + "/queryrooms", { params: { searchQuery } })
             .then((result) => {
                 let rooms = {}
                 for (let i = 0; i < result.data.length; i++) {
@@ -30,7 +31,7 @@ export const GameRooms = () => {
     }
 
     function getAllRooms() {
-        axios.get("http://localhost:4000/allrooms" )
+        axios.get(SERVER_URL + "/allrooms" )
             .then((result) => {
                 let rooms = {}
                 for (let i = 0; i < result.data.length; i++) {
@@ -51,7 +52,7 @@ export const GameRooms = () => {
 
     useEffect(() => {
         getAllRooms()
-        axios.get("http://localhost:4000/currentuser")
+        axios.get(SERVER_URL + "/currentuser")
             .then((result) => {
                 setUsername(result.data.username)
                 setSessionID(result.data._id)

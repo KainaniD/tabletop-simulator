@@ -1,6 +1,9 @@
 const express = require('express');
+require('dotenv').config()
+
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
+const MONGO_URL = process.env.MONGO_URL || 'mongodb+srv://keelanhu01:yjX6GhQTrZhNDkJs@tabletop-simulator.g6o2qfy.mongodb.net/?retryWrites=true&w=majority&appName=Tabletop-Simulator'
 const mongoose = require('mongoose')
 const passport = require('passport')
 const session = require('express-session')
@@ -20,12 +23,12 @@ const cors = require('cors');
 const friendsModel = require('./model/Friend');
 
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: process.env.ORIGIN,
     credentials: true,
     optionSuccessStatus: 200
 }
 
-mongoose.connect('mongodb+srv://keelanhu01:yjX6GhQTrZhNDkJs@tabletop-simulator.g6o2qfy.mongodb.net/?retryWrites=true&w=majority&appName=Tabletop-Simulator')
+mongoose.connect(MONGO_URL)
 app.use(express.json())
 app.use(cors(corsOptions));
 
@@ -399,7 +402,8 @@ const server = http.createServer(app);
 
 
 const io = new Server(server, {
-    cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
+    cors: {     origin: process.env.ORIGIN,
+    methods: ["GET", "POST"] },
 });
 
 const roomIO = io.of("/rooms")

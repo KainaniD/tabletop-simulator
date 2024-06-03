@@ -5,8 +5,9 @@ import { PhaserGame } from '../game/PhaserGame';
 import { useParams, redirect } from "react-router-dom"
 import axios from '../axiosConfig'
 import io from "socket.io-client";
+import { SERVER_URL, CLIENT_URL } from "../urls";
 
-const socket = io("http://localhost:4000/rooms")
+const socket = io(SERVER_URL)
 
 
 export const Room = () => {
@@ -17,11 +18,8 @@ export const Room = () => {
     const { name } = useParams()
     const condition = "delete"
 
-    // let socket = io.connect('http://localhost:4000');
-    // var clientID;
-
     useEffect(() => {
-        axios.get("http://localhost:4000/currentuser")
+        axios.get(SERVER_URL + "/currentuser")
             .then((result) => {
                 setUsername(result.data.username)
             })
@@ -44,12 +42,12 @@ export const Room = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        axios.get("http://localhost:4000/deleteroom", { params: { name, condition } })
+        axios.get(SERVER_URL + "/deleteroom", { params: { name, condition } })
             .then(result => {
                 if (result.data.success === true) {
                     //Successfully deleted room
                     //alert(result.data.message)
-                    window.location.replace("http://localhost:3000/rooms");
+                    window.location.replace(CLIENT_URL + "/rooms");
                 } else if (result.data.success === false) {
                     //Failed to delete room
                     //alert(result.data.message)
