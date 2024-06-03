@@ -12,7 +12,7 @@ class Game extends Phaser.Scene {
         this.deck = new Deck(this);
     }
     card_names = [];
-    
+    socket_id;
     
     
     preload() {
@@ -28,11 +28,11 @@ class Game extends Phaser.Scene {
 
 
     create() {
-        this.socket = io('http://localhost:4000')
-        this.socket.on('connect', () => console.log('Connected!'))
-        this.socket.on("cardMoved", (data) => {
-            data[3].setX(data[0]).setY(data[1])
-        });
+        // this.socket = io('http://localhost:4000')
+        // this.socket.on('connect', () => console.log('Connected!'))
+        // this.socket.on("cardMoved", (data) => {
+        //     data[3].setX(data[0]).setY(data[1])
+        // });
 
         this.input.mouse.disableContextMenu()
         var playerHand_list = [];
@@ -48,6 +48,11 @@ class Game extends Phaser.Scene {
 
     loadPlayerHands() {
         this.playerHand1 = new PlayerHand(this, 200, 800, 'hello', 400, 200)
+    }
+
+    grabID (id) {
+        this.socket_id = id;
+        console.log(id)
     }
 
     update() {
