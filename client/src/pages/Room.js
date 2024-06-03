@@ -21,9 +21,8 @@ export const Room = () => {
 
     socket.on('connect', () => {
         let clientID = socket.id;
-        console.log(clientID)
     });
-    console.log(socket.id)
+
     socket.emit("joinRoom", name);
     const handleSubmit = (e) => {
         e.preventDefault()        

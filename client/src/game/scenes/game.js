@@ -54,13 +54,17 @@ class Game extends Phaser.Scene {
         this.socket = socket;
         console.log(socket)
         console.log(this.socket)
-        this.socket.emit("gameClientConnected", "hello there")
-
+        this.socket.emit("gameClientConnected", `game client connected at: ${this.socket.id}`)
         this.startSocketEvents()
     }
 
     startSocketEvents(){
-        
+        this.socket.on("sendSync", () => {
+            console.log(this.scene.data.getAll())
+        })
+        this.socket.on("getSync", () => {
+
+        })
     }
 
     update() {
