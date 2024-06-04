@@ -52,15 +52,18 @@ class Card extends Phaser.GameObjects.Image {
                     this.playerHand=target;
                 }
                 target.handRender()
+
+                
+
             }
         )
 
-        this.on('dragstart',
-            function(pointer, dragX, dragY) {
-                if(pointer.duration < 150 && this.playerHand ){
-                    this.playerHand.removeCard(this)
-                    this.playerHand=null;
-                }
+        this.on('dragleave',
+            function(pointer, target) {
+                target.removeCard(this);
+                this.playerHand=null;
+
+                
             }
         
         )
