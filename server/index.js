@@ -1,5 +1,7 @@
 const express = require('express');
-require('dotenv').config()
+
+//get rid of path in production
+require('dotenv').config({path:".env.dev"})
 
 const app = express();
 const PORT = process.env.PORT || 4000;
