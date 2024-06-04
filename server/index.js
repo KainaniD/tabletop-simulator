@@ -32,21 +32,23 @@ mongoose.connect(MONGO_URL)
 app.use(express.json())
 app.use(cors(corsOptions));
 
+app.enable('trust proxy', 1)
+
 
 app.use(session({
     secret: 'this is a really good secret',
     resave: false,
     saveUninitialized: true,
+    proxy: true,
     cookie: {
         secure: true,
-        sameSite: 'lax',
+        sameSite: 'none',
         maxAge: 1000 * 60 * 60 * 24
     }
 }))
 
 app.use(passport.session());
 
-app.enable('trust proxy', 1)
 
 app.post("/register", (req, res) => {
     const {username, email, password} = req.body;
