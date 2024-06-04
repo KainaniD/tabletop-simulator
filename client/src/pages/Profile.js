@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import axios from '../axiosConfig'
 import io from "socket.io-client";
 import pfp from '../assets/pfp.png'
@@ -23,11 +23,16 @@ function logout() {
 
 export const Profile = () => {
 
+    
+    
+    const fileInput = useRef(null);
+
     const [sessionID, setSessionID] = useState()
     const [username, setUsername] = useState()
     const [allUsers, setAllUsers] = useState({})
     const [currentRequests, setCurrentRequests] = useState({})
     const [allFriends, setAllFriends] = useState({})
+    const [photo, setPhoto] = useState();
 
 
     function sendFriendRequest(targetuser) {
@@ -116,14 +121,24 @@ export const Profile = () => {
 
     }
 
-    useEffect( () => {
-        
-            axios.get("http://localhost:4000/currentuser")
+    useEffect(() => {
+        axios.get(SERVER_URL + "/currentuser")
             .then(async (result) => {
                 setUsername(result.data.username)
                 setSessionID(result.data._id)
+                console.log("result.data.username")
+                const test = await axios.get("/profile",{params: {user: result.data.username}}).then((result) => {
+                    const file = result.data.imageUrl
+                    setPhoto(file)
+                    console.log(result)
+                })
+                console.log(test)
+                
+                
             })
             .catch(err => console.log(err))
+
+
 
 
         getAllUsers()
@@ -149,6 +164,27 @@ export const Profile = () => {
             .catch(err => console.log(err))
     }, [])
 
+    const uploadPfp = event => {
+        //console.log("amogus")
+        fileInput.current.click();
+    }
+    
+    const handleChange = async event => {
+        console.log("hello");
+        const fileUploaded = event.target.files[0];
+
+
+    const formData = new FormData();
+    formData.append("image", fileUploaded)
+    formData.append("username", username)
+    formData.append("caption", "amogus")
+    setPhoto(URL.createObjectURL(fileUploaded));
+    await axios.post("/profile", formData, { headers: {'Content-Type': 'multipart/form-data'}})
+        //console.log(URL.createObjectURL(fileUploaded));
+        
+        
+    };
+
     return (
         <div className="flex pb-5 min-h-[calc(100vh-198px)] gap-5">
             <div className="flex flex-col w-1/3 bg-gray-100 p-5 rounded-lg shadow-md items-center">
@@ -156,13 +192,21 @@ export const Profile = () => {
                 {/* <p>Socket Session ID: {clientID}</p>
                 <p>Express Session ID: {sessionID}</p> */}
                 <div className="py-5 px-5">
-                    <img src={pfp} alt="" width="200" height="auto" className="x border-gray-300 rounded-lg border-4" />
+                    <img src={photo} alt="" className="border-gray-300 rounded-lg h-52 w-52 object-cover border-4" />
                 </div>
-                <button type="submit"
+                <button type="file" id = "get_file"
                     className="py-2 px-4 rounded-lg bg-blue-400 motion-safe:hover:bg-blue-500"
+                    onClick={uploadPfp}
                 >
+                       
                     Change/Add Profile Picture
                 </button>
+                <input 
+                type="file"
+                accept="image/*"
+                ref={fileInput} 
+                onChange={handleChange} 
+                style={{display:'none'}}/>
                 <div className='py-2' />
                 <button onClick={logout} className="py-2 px-10 my-1 rounded-lg bg-blue-400 motion-safe:hover:bg-blue-500">
                     Logout
