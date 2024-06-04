@@ -17,7 +17,6 @@ export const Room = () => {
     const [messages, setMessages] = useState([]);
     const { name } = useParams()
     const condition = "delete"
-
     useEffect(() => {
         axios.get(SERVER_URL + "/currentuser")
             .then((result) => {
@@ -38,6 +37,13 @@ export const Room = () => {
             });
         });
         socket.emit("joinRoom", name);
+        
+
+
+        return () => {
+            socket.emit("leaveRoom", name)
+        }
+
     }, []);
 
     const handleSubmit = (e) => {
