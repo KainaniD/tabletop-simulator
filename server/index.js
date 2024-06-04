@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 4000;
 const MONGO_URL = process.env.MONGO_URL || 'mongodb+srv://keelanhu01:yjX6GhQTrZhNDkJs@tabletop-simulator.g6o2qfy.mongodb.net/?retryWrites=true&w=majority&appName=Tabletop-Simulator'
 const mongoose = require('mongoose')
 const passport = require('passport')
-const session = require('express-session')
+const session = require('cookie-session')
 
 const userModel = require('./model/User')
 passport.use(userModel.createStrategy());
