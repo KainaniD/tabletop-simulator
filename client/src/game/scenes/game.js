@@ -13,6 +13,7 @@ class Game extends Phaser.Scene {
     }
     card_names = [];
     socket;
+    player_dictionary = {}
     
     
     preload() {
@@ -41,13 +42,16 @@ class Game extends Phaser.Scene {
         table_outline.lineStyle(4, 0x000000)
         table_outline.strokeRect(0,0, this.scale.width, this.scale.height)
         this.deck.loadCards();
+        this.deck.shuffleDeck()
         this.loadPlayerHands()
     }
     
-
+    addPlayerHands(name) {
+        this.player_dictionary[name] = new PlayerHand(this, 200, 800, name, 400, 200)
+    }
 
     loadPlayerHands() {
-        this.playerHand1 = new PlayerHand(this, 200, 800, 'hello', 400, 200)
+        this.addPlayerHands("hello")
     }
 
     setSocket(socket) {
@@ -70,6 +74,9 @@ class Game extends Phaser.Scene {
         })
         this.socket.on("cardMoved", (card_name, x, y,facedown) => {
             this.deck.card_objects[card_name].make_changes(x,y,facedown)
+        })
+        this.socket.on("cardAddedToHand", (name, cardFront) => {
+            this.player_dictionary[name].updateHand(cardFront)
         })
     }
 

@@ -443,6 +443,11 @@ roomIO.on("connection", (socket) => {
         socket.on("cardMoved", (card_name, x, y, facedown) => {
             socket.to(room).emit("cardMoved", card_name, x, y, facedown)
         })
+        socket.on("cardAddedToHand", (name, cardFront) => {
+            console.log(cardFront)
+            socket.to(room).emit("cardAddedToHand", name, cardFront)
+        })
+// add here
 
 
     });
@@ -471,6 +476,7 @@ roomIO.on("connection", (socket) => {
         console.log("sync data received")
         roomIO.to(id).emit("getSync", game_data)
     })
+
 
     // socket.on("cardMoved", (card_name, x, y) => {
     //     socket.to(room).emit("cardMoved", card_name, x, y)

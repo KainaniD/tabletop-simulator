@@ -3,6 +3,22 @@ export default class Bootloader extends Phaser.Scene {
     constructor() {
         super({key: "bootloader"});
     }
+    shuffle(array) {
+        console.log("Shuffling")
+        let currentIndex = array.length;
+      
+        // While there remain elements to shuffle...
+        while (currentIndex != 0) {
+      
+          // Pick a remaining element...
+          let randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex--;
+      
+          // And swap it with the current element.
+          [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+        }
+      }
 
     
     
@@ -16,9 +32,10 @@ export default class Bootloader extends Phaser.Scene {
                 card_names.push('card'+suite+value);
             }
         }
+        shuffle(card_names);
         
         for (var card_name of card_names) {
-            //console.log(card_name)
+            console.log(card_name)
             this.load.image(card_name, '/assets/Cards/' + card_name+'.png') 
             
         } 
