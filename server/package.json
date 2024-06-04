@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.588.0",
+    "@aws-sdk/s3-request-presigner": "^3.588.0",
     "axios": "^1.7.2",
     "cookie-session": "^2.1.0",
     "cors": "^2.8.5",
