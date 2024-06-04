@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 4000;
 const MONGO_URL = process.env.MONGO_URL || 'mongodb+srv://keelanhu01:yjX6GhQTrZhNDkJs@tabletop-simulator.g6o2qfy.mongodb.net/?retryWrites=true&w=majority&appName=Tabletop-Simulator'
 const mongoose = require('mongoose')
 const passport = require('passport')
-const session = require('session')
+const session = require('express-session')
 
 const userModel = require('./model/User')
 passport.use(userModel.createStrategy());
@@ -32,8 +32,6 @@ mongoose.connect(MONGO_URL)
 app.use(express.json())
 app.use(cors(corsOptions));
 
-app.enable('trust proxy', 1)
-
 
 app.use(session({
     secret: 'this is a really good secret',
@@ -49,6 +47,7 @@ app.use(session({
 
 app.use(passport.session());
 
+app.enable('trust proxy', 1)
 
 app.post("/register", (req, res) => {
     const {username, email, password} = req.body;
