@@ -7,6 +7,12 @@ const MONGO_URL = process.env.MONGO_URL || 'mongodb+srv://keelanhu01:yjX6GhQTrZh
 const mongoose = require('mongoose')
 const passport = require('passport')
 const session = require('express-session')
+const crypto = require('crypto')
+const multer = require('multer')
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner")
+const {S3Client, PutObjectCommand, GetObjectCommand} = require('@aws-sdk/client-s3')
+const prisma = require('prisma')
+const sharp = require('sharp')
 
 const userModel = require('./model/User')
 passport.use(userModel.createStrategy());
@@ -31,6 +37,23 @@ const corsOptions = {
 mongoose.connect(MONGO_URL)
 app.use(express.json())
 app.use(cors(corsOptions));
+
+const storage = multer.memoryStorage()
+const upload = multer({storage: storage})
+
+const AWSkey = 'AKIATCKANBNQ23SPQKP5'
+const secret = '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'
+const bucketName = '35l-project';
+const bucketRegion = 'us-east-2';
+
+const s3 = new S3Client({
+    credentials: {
+        accessKeyId: AWSkey,
+        secretAccessKey: secret,
+    },
+    region: bucketRegion
+});
+
 
 
 app.use(session({
@@ -365,6 +388,74 @@ app.get("/acceptfriendrequest", (req, res) => {
         })
         .catch(err => res.json(err))
 })
+const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex')
+
+app.post('/profile', upload.single('image'), async (req, res) => {
+    
+    const file = req.file 
+    const user = req.body.username
+    const caption = req.body.caption
+  
+    const fileBuffer = await sharp(file.buffer)
+      .resize({ height: 1920, width: 1080, fit: "contain" })
+      .toBuffer()
+  
+    // Configure the upload details to send to S3
+    const fileName = generateFileName()
+    const uploadParams = {
+      Bucket: bucketName,
+      Body: fileBuffer,
+      Key: fileName,
+      ContentType: file.mimetype
+    }
+    const filter = {username: user}
+    const update = {pfp: fileName}
+    const amog = await userModel.findOneAndUpdate(filter, update)
+    t = await userModel.findOne({username: req.username});
+
+  
+    // Send the upload to S3
+    await s3.send(new PutObjectCommand(uploadParams));
+  
+    // Save the image name to the database. Any other req.body data can be saved here too but we don't need any other image data.
+  
+    res.send("amogus")
+  })
+  app.get("/profile", async (req, res) => {
+    /*
+    const posts = await prisma.posts.findMany({ orderBy: [{ created: 'desc' }] }) // Get all posts from the database
+  
+    for (let post of posts) { // For each post, generate a signed URL and save it to the post object
+      post.imageUrl = await getSignedUrl(
+        s3Client,
+        new GetObjectCommand({
+          Bucket: bucketName,
+          Key: imageName
+        }),
+        { expiresIn: 60 }// 60 seconds
+      )
+    }
+    */
+   const user = req.query.user
+   //console.log(user);
+   const prof = await userModel.findOne({username: user}).exec()
+
+   const post = {};
+
+   //console.log(prof);
+   //console.log(prof.pfp);
+
+    post.imageUrl = await getSignedUrl(
+        s3,
+        new GetObjectCommand({
+          Bucket: bucketName,
+          Key: prof.pfp
+        }),
+        { expiresIn: 360 }// 60 seconds
+      )
+    //console.log(post.imageUrl)
+    res.send(post)
+  })
 
 app.get("/removefriend", async (req, res) => {
     try {
@@ -398,6 +489,8 @@ app.get("/removefriend", async (req, res) => {
         res.status(500).json({ success: false, message: "An error occurred while denying friend request" });
     }
 });
+
+
 
 
 const server = http.createServer(app);
