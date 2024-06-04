@@ -14,8 +14,6 @@ let socket = io(SERVER_URL);
 // });
 
 export const GameRooms = () => {
-    const [sessionID, setSessionID] = useState()
-    const [username, setUsername] = useState()
     const [backendData, setBackendData] = useState({})
 
     function searchRooms(searchQuery) {
@@ -52,13 +50,7 @@ export const GameRooms = () => {
 
     useEffect(() => {
         getAllRooms()
-        axios.get(SERVER_URL + "/currentuser")
-            .then((result) => {
-                setUsername(result.data.username)
-                setSessionID(result.data._id)
-            })
-            .catch(err => console.log(err))
-    }, [])
+    })
 
     return (
 

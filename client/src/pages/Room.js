@@ -7,7 +7,7 @@ import axios from '../axiosConfig'
 import io from "socket.io-client";
 import { SERVER_URL, CLIENT_URL } from "../urls";
 
-const socket = io(SERVER_URL)
+const socket = io(SERVER_URL + "/rooms")
 
 
 export const Room = () => {

@@ -405,8 +405,10 @@ const server = http.createServer(app);
 
 
 const io = new Server(server, {
-    cors: {     origin: process.env.ORIGIN,
-    methods: ["GET", "POST"] },
+    cors: {     
+        origin: process.env.ORIGIN,
+        methods: ["GET", "POST"] 
+    },
 });
 
 const roomIO = io.of("/rooms")
