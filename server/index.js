@@ -66,8 +66,8 @@ app.use(session({
     saveUninitialized: true,
     proxy: true,
     cookie: {
-        secure: false, //set to false when dev
-        sameSite: 'lax', //none when production, 'lax when dev
+        secure: true, //set to false when dev
+        sameSite: 'none', //none when production, 'lax when dev
         maxAge: 1000 * 60 * 60 * 24
     }
 }))

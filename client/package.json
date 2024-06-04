@@ -2,16 +2,13 @@
   "name": "client",
   "version": "0.1.0",
   "options": {
-    "proxy": ["http://localhost:4000", "https://tabletop-simulator-server.onrender.com"],
+    "proxy": ["https://tabletop-simulator-server.onrender.com"],
     "allowedHosts": [
-      "localhost",
-      ".localhost",
       "tabletop-simulator-server.onrender.com",
        "tabletop-simulator-server.onrender"
     ]
   },
   "private": true,
-  "homepage": "https://tabletop-simulator.netlify.app/login",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
