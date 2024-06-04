@@ -116,9 +116,10 @@ export const Profile = () => {
 
     }
 
-    useEffect(() => {
-        axios.get(SERVER_URL + "/currentuser")
-            .then((result) => {
+    useEffect( () => {
+        
+            axios.get("http://localhost:4000/currentuser")
+            .then(async (result) => {
                 setUsername(result.data.username)
                 setSessionID(result.data._id)
             })

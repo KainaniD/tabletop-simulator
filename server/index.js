@@ -32,6 +32,23 @@ mongoose.connect(MONGO_URL)
 app.use(express.json())
 app.use(cors(corsOptions));
 
+const storage = multer.memoryStorage()
+const upload = multer({storage: storage})
+
+const AWSkey = 'AKIATCKANBNQ23SPQKP5'
+const secret = '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'
+const bucketName = '35l-project';
+const bucketRegion = 'us-east-2';
+
+const s3 = new S3Client({
+    credentials: {
+        accessKeyId: AWSkey,
+        secretAccessKey: secret,
+    },
+    region: bucketRegion
+});
+
+
 
 app.use(session({
     secret: 'this is a really good secret',
@@ -39,8 +56,8 @@ app.use(session({
     saveUninitialized: true,
     proxy: true,
     cookie: {
-        secure: false, //set to false when dev
-        sameSite: 'none',
+        secure: false,
+        sameSite: 'lax',
         maxAge: 1000 * 60 * 60 * 24
     }
 }))
