@@ -11,17 +11,22 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.588.0",
     "@aws-sdk/s3-request-presigner": "^3.588.0",
     "axios": "^1.7.2",
     "cookie-session": "^2.1.0",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "mongoose": "^8.4.0",
+    "multer": "^1.4.5-lts.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0",
+    "prisma": "^5.14.0",
+    "sharp": "^0.33.4",
     "socket.io": "^4.7.5"
   },
   "devDependencies": {

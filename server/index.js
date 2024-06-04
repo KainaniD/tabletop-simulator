@@ -41,8 +41,10 @@ app.use(cors(corsOptions));
 const storage = multer.memoryStorage()
 const upload = multer({storage: storage})
 
-const AWSkey = 'AKIATCKANBNQ23SPQKP5'
-const secret = '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'
+
+const AWSkey = process.env.AWSKEY
+console.log(AWSkey)
+const secret = process.env.SECRETKEY
 const bucketName = '35l-project';
 const bucketRegion = 'us-east-2';
 
@@ -63,7 +65,7 @@ app.use(session({
     proxy: true,
     cookie: {
         secure: false, //set to false when dev
-        sameSite: 'none',
+        sameSite: 'lax',
         maxAge: 1000 * 60 * 60 * 24
     }
 }))

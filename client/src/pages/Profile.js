@@ -123,7 +123,7 @@ export const Profile = () => {
 
     useEffect(() => {
         axios.get(SERVER_URL + "/currentuser")
-            .then((result) => {
+            .then(async (result) => {
                 setUsername(result.data.username)
                 setSessionID(result.data._id)
                 console.log("result.data.username")
