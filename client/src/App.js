@@ -3,6 +3,8 @@ import { MyRoutes } from './MyRoutes';
 import { Link } from 'react-router-dom';
 import logo from './assets/logo.png'
 import axios from './axiosConfig'
+import { SERVER_URL } from './urls';
+
 
 function App() {
 
@@ -10,7 +12,7 @@ function App() {
 
 
   useEffect(() => {
-    axios.get("http://localhost:4000/currentuser")
+    axios.get(SERVER_URL + "/currentuser")
     .then((result) => {
         if (result.data) {
           setIsLoggedIn(true)

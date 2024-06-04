@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import PlayerHand from './playerHand';
+// import PlayerHand from './playerHand';
 class Card extends Phaser.GameObjects.Image {
     constructor(scene, x, y, cardFront, cardBack, cardSuite, cardValue) {
         super(scene, x, y, cardFront)
@@ -27,7 +27,7 @@ class Card extends Phaser.GameObjects.Image {
                 this.scene.children.bringToTop(this);
                 this.x = dragX;
                 this.y = dragY;    
-                //this.scene.socket.emit("cardMoved", [x, y, this])
+                this.send_changes()
             }
         );
         this.on('pointerdown', 
@@ -35,14 +35,8 @@ class Card extends Phaser.GameObjects.Image {
                 if (! pointer.rightButtonDown()) {
                     return;
                 }
-                if (this.facedown) {
-                    this.setTexture(this.cardFront)
-                    this.facedown = false
-                }
-                else {
-                    this.setTexture(this.cardBack)
-                    this.facedown = true
-                }
+                this.flip_card();
+                this.send_changes();
             }
         );
         this.on('pointerdown', 
@@ -64,21 +58,46 @@ class Card extends Phaser.GameObjects.Image {
             }
         )
 
-        this.on('dragleave',
-            function(pointer, target) {
-                target.removeCard(this);
-                this.playerHand=null;
-
-                
+        this.on('dragstart',
+            function(pointer, dragX, dragY) {
+                if(this.playerHand) {
+                    this.playerHand.removeCard(this)
+                    this.playerHand = null;
+                }
             }
         
         )
-
-        
         
     }
+    //may cause performance issues, if so do it a different way
 
+    flip_card() {
+        if (this.facedown) {
+            this.setTexture(this.cardFront)
+            this.facedown = false
+        }
+        else {
+            this.setTexture(this.cardBack)
+            this.facedown = true
+        }
+    }
 
+    send_changes() {
+        this.scene.socket.emit("cardMoved", this.cardFront, this.x, this.y, this.facedown)
+    }
+
+    make_changes (x, y, facedown) {
+        this.setX(x).setY(y);
+        if (this.facedown !== facedown) {
+            this.flip_card()
+        }
+    }
+
+    update () {
+  
+    }
+
+    
 
 }
 

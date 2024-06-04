@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import Card from './card';
+// import Card from './card';
 class PlayerHand extends Phaser.GameObjects.Zone{
     cards_in_hand = [];
     constructor(scene, x, y, name, width, height){
@@ -10,7 +10,6 @@ class PlayerHand extends Phaser.GameObjects.Zone{
         
     }
 
-    
 
     init() {
         this.scene.add.existing(this);
@@ -22,10 +21,19 @@ class PlayerHand extends Phaser.GameObjects.Zone{
         this.setRectangleDropZone(this.width, this.height)
     }
 
+    updateHand(cardFront) {
+        console.log(cardFront)
+        let card_object = this.scene.deck.card_objects[cardFront]
+        this.cards_in_hand.push(card_object);
+        this.handRender()
+    }
+
     addCard(card_object){
         this.cards_in_hand.push(card_object);
         this.handRender()
-        
+        //emit a server event
+        console.log(card_object.cardFront)
+        this.scene.socket.emit("cardAddedToHand", this.name, card_object.cardFront)
     }
     removeCard(card_object) {
         let removal_index = this.cards_in_hand.indexOf(card_object);

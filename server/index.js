@@ -1,6 +1,9 @@
 const express = require('express');
+require('dotenv').config()
+
 const app = express();
-const PORT = 4000;
+const PORT = process.env.PORT || 4000;
+const MONGO_URL = process.env.MONGO_URL || 'mongodb+srv://keelanhu01:yjX6GhQTrZhNDkJs@tabletop-simulator.g6o2qfy.mongodb.net/?retryWrites=true&w=majority&appName=Tabletop-Simulator'
 const mongoose = require('mongoose')
 const passport = require('passport')
 const session = require('express-session')
@@ -20,12 +23,12 @@ const cors = require('cors');
 const friendsModel = require('./model/Friend');
 
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: process.env.ORIGIN,
     credentials: true,
     optionSuccessStatus: 200
 }
 
-mongoose.connect('mongodb+srv://keelanhu01:yjX6GhQTrZhNDkJs@tabletop-simulator.g6o2qfy.mongodb.net/?retryWrites=true&w=majority&appName=Tabletop-Simulator')
+mongoose.connect(MONGO_URL)
 app.use(express.json())
 app.use(cors(corsOptions));
 
@@ -34,15 +37,18 @@ app.use(session({
     secret: 'this is a really good secret',
     resave: false,
     saveUninitialized: true,
+    proxy: true,
     cookie: {
-        secure: false,
-        sameSite: 'lax',
+        secure: false, //set to false when dev
+        sameSite: 'none',
         maxAge: 1000 * 60 * 60 * 24
     }
 }))
 
 app.use(passport.session());
-  
+
+app.enable('trust proxy', 1)
+
 app.post("/register", (req, res) => {
     const {username, email, password} = req.body;
     
@@ -399,11 +405,14 @@ const server = http.createServer(app);
 
 
 const io = new Server(server, {
-    cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
+    cors: {     
+        origin: process.env.ORIGIN,
+        methods: ["GET", "POST"] 
+    },
 });
 
 const roomIO = io.of("/rooms")
-//var players = []
+let rooms_with_players = {}
 
 
 roomIO.on("connection", (socket) => {
@@ -423,10 +432,77 @@ roomIO.on("connection", (socket) => {
         const clients = io.sockets.adapter.rooms.get(room);
         const numClients = clients ? clients.size : 0;
         console.log('Clients: ' + numClients)
+        console.log(rooms_with_players)
+        if ((! rooms_with_players[room]) || (rooms_with_players[room].length === 0)) {
+            rooms_with_players[room] = [socket]
+        }
+        else{
+            rooms_with_players[room].push(socket)
+        }
+
+        socket.on("cardMoved", (card_name, x, y, facedown) => {
+            socket.to(room).emit("cardMoved", card_name, x, y, facedown)
+        })
+        socket.on("cardAddedToHand", (name, cardFront) => {
+            console.log(cardFront)
+            socket.to(room).emit("cardAddedToHand", name, cardFront)
+        })
+// add here
+
+
     });
+    socket.on("disconnect", () => {
+        let _temp = findSocket(socket);
+        if (_temp) {
+            let _room = _temp[0];
+            let _socket_index = _temp[1]
+            rooms_with_players[_room].splice(_socket_index,1)
+        }
+        
+    })
+    socket.on("gameClientConnected", (message) => {
+        console.log(message);
+        let cur_room = findRoom(socket);
+        console.log(cur_room)
+        if (rooms_with_players[cur_room].length > 1){ //if there is more than one player, copy over the data
+            console.log("here before the disaster")
+            rooms_with_players[cur_room][0].emit("sendSync", socket.id)
+            console.log("game data request sent")
+        } //i hope sockets only have one room
+        //socket.to(room).emit("")
+        
+    })
+    socket.on("sendSync", (id, game_data) => {
+        console.log("sync data received")
+        roomIO.to(id).emit("getSync", game_data)
+    })
+
+
+    // socket.on("cardMoved", (card_name, x, y) => {
+    //     socket.to(room).emit("cardMoved", card_name, x, y)
+    // }) //we will trying moving this inside joining room
 });
 
+function findRoom(socket) {
+    for (let item of socket.rooms) {
+        if (item !== socket.id) {
+            return item;
+        }   
+    }
+    throw new Error('Socket is not in a room!')
+}
 
+
+function findSocket(socket) {
+    for (let room in rooms_with_players) {
+        for (let i=0; i< rooms_with_players[room].length; i++){
+            if (socket === rooms_with_players[room][i]) {
+                return [room, i]
+            }    
+        }
+    }
+    return null;
+}
 
 
 

@@ -9,6 +9,8 @@ import { NewRoom } from './pages/NewRoom'
 import { Register } from './pages/Register'
 import { Login } from './pages/Login'
 import axios from './axiosConfig'
+import { SERVER_URL } from './urls';
+
 
 export const MyRoutes = () => {
 
@@ -16,7 +18,7 @@ export const MyRoutes = () => {
 
 
     useEffect(() => {
-      axios.get("http://localhost:4000/currentuser")
+      axios.get(SERVER_URL + "/currentuser")
       .then((result) => {
           if (result.data) {
             setIsLoggedIn(true)
