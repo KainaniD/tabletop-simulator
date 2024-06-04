@@ -47,12 +47,24 @@ class Deck {
                 xoffset += 20;
             }
         }
-
         //this.card = new Card(this, 200, 100, 'cardClubs4', 'card_back');
         //this.card1 = new Card(this, 100, 100, 'cardClubs3', 'card_back');
     }
 
-
+    shuffleDeck() {
+        console.log("Shuffling")
+        for(let cardName in this.card_objects) {
+            let random_suite_index = Math.floor(Math.random() * 4)
+            let random_suite = this.card_suites[random_suite_index]
+            let random_value_index = Math.floor(Math.random() * 13)
+            let random_value = this.card_values[random_value_index]
+            let otherCard = this.card_objects['card'+random_suite+random_value]
+            let tempX = otherCard.x
+            let tempY = otherCard.y
+            otherCard.setX(this.card_objects[cardName].x).setY(this.card_objects[cardName].y)
+            this.card_objects[cardName].setX(tempX).setY(tempY)
+        }
+    }
 
 }
 

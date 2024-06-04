@@ -67,8 +67,6 @@ class Card extends Phaser.GameObjects.Image {
             }
         
         )
-
-        
         
     }
     //may cause performance issues, if so do it a different way

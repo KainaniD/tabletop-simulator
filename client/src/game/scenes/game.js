@@ -42,6 +42,7 @@ class Game extends Phaser.Scene {
         table_outline.lineStyle(4, 0x000000)
         table_outline.strokeRect(0,0, this.scale.width, this.scale.height)
         this.deck.loadCards();
+        this.deck.shuffleDeck()
         this.loadPlayerHands()
     }
     
