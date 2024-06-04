@@ -16,6 +16,7 @@ export const GameRooms = () => {
     const [sessionID, setSessionID] = useState()
     const [username, setUsername] = useState()
     const [backendData, setBackendData] = useState({})
+    const [initialized, setInitialized] = useState(false)
 
     function searchRooms(searchQuery) {
         axios.get("http://localhost:4000/queryrooms", { params: { searchQuery } })
@@ -50,14 +51,11 @@ export const GameRooms = () => {
     }
 
     useEffect(() => {
-        getAllRooms()
-        axios.get("http://localhost:4000/currentuser")
-            .then((result) => {
-                setUsername(result.data.username)
-                setSessionID(result.data._id)
-            })
-            .catch(err => console.log(err))
-    }, [])
+        if (!initialized) {
+            setInitialized(true)
+            getAllRooms()
+        }
+    })
 
     return (
 
