@@ -45,7 +45,9 @@ app.use(session({
 }))
 
 app.use(passport.session());
-  
+
+app.enable('trust proxy', 1)
+
 app.post("/register", (req, res) => {
     const {username, email, password} = req.body;
     
