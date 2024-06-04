@@ -65,7 +65,7 @@ app.use(session({
     proxy: true,
     cookie: {
         secure: false, //set to false when dev
-        sameSite: 'lax',
+        sameSite: 'lax', //none when production, 'lax when dev
         maxAge: 1000 * 60 * 60 * 24
     }
 }))
@@ -512,7 +512,7 @@ let rooms_with_players = {}
 
 roomIO.on("connection", (socket) => {
     socket.on("rooms:connection", () => {})
-    console.log(`connected to room user = ${socket.id}`)
+    console.log(`connected to rooms page = ${socket.id}`)
     socket.on("sendMessage", (room, message) => {
         roomIO.to(room).emit("receiveMessage", message); // Broadcast the message to all clients in the room
         console.log(`User ${socket.id} broadcasting from room ${room}`);
@@ -520,53 +520,55 @@ roomIO.on("connection", (socket) => {
         console.log(message)
         console.log(room)
     });
+
     socket.on("joinRoom", (room) => {           //, callback) => {
         console.log(`User ${socket.id} joining room ${room}`);
         socket.join(room);
         //callback({ status: 'ok' });
         const clients = io.sockets.adapter.rooms.get(room);
         const numClients = clients ? clients.size : 0;
-        console.log('Clients: ' + numClients)
+
         console.log(rooms_with_players)
         if ((! rooms_with_players[room]) || (rooms_with_players[room].length === 0)) {
             rooms_with_players[room] = [socket]
         }
-        else{
+        else {
             rooms_with_players[room].push(socket)
+            console.log("Sync data request sent")
+
+            socket.on("gameClientConnected", (message) => {
+                console.log(message);
+                rooms_with_players[room][0].to(room).emit("sendSync", socket.id)
+            })
         }
 
         socket.on("cardMoved", (card_name, x, y, facedown) => {
             socket.to(room).emit("cardMoved", card_name, x, y, facedown)
         })
+
         socket.on("cardAddedToHand", (name, cardFront) => {
             console.log(cardFront)
             socket.to(room).emit("cardAddedToHand", name, cardFront)
         })
-// add here
+        
 
+        socket.on("leaveRoom", (room) => {
+            console.log(`left ${room}`)
+            socket.emit("destroyClient")
+            socket.leave(room);
+            socket.removeAllListeners("gameClientConnected")
+            socket.removeAllListeners("cardMoved")
+            socket.removeAllListeners("cardAddedToHand")
+            socket.removeAllListeners("sendSync")
+            let room_list = rooms_with_players[room];
+            room_list.splice(room_list.indexOf(socket), 1)
+        })
 
+        
     });
-    socket.on("disconnect", () => {
-        let _temp = findSocket(socket);
-        if (_temp) {
-            let _room = _temp[0];
-            let _socket_index = _temp[1]
-            rooms_with_players[_room].splice(_socket_index,1)
-        }
-        
-    })
-    socket.on("gameClientConnected", (message) => {
-        console.log(message);
-        let cur_room = findRoom(socket);
-        console.log(cur_room)
-        if (rooms_with_players[cur_room].length > 1){ //if there is more than one player, copy over the data
-            console.log("here before the disaster")
-            rooms_with_players[cur_room][0].emit("sendSync", socket.id)
-            console.log("game data request sent")
-        } //i hope sockets only have one room
-        //socket.to(room).emit("")
-        
-    })
+
+
+
     socket.on("sendSync", (id, game_data) => {
         console.log("sync data received")
         roomIO.to(id).emit("getSync", game_data)
@@ -600,24 +602,5 @@ function findSocket(socket) {
 }
 
 
-
-
-io.on("connection", (socket) => {
-    // console.log(`a user connected ${socket.id}`);
-    // players.push(socket.id);
-
-
-    // socket.on("send_message", (data) => {
-    //   socket.broadcast.emit("receive_message", data);
-    // });
-
-    // socket.on("cardMoved", (data) => {
-    //     socket.broadcast.emit("cardMoved", data)
-    // })
-
-    socket.on("disconnect", function () {
-        console.log(`A user disconnected:${socket.id}` )
-    });
-});
 
 server.listen(PORT, () => { console.log(`Server started on port ${PORT}`) })

@@ -71,12 +71,16 @@ class Game extends Phaser.Scene {
             console.log("client received sync data")
             console.log(game_data)
             this.setCardData(game_data)
+            console.log("game data set")
         })
         this.socket.on("cardMoved", (card_name, x, y,facedown) => {
             this.deck.card_objects[card_name].make_changes(x,y,facedown)
         })
         this.socket.on("cardAddedToHand", (name, cardFront) => {
             this.player_dictionary[name].updateHand(cardFront)
+        })
+        this.socket.on("destroyClient", () => {
+            this.game.destroy(true);
         })
     }
 
