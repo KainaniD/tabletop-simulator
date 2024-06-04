@@ -15,6 +15,7 @@ let socket = io(SERVER_URL);
 
 export const GameRooms = () => {
     const [backendData, setBackendData] = useState({})
+    const [initialized, setInitialized] = useState(false)
 
     function searchRooms(searchQuery) {
         axios.get(SERVER_URL + "/queryrooms", { params: { searchQuery } })
@@ -49,7 +50,10 @@ export const GameRooms = () => {
     }
 
     useEffect(() => {
-        getAllRooms()
+        if (!initialized) {
+            setInitialized(true)
+            getAllRooms()
+        }
     })
 
     return (
