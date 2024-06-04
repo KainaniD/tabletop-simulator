@@ -1,7 +1,11 @@
 const express = require('express');
 
-//get rid of path in production
 require('dotenv').config()
+
+const path = (process.env.MODE === "dev") ? ".env.dev" : ".env.production"
+
+require('dotenv').config({path:path})
+
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -66,8 +70,8 @@ app.use(session({
     saveUninitialized: true,
     proxy: true,
     cookie: {
-        secure: true, //set to false when dev
-        sameSite: 'none', //none when production, 'lax when dev
+        secure: (process.env.MODE === "dev") ? false : true, //set to false when dev
+        sameSite: (process.env.MODE === "dev") ? 'lax' : 'none', //none when production, 'lax when dev
         maxAge: 1000 * 60 * 60 * 24
     }
 }))

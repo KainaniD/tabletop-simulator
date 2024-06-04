@@ -2,10 +2,12 @@
   "name": "client",
   "version": "0.1.0",
   "options": {
-    "proxy": ["https://tabletop-simulator-server.onrender.com"],
+    "proxy": ["http://localhost:4000", "https://tabletop-simulator-server.onrender.com"],
     "allowedHosts": [
-      "tabletop-simulator-server.onrender.com",
-       "tabletop-simulator-server.onrender"
+    "localhost",
+    ".localhost",
+    "tabletop-simulator-server.onrender.com",
+    "tabletop-simulator-server.onrender"
     ]
   },
   "private": true,
