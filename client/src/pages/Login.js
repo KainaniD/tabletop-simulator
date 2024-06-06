@@ -15,7 +15,7 @@ export function Login() {
                     //alert(result.data.message)
                     window.location.replace(CLIENT_URL + "/profile");
                 } else if (result.data.success === false) {
-                    //alert(result.data.message)
+                    alert(result.data.message)
                 }
             })
             .catch(err => console.log(err))

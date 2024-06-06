@@ -24,13 +24,13 @@ export function Register() {
                     //alert(result.data.message)
                     window.location.replace(CLIENT_URL + "/profile");
                 } else if (result.data.success === false) {
-                    //alert(result.data.message)
+                    alert(result.data.message)
                 }
             })
             .catch(err => console.log(err))
           }, 1000)
           } else if (result.data.success === false) {
-            //alert(result.data.message)
+            alert(result.data.message)
           }
         })
         .catch(err => console.log(err))
@@ -76,7 +76,7 @@ export function Register() {
               />
             </div>
             <div className="flex space-x-2">
-            <label htmlFor="username" className="input-label w-20">Password</label>
+            <label htmlFor="username" className="input-label w-20">Confirm</label>
               <input
                 type="password"
                 placeholder="Confirm Password"
