@@ -85,6 +85,8 @@ app.post("/register", (req, res) => {
     const { username, email, password } = req.body;
 
     const checkValidPassword = (process.env.MODE === "dev") ? false : true
+    const checkValidEmail = (process.env.MODE === "dev") ? false : true
+
     if (checkValidPassword) {
         const containsLowercase = /[a-z]/
         const containsUppercase = /[A-Z]/
@@ -99,6 +101,13 @@ app.post("/register", (req, res) => {
             if (!password.match(allRegexChecks[i][0])) {
                 return res.json({ success: false, message: "your password needs a " + allRegexChecks[i][1] })
             }
+        }
+    }
+
+    if (checkValidEmail) {
+        const regexCheck = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        if (!email.match(regexCheck)){
+            return res.json({ success: false, message: "your email is invalid" })
         }
     }
 
