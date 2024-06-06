@@ -27,18 +27,28 @@ class Card extends Phaser.GameObjects.Image {
                 this.scene.children.bringToTop(this);
                 this.x = dragX;
                 this.y = dragY;    
-                this.send_changes()
+                this.send_changes(this.cardFront, this.x, this.y, this.facedown)
             }
         );
+        //flip card
         this.on('pointerdown', 
             function(pointer, gameObject) {
                 if (! pointer.rightButtonDown()) {
                     return;
                 }
-                this.flip_card();
-                this.send_changes();
+                
+
+                //only send changes if you are not flipping in your own hand
+                if (this.playerHand && (this.scene.socket.id === this.playerHand.name)) {
+                    console.log("flipped in own's hand")               
+                    this.flip_card();
+                    return;
+                }
+                this.flip_card(); //flip card, then send changes
+                this.send_changes(this.cardFront, this.x, this.y, this.facedown);
             }
         );
+        //bring card to top
         this.on('pointerdown', 
             function(pointer, gameObject) {
                 this.scene.children.bringToTop(this);
@@ -48,8 +58,12 @@ class Card extends Phaser.GameObjects.Image {
         this.on('drop', 
             function(pointer, target) {
                 if (this.playerHand === null || target.name !== this.playerHand.name) {
+                    if (this.facedown === false) {
+                        //automatically face down when adding to hand
+                        this.flip_card()
+                        this.send_changes(this.cardFront, this.x, this.y, this.facedown)
+                    }
                     target.addCard(this);
-                    
                     this.playerHand=target;
                     this.send_hand_changes(this.playerHand.name, false)
                 }
@@ -63,6 +77,10 @@ class Card extends Phaser.GameObjects.Image {
         this.on('dragstart',
             function(pointer, dragX, dragY) {
                 if(this.playerHand) {
+                    //automatically face down when removing from hand
+                    if (this.facedown === false) {
+                        this.flip_card()
+                    }
                     this.playerHand.removeCard(this)
                     this.send_hand_changes(this.playerHand.name, true)
                     this.playerHand = null;
@@ -73,7 +91,7 @@ class Card extends Phaser.GameObjects.Image {
         )
         
     }
-    //may cause performance issues, if so do it a different way
+
 
     flip_card() {
         if (this.facedown) {
@@ -86,8 +104,8 @@ class Card extends Phaser.GameObjects.Image {
         }
     }
 
-    send_changes() {
-        this.scene.socket.emit("cardMoved", this.cardFront, this.x, this.y, this.facedown)
+    send_changes(cardFront, x, y, facedown) {
+        this.scene.socket.emit("cardMoved", cardFront, x, y, facedown)
     }
 
     make_changes (x, y, facedown) {
