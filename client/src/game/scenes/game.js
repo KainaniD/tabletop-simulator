@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import Card from "../gameobjects/card"
-//import Bootloader from "./bootloader";
+import Bootloader from "./bootloader";
 import PlayerHand from "../gameobjects/playerHand";
 import Deck from "../gameobjects/deck.js"
 import io from 'socket.io-client'
@@ -22,10 +22,17 @@ class Game extends Phaser.Scene {
         console.log("deck loaded")
         this.deck.shuffleDeck()
         this.loadPlayerHands()
+        
+    
         this.load.on("complete", () => {
-            this.socket.emit("gameClientConnected", `game client connected at: ${this.socket.id}`)
-            this.startSocketEvents()
+
+            
+            
+            // this.socket.emit("gameClientConnected", `game client connected at: ${this.socket.id}`);
+            // this.startSocketEvents();
         })
+        
+        
 
         /* in case preload doesn't work the way i think
         this.events.on('ready', () => {
@@ -49,18 +56,31 @@ class Game extends Phaser.Scene {
 
 
     create() {
-        // this.socket = io('http://localhost:4000')
-        // this.socket.on('connect', () => console.log('Connected!'))
-        // this.socket.on("cardMoved", (data) => {
-        //     data[3].setX(data[0]).setY(data[1])
-        // });
-        
+      
+
         this.input.mouse.disableContextMenu()
         //card_objects_group = newGroup(this, )
         var table_outline = this.add.graphics()
         table_outline.lineStyle(4, 0x000000)
         table_outline.strokeRect(0,0, this.scale.width, this.scale.height)
       
+        
+    }
+    gameLoaded = new CustomEvent("gameLoaded")
+    firstFrame = true;
+    notConnected = true;
+    update() {
+        if (this.firstFrame) {
+            window.dispatchEvent(this.gameLoaded);
+            this.firstFrame = false;
+        }
+        if (this.notConnected && this.socket) {
+            console.log("client connecting")
+            this.startSocketEvents()
+            this.socket.emit("gameClientConnected", `game client connected at: ${this.socket.id}`)
+            
+            this.notConnected=false;
+        }
         
     }
     
@@ -97,6 +117,7 @@ class Game extends Phaser.Scene {
 
     setSocket(socket) {
         this.socket = socket;
+        console.log(`socket set, this socket is ${this.socket}`)
     }
 
     startSocketEvents(){
@@ -185,6 +206,7 @@ class Game extends Phaser.Scene {
 
     setHandData(hand_data) {
         for (let player_name in hand_data) {
+            console.log(hand_data)
             this.player_dictionary[player_name] = new PlayerHand(this, hand_data['x'], hand_data['y'], player_name, hand_data['width'], hand_data['height']);
             let curr_player_object = this.player_dictionary[player_name] //the player hand (the rectangle) image
             
@@ -201,27 +223,8 @@ class Game extends Phaser.Scene {
         this.addPlayerHand(this.socket.id, 400, 200)
     }
 
-    setHandData(hand_data) {
-        for (let player_name in hand_data) {
-            this.player_dictionary[player_name] = new PlayerHand(this, hand_data['x'], hand_data['y'], player_name, hand_data['width'], hand_data['height']);
-            let curr_player_object = this.player_dictionary[player_name] //the player hand (the rectangle) image
-            
-            console.log(player_name)
-            console.log("Setting hand data")
-      
 
-            let incoming_player_object = hand_data[player_name] 
-            console.log("Setting hand data")
-            curr_player_object.setCardObjects(incoming_player_object['cards'])
-
-            
-        }
-        this.addPlayerHand(this.socket.id, 400, 200)
-    }
-
-    update() {
-        
-    }
+    
 
 }
 

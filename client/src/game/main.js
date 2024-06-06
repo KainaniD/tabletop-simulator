@@ -27,10 +27,15 @@ const config = {
 const StartGame = (parent, socket) => {
   let phaserGame =  new Phaser.Game({...config, parent});
 
-  setTimeout(
-    () => phaserGame.scene.getScene('game').setSocket(socket),
-    500 //the higher, the more friendly for longer load times
-  );
+  window.addEventListener('gameLoaded', () => {
+    phaserGame.scene.getScene('game').setSocket(socket)
+    console.log('socket set')
+
+    
+  })
+
+  
+
   return phaserGame;
 }
 

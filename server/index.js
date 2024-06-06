@@ -544,8 +544,8 @@ roomIO.on("connection", (socket) => {
 
             socket.on("gameClientConnected", (message) => {
                 console.log(message);
-                console.log("sendSync Socket")
-                console.log(rooms_with_players[room][0])
+                console.log(`sendSync Socket ${socket.id}`)
+                console.log(rooms_with_players[room][0].id)
                 rooms_with_players[room][0].emit("sendSync", socket.id)
             })
         }

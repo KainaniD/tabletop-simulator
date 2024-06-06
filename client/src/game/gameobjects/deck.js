@@ -44,7 +44,7 @@ class Deck {
         let xoffset = 10;
         for (let value of this.card_values) {
             for (let suite of this.card_suites) {
-                this.card_objects['card'+suite+value] = new Card(this.scene, 50+xoffset, 100, 'card'+suite+value, 'card_back', suite, this.card_to_value[value])
+                this.card_objects['card'+suite+value] = new Card(this.scene, 50+xoffset, 450, 'card'+suite+value, 'card_back', suite, this.card_to_value[value])
                 xoffset += 20;
             }
         }

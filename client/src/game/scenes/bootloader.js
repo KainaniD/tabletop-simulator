@@ -3,10 +3,12 @@ export default class Bootloader extends Phaser.Scene {
     constructor() {
         super({key: "bootloader"});
     }
+    socket;
     
     
 
     preload() {
+        
         let card_suites = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
         let card_values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
         let card_names = []
@@ -17,12 +19,15 @@ export default class Bootloader extends Phaser.Scene {
         }
         
         for (let card_name of card_names) {
-            console.log(card_name)
+            //console.log(card_name)
             this.load.image(card_name, '/assets/Cards/' + card_name+'.png') 
             
         } 
         this.load.image('card_back', '/assets/Cards/cardBack_blue2.png') //pick card back style here
-        this.load.on("complete", () => {this.scene.start("game")}, this)
+        this.load.on("complete", () => {
+            this.scene.start("game")
+        }, this)
     }
 
 }   
+
