@@ -18,13 +18,33 @@ class Game extends Phaser.Scene {
     
     preload() {
         
+        this.deck.loadCards();
+        console.log("deck loaded")
+        this.deck.shuffleDeck()
+        this.loadPlayerHands()
+        this.load.on("complete", () => {
+            this.socket.emit("gameClientConnected", `game client connected at: ${this.socket.id}`)
+            this.startSocketEvents()
+        })
+
+        /* in case preload doesn't work the way i think
+        this.events.on('ready', () => {
+            this.socket.emit("gameClientConnected", `game client connected at: ${this.socket.id}`)
+            this.startSocketEvents()
+        })
+        //perhaps we may also want to put an even emitter inside loadPlayerHands
         
-        for (var card_name of this.deck.card_names) {
-            //console.log(card_name)
-            this.load.image(card_name, '/assets/Cards/' + card_name+'.png') 
-        } 
-        this.load.image('card_back', '/assets/Cards/cardBack_blue2.png') //pick card back style here
-        //this.load.on("complete", () => {this.scene.start("game")}, this)
+        */
+
+
+
+
+
+        // for (var card_name of this.deck.card_names) {
+        //     this.load.image(card_name, '/assets/Cards/' + card_name+'.png') 
+        // } 
+        // this.load.image('card_back', '/assets/Cards/cardBack_blue2.png') //pick card back style here
+        // //this.load.on("complete", () => {this.scene.start("game")}, this)
     }
 
 
@@ -36,11 +56,20 @@ class Game extends Phaser.Scene {
         // });
         
         this.input.mouse.disableContextMenu()
-        var playerHand_list = [];
         //card_objects_group = newGroup(this, )
         var table_outline = this.add.graphics()
         table_outline.lineStyle(4, 0x000000)
         table_outline.strokeRect(0,0, this.scale.width, this.scale.height)
+      
+        
+    }
+    
+    addPlayerHands(name) {
+        this.player_dictionary[name] = new PlayerHand(this, 200, 800, name, 400, 200)
+    }
+
+    loadPlayerHands() {
+        this.addPlayerHands("hello")
         this.deck.loadCards();
         this.deck.shuffleDeck()
     }
@@ -68,8 +97,6 @@ class Game extends Phaser.Scene {
 
     setSocket(socket) {
         this.socket = socket;
-        this.socket.emit("gameClientConnected", `game client connected at: ${this.socket.id}`)
-        this.startSocketEvents()
     }
 
     startSocketEvents(){
@@ -135,17 +162,43 @@ class Game extends Phaser.Scene {
                 'facedown': card_object.facedown
             };
         }
+        console.log(data_map)
         return data_map;
     }
 
     setCardData(card_data) {
-        console.log(this.deck.card_objects)
+        console.log("setting data")
         for (let card_key in this.deck.card_objects) {
+            console.log(card_key)
             let incoming_card_object = card_data[card_key]
             let current_card_object = this.deck.card_objects[card_key]
             current_card_object.setX(incoming_card_object['x']).setY(incoming_card_object['y'])
             
+            if (incoming_card_object['facedown'] !== current_card_object.facedown){
+                current_card_object.flip_card()
+            }
+            //this is never reached
+            console.log("after setting")
+            console.log(current_card_object)
         }
+    }
+
+    setHandData(hand_data) {
+        for (let player_name in hand_data) {
+            this.player_dictionary[player_name] = new PlayerHand(this, hand_data['x'], hand_data['y'], player_name, hand_data['width'], hand_data['height']);
+            let curr_player_object = this.player_dictionary[player_name] //the player hand (the rectangle) image
+            
+            console.log(player_name)
+            console.log("Setting hand data")
+      
+
+            let incoming_player_object = hand_data[player_name] 
+            console.log("Setting hand data")
+            curr_player_object.setCardObjects(incoming_player_object['cards'])
+
+            
+        }
+        this.addPlayerHand(this.socket.id, 400, 200)
     }
 
     setHandData(hand_data) {
