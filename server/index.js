@@ -92,12 +92,12 @@ app.post("/register", (req, res) => {
         const containsSpecial = /[!@#$%^&*()]{}/
         const allRegexChecks = [[containsLowercase, "lowercase letter"], [containsUppercase, "uppercase letter"], [containsNumber, "number"], [containsSpecial, "special character"]]
 
-        if (password.length < 5) {
-            return res.json({ success: false, message: "bro, pick a longer password" })
+        if (password.length < 10) {
+            return res.json({ success: false, message: "please make a longer password, it must be at least 10 characters long" })
         }
         for (let i = 0; i < allRegexChecks.length; i++) {
             if (!password.match(allRegexChecks[i][0])) {
-                return res.json({ success: false, message: "bro, your password needs a " + allRegexChecks[i][1] })
+                return res.json({ success: false, message: "your password needs a " + allRegexChecks[i][1] })
             }
         }
     }
