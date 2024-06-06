@@ -1,7 +1,11 @@
 const express = require('express');
 
-//get rid of path in production
 require('dotenv').config()
+
+const path = (process.env.MODE === "dev") ? ".env.dev" : ".env.production"
+
+require('dotenv').config({ path: path })
+
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -12,7 +16,7 @@ const session = require('express-session')
 const crypto = require('crypto')
 const multer = require('multer')
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner")
-const {S3Client, PutObjectCommand, GetObjectCommand} = require('@aws-sdk/client-s3')
+const { S3Client, PutObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3')
 const prisma = require('prisma')
 const sharp = require('sharp')
 
@@ -29,6 +33,7 @@ const { Server } = require("socket.io");
 const cors = require('cors');
 
 const friendsModel = require('./model/Friend');
+const { all } = require('axios');
 
 const corsOptions = {
     origin: process.env.ORIGIN,
@@ -41,7 +46,7 @@ app.use(express.json())
 app.use(cors(corsOptions));
 
 const storage = multer.memoryStorage()
-const upload = multer({storage: storage})
+const upload = multer({ storage: storage })
 
 
 const AWSkey = process.env.AWSKEY
@@ -66,8 +71,8 @@ app.use(session({
     saveUninitialized: true,
     proxy: true,
     cookie: {
-        secure: true, //set to false when dev
-        sameSite: 'none', //none when production, 'lax when dev
+        secure: (process.env.MODE === "dev") ? false : true,
+        sameSite: (process.env.MODE === "dev") ? 'lax' : 'none',
         maxAge: 1000 * 60 * 60 * 24
     }
 }))
@@ -77,27 +82,50 @@ app.use(passport.session());
 app.enable('trust proxy', 1)
 
 app.post("/register", (req, res) => {
-    const {username, email, password} = req.body;
-    
-    userModel.findOne({username : username})
-    .then((user) => {
-        if(user) {
-            return res.json({success: false, message: "a user with the name " + username + " already exists"})
-        }else{
-            userModel.register(new userModel ({username: username, email: email}), password)
-            .then (res.json( {success: true, message: "Hi " + username + " you've registered your account!"}))
-            .catch (err => res.json(err))
+    const { username, email, password } = req.body;
+
+    const checkValidPassword = (process.env.MODE === "dev") ? false : true
+    if (checkValidPassword) {
+        const containsLowercase = /[a-z]/
+        const containsUppercase = /[A-Z]/
+        const containsNumber = /[0-9]/
+        const containsSpecial = /[!@#$%^&*()]{}/
+        const allRegexChecks = [[containsLowercase, "lowercase letter"], [containsUppercase, "uppercase letter"], [containsNumber, "number"], [containsSpecial, "special character"]]
+
+        if (password.length < 5) {
+            return res.json({ success: false, message: "bro, pick a longer password" })
         }
-    })
+        for (let i = 0; i < allRegexChecks.length; i++) {
+            if (!password.match(allRegexChecks[i][0])) {
+                return res.json({ success: false, message: "bro, your password needs a " + allRegexChecks[i][1] })
+            }
+        }
+    }
+
+    if (password.match)
+        userModel.findOne({ username: username })
+            .then((user) => {
+                if (user) {
+                    return res.json({ success: false, message: "a user with the name " + username + " already exists" })
+                } else {
+                    userModel.register(new userModel({ username: username, email: email }), password)
+                        .then(res.json({ success: true, message: "Hi " + username + " you've registered your account!" }))
+                        .catch(err => res.json(err))
+                }
+            })
 })
 
 app.get("/login", (req, res) => {
 
     const { username, password } = req.query
     req.body = { username: username, password: password }
+
+    const passwordAttempt = (process.env.MODE === "dev") ? false : true
+
+
     passport.authenticate("local", function (err, user) {
         if (err) {
-            return res.json({ success: false, message: "something wrong happened :(" });
+            return res.json({ success: false, message: "something wrong happened :(" })
         }
         else {
             if (!user) {
@@ -139,10 +167,14 @@ app.get("/login", (req, res) => {
             } else {
                 req.login(user, function (err) {
                     if (err) {
-                        return res.json({ success: false, message: "something wrong happened :(" });
+                        return res.json({ success: false, message: "that user does not exist" })
                     } else {
-                        req.session.save()
-                        return res.json({ success: true, message: "you logged in", user: user })
+                        userModel.findOneAndUpdate({ _id: user._id }, { attempts: 10 })
+                            .then(() => {
+                                req.session.save()
+                                return res.json({ success: true, message: "you logged in", user: user })
+                            })
+                            .catch(() => { return res.json({ success: false, message: "something wrong happened :(" }) })
                     }
                 })
             }
@@ -322,7 +354,7 @@ app.get("/deleteroom", (req, res) => {
     roomModel.deleteOne({ name: name })
         .then(() => {
             return res.json({ success: true, message: "successfully deleted" })
-            
+
         })
         .catch((err) => {
             return res.json({ success: false, message: "failed to delete", error: err });
@@ -371,7 +403,7 @@ app.get("/sendfriendrequest", (req, res) => {
 
                         for (let i = 0; i < currentuser.friends.length; i++) {
                             if (targetuser.friends.includes(currentuser.friends[i])) {
-                                return res.json({success: false, message: "there already exists a request between users"})
+                                return res.json({ success: false, message: "there already exists a request between users" })
                             }
                         }
 
@@ -429,37 +461,37 @@ app.get("/acceptfriendrequest", (req, res) => {
 const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex')
 
 app.post('/profile', upload.single('image'), async (req, res) => {
-    
-    const file = req.file 
+
+    const file = req.file
     const user = req.body.username
     const caption = req.body.caption
-  
+
     const fileBuffer = await sharp(file.buffer)
-      .resize({ height: 1920, width: 1080, fit: "contain" })
-      .toBuffer()
-  
+        .resize({ height: 1920, width: 1080, fit: "contain" })
+        .toBuffer()
+
     // Configure the upload details to send to S3
     const fileName = generateFileName()
     const uploadParams = {
-      Bucket: bucketName,
-      Body: fileBuffer,
-      Key: fileName,
-      ContentType: file.mimetype
+        Bucket: bucketName,
+        Body: fileBuffer,
+        Key: fileName,
+        ContentType: file.mimetype
     }
-    const filter = {username: user}
-    const update = {pfp: fileName}
+    const filter = { username: user }
+    const update = { pfp: fileName }
     const amog = await userModel.findOneAndUpdate(filter, update)
-    t = await userModel.findOne({username: req.username});
+    t = await userModel.findOne({ username: req.username });
 
-  
+
     // Send the upload to S3
     await s3.send(new PutObjectCommand(uploadParams));
-  
+
     // Save the image name to the database. Any other req.body data can be saved here too but we don't need any other image data.
-  
+
     res.send("amogus")
-  })
-  app.get("/profile", async (req, res) => {
+})
+app.get("/profile", async (req, res) => {
     /*
     const posts = await prisma.posts.findMany({ orderBy: [{ created: 'desc' }] }) // Get all posts from the database
   
@@ -474,26 +506,26 @@ app.post('/profile', upload.single('image'), async (req, res) => {
       )
     }
     */
-   const user = req.query.user
-   //console.log(user);
-   const prof = await userModel.findOne({username: user}).exec()
+    const user = req.query.user
+    //console.log(user);
+    const prof = await userModel.findOne({ username: user }).exec()
 
-   const post = {};
+    const post = {};
 
-   //console.log(prof);
-   //console.log(prof.pfp);
+    //console.log(prof);
+    //console.log(prof.pfp);
 
     post.imageUrl = await getSignedUrl(
         s3,
         new GetObjectCommand({
-          Bucket: bucketName,
-          Key: prof.pfp
+            Bucket: bucketName,
+            Key: prof.pfp
         }),
         { expiresIn: 360 }// 60 seconds
-      )
+    )
     //console.log(post.imageUrl)
     res.send(post)
-  })
+})
 
 app.get("/removefriend", async (req, res) => {
     try {
@@ -536,9 +568,9 @@ const server = http.createServer(app);
 
 
 const io = new Server(server, {
-    cors: {     
+    cors: {
         origin: process.env.ORIGIN,
-        methods: ["GET", "POST"] 
+        methods: ["GET", "POST"]
     },
 });
 
@@ -547,12 +579,12 @@ let rooms_with_players = {}
 
 
 roomIO.on("connection", (socket) => {
-    socket.on("rooms:connection", () => {})
+    socket.on("rooms:connection", () => { })
     console.log(`connected to rooms page = ${socket.id}`)
     socket.on("sendMessage", (room, message) => {
         roomIO.to(room).emit("receiveMessage", message); // Broadcast the message to all clients in the room
         console.log(`User ${socket.id} broadcasting from room ${room}`);
-        console.log('broadcasting message ' + {message} + 'to room' + {room}) 
+        console.log('broadcasting message ' + { message } + 'to room' + { room })
         console.log(message)
         console.log(room)
     });
@@ -565,7 +597,7 @@ roomIO.on("connection", (socket) => {
         const numClients = clients ? clients.size : 0;
 
         console.log(rooms_with_players)
-        if ((! rooms_with_players[room]) || (rooms_with_players[room].length === 0)) {
+        if ((!rooms_with_players[room]) || (rooms_with_players[room].length === 0)) {
             rooms_with_players[room] = [socket]
         }
         else {
@@ -586,7 +618,7 @@ roomIO.on("connection", (socket) => {
             console.log(cardFront)
             socket.to(room).emit("cardAddedToHand", name, cardFront)
         })
-        
+
 
         socket.on("leaveRoom", (room) => {
             console.log(`left ${room}`)
@@ -600,7 +632,7 @@ roomIO.on("connection", (socket) => {
             room_list.splice(room_list.indexOf(socket), 1)
         })
 
-        
+
     });
 
 
@@ -620,7 +652,7 @@ function findRoom(socket) {
     for (let item of socket.rooms) {
         if (item !== socket.id) {
             return item;
-        }   
+        }
     }
     throw new Error('Socket is not in a room!')
 }
@@ -628,10 +660,10 @@ function findRoom(socket) {
 
 function findSocket(socket) {
     for (let room in rooms_with_players) {
-        for (let i=0; i< rooms_with_players[room].length; i++){
+        for (let i = 0; i < rooms_with_players[room].length; i++) {
             if (socket === rooms_with_players[room][i]) {
                 return [room, i]
-            }    
+            }
         }
     }
     return null;

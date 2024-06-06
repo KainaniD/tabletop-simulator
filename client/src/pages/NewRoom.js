@@ -13,7 +13,7 @@ export function NewRoom() {
             .then(result => {
                 if (result.data.success === true) {
                     //room created case
-                    alert(result.data.message)
+                    //alert(result.data.message)
                     window.location.replace(CLIENT_URL + "/rooms/" + name);
 
                 } else if (result.data.success === false) {
