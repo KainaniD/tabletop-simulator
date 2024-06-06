@@ -374,8 +374,9 @@ app.get("/queryrooms", (req, res) => {
         .catch(err => res.json(err))
 })
 
-app.get("/currentuser", (req, res) => {
-    return res.json(req.user)
+app.get("/currentuser", async (req, res) => {
+    const ret = res.json(req.user);
+    return ret
 })
 
 app.post("/session", (req, res) => {
@@ -584,12 +585,21 @@ roomIO.on("connection", (socket) => {
         console.log(room)
     });
 
-    socket.on("joinRoom", (room) => {           //, callback) => {
+    socket.on("joinRoom", (room2) => {           //, callback) => {
+        const room = room2.data
+        const username = room2.username
         console.log(`User ${socket.id} joining room ${room}`);
         socket.join(room);
         //callback({ status: 'ok' });
         const clients = io.sockets.adapter.rooms.get(room);
         const numClients = clients ? clients.size : 0;
+        console.log("amogus")
+        //console.log(clients.entries)
+        roomIO.to(room).emit("receiveMessage",{text: username + ' has joined the room'});
+        //socket.emit('chat message', "amogussy");
+        socket.on('chat message', function (msg) {
+            
+        });
 
         console.log(rooms_with_players)
         if ((!rooms_with_players[room]) || (rooms_with_players[room].length === 0)) {

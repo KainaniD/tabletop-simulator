@@ -15,11 +15,13 @@ export const Room = () => {
     const [username, setUsername] = useState()
     const [message, setMessage] = useState("");
     const [messages, setMessages] = useState([]);
+    const [users, setAllUsers] = useState([]);
+    const [images, setImages] = useState([]);
     const { name } = useParams()
     const condition = "delete"
     useEffect(async () => {
         const amog = await axios.get(SERVER_URL + "/currentuser")
-            .then((result) => {
+            .then(async (result) => {
                 setUsername(result.data.username)
                 //console.log("oo")
                 const temp = result.data.username;
@@ -32,7 +34,39 @@ export const Room = () => {
                 //console.log("heyyyyy")
                 //console.log(result.data.username)
                 socket.emit("joinRoom", {data: name, username: result.data.username});
+                setAllUsers((users) => [...users, result.data.username])
+                setMessages((prevMessages) => {
+                    const updatedMessages = [...prevMessages, message];
+                    console.log("we did it")
+                    console.log("Updated messages:", updatedMessages);
+                    return updatedMessages;
+                });
+                const getImageUrl = async (n) =>{
+                    let file;
+                    const test = axios.get("/profile",{params: {user: n}}).then((result) => {
+                        file = result.data.imageUrl
+                        //console.log(result.data.imageUrl)
+                    })
+                    console.log("amogus1")
+                    console.log(file)
+                    console.log("amogus2")
+                    return file
+                }
+                let temp2 =[];
+                for (let i = 0; i < users.length; i++) {
+                    temp2.push({name: users[i], imgL: await getImageUrl(users[i])})
+                }
+                //console.log("working?")
+                //console.log(users)
+                //console.log(temp2)
 
+                //setImages(temp2);
+
+                
+                //getAllUsers();
+
+                //const arrayDataItems = courses.map((course) => <li>{course}</li>);
+                
 
             })
             .catch(err => console.log(err))
@@ -60,6 +94,8 @@ export const Room = () => {
         }
 
     }, []);
+
+
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -93,6 +129,28 @@ export const Room = () => {
             sendMessage();
         }
     };
+
+
+    //getAllUsers();
+    //const listItems = users.map(person => <li>{person}</li>);
+    console.log(images)
+    const listItems = images.map(person =>
+        
+        <li>
+          <img
+            src={person.name}
+            alt={person.imgL}
+          />
+          <p>
+            <b>{person}:</b>
+            {'One of the dudes'}
+            'Being cool'
+          </p>
+        </li>
+      );
+    //console.log(listItems)
+    const listItems2 = users.map(person => <li>{person}</li>);
+
 
     return (
         <div id="app">
@@ -141,7 +199,10 @@ export const Room = () => {
                     </form>
                 </div>
             </div>
+        <div>
+        <ul>{listItems2}</ul>
 
+        </div>
         </div>
 
     );
