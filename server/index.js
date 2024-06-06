@@ -1,7 +1,7 @@
 const express = require('express');
 
-//get rid of path in production
-require('dotenv').config()
+//get rid of {path: ".env.dev"} in production
+require('dotenv').config({path: ".env.dev"})
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -66,8 +66,8 @@ app.use(session({
     saveUninitialized: true,
     proxy: true,
     cookie: {
-        secure: true, //set to false when dev
-        sameSite: 'none', //none when production, 'lax when dev
+        secure: false, //set to false when dev
+        sameSite: 'lax', //none when production, 'lax when dev
         maxAge: 1000 * 60 * 60 * 24
     }
 }))
@@ -540,7 +540,9 @@ roomIO.on("connection", (socket) => {
 
             socket.on("gameClientConnected", (message) => {
                 console.log(message);
-                rooms_with_players[room][0].to(room).emit("sendSync", socket.id)
+                console.log("sendSync Socket")
+                console.log(rooms_with_players[room][0])
+                rooms_with_players[room][0].emit("sendSync", socket.id)
             })
         }
 

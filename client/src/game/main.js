@@ -1,5 +1,5 @@
 import Phaser from "phaser"
-//import Bootloader from "./scenes/bootloader.js"
+import Bootloader from "./scenes/bootloader.js"
 import Game from "./scenes/game.js"
 
 
@@ -20,7 +20,7 @@ const config = {
       debug: false,
     },
   },
-  scene: [Game],
+  scene: [Bootloader, Game],
   backgroundColor: 0xffffff
 };
 
@@ -29,10 +29,15 @@ const StartGame = (parent, socket) => {
 
   setTimeout(
     () => phaserGame.scene.getScene('game').setSocket(socket),
-    500
+    500 //the higher, the more friendly for longer load times
   );
   return phaserGame;
 }
 
 
 export default StartGame;
+
+
+
+
+

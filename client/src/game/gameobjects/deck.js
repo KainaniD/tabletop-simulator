@@ -38,15 +38,17 @@ class Deck {
             }
         }
     }
+    
     card_objects = {};
     loadCards() {
-        var xoffset = 10;
-        for (var value of this.card_values) {
-            for (var suite of this.card_suites) {
+        let xoffset = 10;
+        for (let value of this.card_values) {
+            for (let suite of this.card_suites) {
                 this.card_objects['card'+suite+value] = new Card(this.scene, 50+xoffset, 100, 'card'+suite+value, 'card_back', suite, this.card_to_value[value])
                 xoffset += 20;
             }
         }
+        // this.card_objects['hello'] = 'there'
         //this.card = new Card(this, 200, 100, 'cardClubs4', 'card_back');
         //this.card1 = new Card(this, 100, 100, 'cardClubs3', 'card_back');
     }
