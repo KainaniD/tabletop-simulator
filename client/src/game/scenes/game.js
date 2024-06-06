@@ -72,13 +72,13 @@ class Game extends Phaser.Scene {
     movePlayerHand(name, width, height) {
         let length = Object.keys(this.player_dictionary).length;
         switch(length) {
-            case 1:
+            case 2:
                 this.player_dictionary[name] = new PlayerHand(this, width/2, height/2, name, width, height)
                 break;
-            case 2:
+            case 3:
                 this.player_dictionary[name] = new PlayerHand(this, 1600-width/2, height/2, name, width, height)
                 break;
-            case 3:
+            case 4:
                 this.player_dictionary[name] = new PlayerHand(this, 1600-width/2, 900-height/2, name, width, height)
                 break;
             default:
@@ -90,11 +90,12 @@ class Game extends Phaser.Scene {
 
     setSocket(socket) {
         this.socket = socket;
-        console.log(`socket set, this socket is ${this.socket}`)
+        console.log(`socket set, this socket is ${this.socket.id}`)
     }
 
     startSocketEvents(){
         this.loadOurHand(this.standardHandWidth, this.standardHandHeight)
+        
         this.socket.on("sendSync", (id) => {
             console.log("sync data request received")
             let card_data = this.getCardData()
@@ -111,7 +112,6 @@ class Game extends Phaser.Scene {
             console.log(hand_data)
             this.setCardData(card_data)
             this.setHandData(hand_data)
-            console.log(hand_data)
             console.log("game data set")
         })
 
@@ -162,7 +162,7 @@ class Game extends Phaser.Scene {
     }
 
     setCardData(card_data) {
-        console.log("setting data")
+        console.log("setting card data")
         for (let card_key in this.deck.card_objects) {
             //console.log(card_key)
             let incoming_card_object = card_data[card_key]
@@ -173,27 +173,34 @@ class Game extends Phaser.Scene {
                 current_card_object.flip_card()
             }
     
-            console.log("after setting")
+            console.log("after card setting")
             //console.log(current_card_object)
         }
     }
 
     setHandData(hand_data) {
+        console.log("hand_data")
+        console.log(hand_data)
         for (let player_name in hand_data) {
-            console.log(hand_data)
+            console.log(player_name)
+
             this.player_dictionary[player_name] = new PlayerHand(this, hand_data['x'], hand_data['y'], player_name, hand_data['width'], hand_data['height']);
             let curr_player_object = this.player_dictionary[player_name] //the player hand (the rectangle) image
             
-            console.log(player_name)
+        
+            
             console.log("Setting hand data")
-      
 
             let incoming_player_object = hand_data[player_name] 
-            console.log("Setting hand data")
-            curr_player_object.setCardObjects(incoming_player_object['cards'])
 
+           
+            curr_player_object.setCardObjects(incoming_player_object['cards'])
+            
+            
             
         }
+        console.log("player dictionary")
+        console.log(this.player_dictionary)
         this.movePlayerHand(this.socket.id, this.standardHandWidth, this.standardHandHeight)
     }
 
