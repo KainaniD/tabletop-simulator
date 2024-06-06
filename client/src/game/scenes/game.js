@@ -14,45 +14,26 @@ class Game extends Phaser.Scene {
     card_names = [];
     socket;
     player_dictionary = {} //passing name and object
+    standardHandWidth = 400;
+    standardHandHeight = 200
     
     
     preload() {
-        
         this.deck.loadCards();
         console.log("deck loaded")
-        this.deck.shuffleDeck()
-        this.loadPlayerHands()
-        
+        this.deck.shuffleDeck()        
     
         this.load.on("complete", () => {
 
             
-            
-            // this.socket.emit("gameClientConnected", `game client connected at: ${this.socket.id}`);
             // this.startSocketEvents();
+            // this.socket.emit("gameClientConnected", `game client connected at: ${this.socket.id}`);
+            
         })
         
         
-
-        /* in case preload doesn't work the way i think
-        this.events.on('ready', () => {
-            this.socket.emit("gameClientConnected", `game client connected at: ${this.socket.id}`)
-            this.startSocketEvents()
-        })
-        //perhaps we may also want to put an even emitter inside loadPlayerHands
-        
-        */
-
-
-
-
-
-        // for (var card_name of this.deck.card_names) {
-        //     this.load.image(card_name, '/assets/Cards/' + card_name+'.png') 
-        // } 
-        // this.load.image('card_back', '/assets/Cards/cardBack_blue2.png') //pick card back style here
-        // //this.load.on("complete", () => {this.scene.start("game")}, this)
     }
+
 
 
     create() {
@@ -77,29 +58,20 @@ class Game extends Phaser.Scene {
         if (this.notConnected && this.socket) {
             console.log("client connecting")
             this.startSocketEvents()
-            this.socket.emit("gameClientConnected", `game client connected at: ${this.socket.id}`)
-            
+            this.socket.emit("gameClientConnected", `game client connected at: ${this.socket.id}`) //game needs to be ready by now
             this.notConnected=false;
         }
         
     }
-    
-    addPlayerHands(name) {
-        this.player_dictionary[name] = new PlayerHand(this, 200, 800, name, 400, 200)
+
+
+    loadOurHand(width, height) {
+        this.player_dictionary[this.socket.id] = new PlayerHand(this, width/2, 900-height/2, this.socket.id, width, height)
     }
 
-    loadPlayerHands() {
-        this.addPlayerHands("hello")
-        this.deck.loadCards();
-        this.deck.shuffleDeck()
-    }
-    
-    addPlayerHand(name, width, height) {
+    movePlayerHand(name, width, height) {
         let length = Object.keys(this.player_dictionary).length;
         switch(length) {
-            case 0:
-                this.player_dictionary[name] = new PlayerHand(this, width/2, 900-height/2, name, width, height)
-                break;
             case 1:
                 this.player_dictionary[name] = new PlayerHand(this, width/2, height/2, name, width, height)
                 break;
@@ -111,6 +83,7 @@ class Game extends Phaser.Scene {
                 break;
             default:
                 console.log("shoo ")
+                throw new Error ("move Player Hand failed lmao")
         }
         this.socket.emit("playerAdded", name, this.getHandData())
     }
@@ -121,6 +94,7 @@ class Game extends Phaser.Scene {
     }
 
     startSocketEvents(){
+        this.loadOurHand(this.standardHandWidth, this.standardHandHeight)
         this.socket.on("sendSync", (id) => {
             console.log("sync data request received")
             let card_data = this.getCardData()
@@ -190,7 +164,7 @@ class Game extends Phaser.Scene {
     setCardData(card_data) {
         console.log("setting data")
         for (let card_key in this.deck.card_objects) {
-            console.log(card_key)
+            //console.log(card_key)
             let incoming_card_object = card_data[card_key]
             let current_card_object = this.deck.card_objects[card_key]
             current_card_object.setX(incoming_card_object['x']).setY(incoming_card_object['y'])
@@ -198,9 +172,9 @@ class Game extends Phaser.Scene {
             if (incoming_card_object['facedown'] !== current_card_object.facedown){
                 current_card_object.flip_card()
             }
-            //this is never reached
+    
             console.log("after setting")
-            console.log(current_card_object)
+            //console.log(current_card_object)
         }
     }
 
@@ -220,7 +194,7 @@ class Game extends Phaser.Scene {
 
             
         }
-        this.addPlayerHand(this.socket.id, 400, 200)
+        this.movePlayerHand(this.socket.id, this.standardHandWidth, this.standardHandHeight)
     }
 
 

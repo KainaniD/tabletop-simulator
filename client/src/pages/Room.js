@@ -38,7 +38,10 @@ export const Room = () => {
         });
         socket.emit("joinRoom", name);
         
-
+        window.addEventListener("beforeunload", () => 
+            {  
+                socket.emit("leaveRoom", name)
+            });
 
         return () => {
             socket.emit("leaveRoom", name)

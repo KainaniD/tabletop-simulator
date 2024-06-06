@@ -534,7 +534,7 @@ roomIO.on("connection", (socket) => {
         const clients = io.sockets.adapter.rooms.get(room);
         const numClients = clients ? clients.size : 0;
 
-        console.log(rooms_with_players)
+        //console.log(rooms_with_players)
         if ((! rooms_with_players[room]) || (rooms_with_players[room].length === 0)) {
             rooms_with_players[room] = [socket]
         }
