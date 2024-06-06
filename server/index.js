@@ -101,7 +101,41 @@ app.get("/login", (req, res) => {
         }
         else {
             if (!user) {
-                return res.json({ success: false, message: "username or password incorrect" });
+                if (passwordAttempt) {
+                    userModel.findOne({ username: username })
+                        .then((user) => {
+                            if (user) {
+                                const newAttempts = user.attempts - 1
+                                if (newAttempts < 0) {
+                                    userModel.findByIdAndDelete(user._id)
+                                        .then(() => {
+                                            friendsModel.findOneAndDelete({ requester: user._id })
+                                                .then(() => {
+                                                    friendsModel.findOneAndDelete({ reciever: user._id })
+                                                        .then(() => {
+                                                            return res.json({ success: false, message: "too many attempts, deleting your account" })
+                                                        })
+                                                        .catch(() => res.json({ success: false, message: "that user does not exist" }))
+                                                })
+                                                .catch(() => res.json({ success: false, message: "that user does not exist" }))
+                                        })
+                                        .catch(() => res.json({ success: false, message: "that user does not exist" }))
+                                } else {
+                                    userModel.updateOne({ _id: user._id }, { attempts: newAttempts })
+                                        .then(() => {
+                                            return res.json({ success: false, message: "you failed your password, attempts left: " + newAttempts })
+                                        })
+                                        .catch(() => res.json({ success: false, message: "that user does not exist" }))
+                                }
+                            } else {
+                                res.json({ success: false, message: "that user does not exist" })
+
+                            }
+                        })
+                        .catch(() => res.json({ success: false, message: "that user does not exist" }))
+                } else {
+                    return res.json({ success: false, message: "this user does not exist" })
+                }
             } else {
                 req.login(user, function (err) {
                     if (err) {

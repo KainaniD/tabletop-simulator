@@ -8,6 +8,7 @@
        "tabletop-simulator-server.onrender"
     ]
   },
+  "homepage": "https://tabletop-simulator.netlify.app/login",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
