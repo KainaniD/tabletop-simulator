@@ -17,31 +17,46 @@ export const Room = () => {
     const [messages, setMessages] = useState([]);
     const { name } = useParams()
     const condition = "delete"
-    useEffect(() => {
-        axios.get(SERVER_URL + "/currentuser")
+    useEffect(async () => {
+        const amog = await axios.get(SERVER_URL + "/currentuser")
             .then((result) => {
                 setUsername(result.data.username)
+                //console.log("oo")
+                const temp = result.data.username;
+                //console.log(result.data.username)
+                socket.on('connect', () => {
+                    let clientID = socket.id;
+                    console.log(clientID)
+                });
+
+                //console.log("heyyyyy")
+                //console.log(result.data.username)
+                socket.emit("joinRoom", {data: name, username: result.data.username});
+
+
             })
             .catch(err => console.log(err))
 
-        socket.on('connect', () => {
-            let clientID = socket.id;
-            console.log(clientID)
-        });
+
+        //const tempM = username + " joined the room!"
+        //
+        //console.log(temp+"yay")
+        //console.log("YAYYAA")
+        //socket.emit("sendMessage", { username, text: tempM })
 
         socket.on("receiveMessage", (message) => {
             setMessages((prevMessages) => {
                 const updatedMessages = [...prevMessages, message];
+                console.log("we did it")
                 console.log("Updated messages:", updatedMessages);
                 return updatedMessages;
             });
         });
-        socket.emit("joinRoom", name);
         
 
 
         return () => {
-            socket.emit("leaveRoom", name)
+            socket.emit("leaveRoom", username)
         }
 
     }, []);
@@ -128,5 +143,6 @@ export const Room = () => {
             </div>
 
         </div>
+
     );
 }
