@@ -117,15 +117,27 @@ class Game extends Phaser.Scene {
 
         this.socket.on("playerAdded", (name, playerData) => {
             console.log("new player joined")
+            
             this.player_dictionary[name] = new PlayerHand(this, playerData[name]['x'], playerData[name]['y'], name, playerData[name]['width'], playerData[name]['height'])
+            console.log(this.player_dictionary)
         })
 
         this.socket.on("cardMoved", (card_name, x, y,facedown) => {
             this.deck.card_objects[card_name].make_changes(x,y,facedown)
         })
-        this.socket.on("cardAddedToHand", (name, cardFront) => {
-            this.player_dictionary[name].updateHand(cardFront)
+        // this.socket.on("cardAddedToHand", (name, cardFront) => {
+        //     this.player_dictionary[name].updateHand(cardFront)
+        // })
+        this.socket.on("ownerChanged", (cardFront, playerName, isRemove) => {
+            let card_object = this.deck.card_objects[cardFront];
+            let playerHand = this.player_dictionary[playerName];
+            console.log("player dictionary")
+            console.log(this.player_dictionary)
+            console.log("player object")
+            console.log(playerHand)
+            card_object.make_hand_changes(playerHand, isRemove)
         })
+
         this.socket.on("destroyClient", () => {
             this.game.destroy(true);
         })
@@ -183,15 +195,12 @@ class Game extends Phaser.Scene {
         console.log(hand_data)
         for (let player_name in hand_data) {
             console.log(player_name)
-
-            this.player_dictionary[player_name] = new PlayerHand(this, hand_data['x'], hand_data['y'], player_name, hand_data['width'], hand_data['height']);
-            let curr_player_object = this.player_dictionary[player_name] //the player hand (the rectangle) image
-            
-        
-            
             console.log("Setting hand data")
-
-            let incoming_player_object = hand_data[player_name] 
+            let incoming_player_object = hand_data[player_name]
+            this.player_dictionary[player_name] = new PlayerHand(this, incoming_player_object['x'], incoming_player_object['y'], player_name, incoming_player_object['width'], incoming_player_object['height']);
+            let curr_player_object = this.player_dictionary[player_name] //the player hand (the rectangle) image
+    
+             
 
            
             curr_player_object.setCardObjects(incoming_player_object['cards'])

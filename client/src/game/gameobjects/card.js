@@ -49,7 +49,9 @@ class Card extends Phaser.GameObjects.Image {
             function(pointer, target) {
                 if (this.playerHand === null || target.name !== this.playerHand.name) {
                     target.addCard(this);
+                    
                     this.playerHand=target;
+                    this.send_hand_changes(this.playerHand.name, false)
                 }
                 target.handRender()
 
@@ -62,8 +64,10 @@ class Card extends Phaser.GameObjects.Image {
             function(pointer, dragX, dragY) {
                 if(this.playerHand) {
                     this.playerHand.removeCard(this)
+                    this.send_hand_changes(this.playerHand.name, true)
                     this.playerHand = null;
                 }
+                
             }
         
         )
@@ -90,6 +94,24 @@ class Card extends Phaser.GameObjects.Image {
         this.setX(x).setY(y);
         if (this.facedown !== facedown) {
             this.flip_card()
+        }
+    }
+
+    send_hand_changes(playerName, isRemove) {
+        console.log("sending playername")
+        console.log(playerName)
+        this.scene.socket.emit("ownerChanged", this.cardFront, playerName, isRemove)
+    }
+
+    make_hand_changes(playerHand, isRemove) {
+        console.log(playerHand);
+        if (isRemove) {
+            playerHand.removeCard(this)
+            this.playerHand = null;
+        }
+        else {
+            playerHand.addCard(this)
+            this.playerHand = playerHand
         }
     }
 

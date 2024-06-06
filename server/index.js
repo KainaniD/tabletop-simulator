@@ -560,21 +560,24 @@ roomIO.on("connection", (socket) => {
             socket.to(room).emit("cardMoved", card_name, x, y, facedown)
         })
 
-        socket.on("cardAddedToHand", (name, cardFront) => {
-            console.log(cardFront)
-            socket.to(room).emit("cardAddedToHand", name, cardFront)
-        })
+        // socket.on("cardAddedToHand", (name, cardFront) => {
+        //     console.log(cardFront)
+        //     socket.to(room).emit("cardAddedToHand", name, cardFront)
+        // })
         
-
+        socket.on("ownerChanged", (cardFront, playerName, isRemove) => {
+            socket.to(room).emit("ownerChanged", cardFront, playerName, isRemove)
+        })
         socket.on("leaveRoom", (room) => {
             console.log(`left ${room}`)
             socket.emit("destroyClient")
             socket.leave(room);
             socket.removeAllListeners("gameClientConnected")
             socket.removeAllListeners("cardMoved")
-            socket.removeAllListeners("cardAddedToHand")
+            // socket.removeAllListeners("cardAddedToHand")
             socket.removeAllListeners("sendSync")
             socket.removeAllListeners('playerAdded')
+            socket.removeAllListeners("ownerChanged")
             let room_list = rooms_with_players[room];
             room_list.splice(room_list.indexOf(socket), 1)
         })

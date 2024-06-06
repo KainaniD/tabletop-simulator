@@ -37,21 +37,23 @@ class PlayerHand extends Phaser.GameObjects.Zone {
         this.setRectangleDropZone(this.width, this.height)
     }
 
-    updateHand(cardFront) {
-        console.log(cardFront)
-        let card_object = this.scene.deck.card_objects[cardFront]
-        this.cards_in_hand.push(card_object);
-        this.handRender()
-    }
+    // updateHand(cardFront) {
+    //     console.log(cardFront)
+    //     let card_object = this.scene.deck.card_objects[cardFront]
+    //     this.cards_in_hand.push(card_object);
+    //     this.handRender()
+    // }
 
     addCard(card_object) {
         this.cards_in_hand.push(card_object);
         this.handRender()
         //emit a server event
+        console.log("card added")
         console.log(card_object.cardFront)
-        this.scene.socket.emit("cardAddedToHand", this.name, card_object.cardFront)
+        // this.scene.socket.emit("cardAddedToHand", this.name, card_object.cardFront)
     }
     removeCard(card_object) {
+        console.log("card removed")
         let removal_index = this.cards_in_hand.indexOf(card_object);
         this.cards_in_hand.splice(removal_index, 1);
         this.handRender();
@@ -81,6 +83,7 @@ class PlayerHand extends Phaser.GameObjects.Zone {
         let multiplier = 1
         for (let i = 0; i < number_of_cards; i++) {
             let card_object = this.cards_in_hand[i]
+            console.log(card_object.cardFront)
             console.log(this.x - this.width / 2 + spacing * multiplier)
             card_object.setX(this.x - this.width / 2 + spacing * multiplier);
             card_object.setY(this.y)
