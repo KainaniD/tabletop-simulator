@@ -63,14 +63,13 @@ class Game extends Phaser.Scene {
             default:
                 console.log("shoo ")
         }
-        this.socket.emit("playerAdded", name, this.player_dictionary[name].getHandData)
+        this.socket.emit("playerAdded", name, this.getHandData())
     }
 
     setSocket(socket) {
         this.socket = socket;
         this.socket.emit("gameClientConnected", `game client connected at: ${this.socket.id}`)
         this.startSocketEvents()
-        this.addPlayerHand(this.socket.id, 400, 200)
     }
 
     startSocketEvents(){
@@ -79,6 +78,7 @@ class Game extends Phaser.Scene {
             let card_data = this.getCardData()
             let hand_data = this.getHandData()
             console.log(card_data)
+            console.log(hand_data)
             this.socket.emit("sendSync", id, card_data, hand_data)
         })
 
@@ -94,7 +94,8 @@ class Game extends Phaser.Scene {
         })
 
         this.socket.on("playerAdded", (name, playerData) => {
-            this.player_dictionary[name] = new PlayerHand(this, playerData['x'], playerData['y'], name, playerData['width'], playerData['height'])
+            console.log("new player joined")
+            this.player_dictionary[name] = new PlayerHand(this, playerData[name]['x'], playerData[name]['y'], name, playerData[name]['width'], playerData[name]['height'])
         })
 
         this.socket.on("cardMoved", (card_name, x, y,facedown) => {
@@ -120,6 +121,7 @@ class Game extends Phaser.Scene {
                 'height':player_object.height,
             }
         }
+        return data_map
 
     }
 
@@ -146,15 +148,22 @@ class Game extends Phaser.Scene {
         }
     }
 
-    setHandData(hand_data ) {
-        for (let player_name in this.player_dictionary) {
+    setHandData(hand_data) {
+        for (let player_name in hand_data) {
+            this.player_dictionary[player_name] = new PlayerHand(this, hand_data['x'], hand_data['y'], player_name, hand_data['width'], hand_data['height']);
             let curr_player_object = this.player_dictionary[player_name] //the player hand (the rectangle) image
-            let incoming_player_object = hand_data[player_name]  //
-            curr_player_object.setX(incoming_player_object['x']).setY(incoming_player_object['y'])
-            curr_player_object.width = incoming_player_object['width']
-            curr_player_object.height = incoming_player_object['height']
+            
+            console.log(player_name)
+            console.log("Setting hand data")
+      
+
+            let incoming_player_object = hand_data[player_name] 
+            console.log("Setting hand data")
             curr_player_object.setCardObjects(incoming_player_object['cards'])
+
+            
         }
+        this.addPlayerHand(this.socket.id, 400, 200)
     }
 
     update() {

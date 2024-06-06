@@ -550,6 +550,8 @@ roomIO.on("connection", (socket) => {
 
         socket.on("playerAdded", (name, playerdata) => {
             socket.to(room).emit("playerAdded", name, playerdata)
+            console.log("PLAYERDATA SENT")
+            console.log(playerdata)
         })
 
         socket.on("cardMoved", (card_name, x, y, facedown) => {

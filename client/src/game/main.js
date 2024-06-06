@@ -29,7 +29,7 @@ const StartGame = (parent, socket) => {
 
   setTimeout(
     () => phaserGame.scene.getScene('game').setSocket(socket),
-    500
+    1000 //CHANGED THIS TO2000 FROM 500
   );
   return phaserGame;
 }
