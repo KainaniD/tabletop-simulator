@@ -91,7 +91,7 @@ app.post("/register", (req, res) => {
         const containsLowercase = /[a-z]/
         const containsUppercase = /[A-Z]/
         const containsNumber = /[0-9]/
-        const containsSpecial = /[!@#$%^&*()]{}/
+        const containsSpecial = /[!@#$%^&*(){}]/
         const allRegexChecks = [[containsLowercase, "lowercase letter"], [containsUppercase, "uppercase letter"], [containsNumber, "number"], [containsSpecial, "special character"]]
 
         if (password.length < 10) {
