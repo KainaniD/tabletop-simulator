@@ -46,6 +46,7 @@ class Deck {
             for (let suite of this.card_suites) {
                 this.card_objects['card'+suite+value] = new Card(this.scene, 50+xoffset, 450, 'card'+suite+value, 'card_back', suite, this.card_to_value[value])
                 xoffset += 20;
+                console.log(this.card_objects['card'+suite+value].depth)
             }
         }
         // this.card_objects['hello'] = 'there'

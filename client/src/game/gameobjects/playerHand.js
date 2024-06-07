@@ -11,16 +11,21 @@ class PlayerHand extends Phaser.GameObjects.Zone {
     }
 
     setCardObjects(card_names) {
-        let new_cards = [];
-        for (let card in card_names) {
-            new_cards.push(this.scene.deck.card_objects[card])
+        //let new_cards = [];
+        for (let card of card_names) {
+            
+            this.cards_in_hand.push(this.scene.deck.card_objects[card])
+            this.scene.deck.card_objects[card].playerHand = this;
         }
-        return new_cards;
+        //return new_cards;
     }
 
     getCardNames() {
+        console.log("getting card names, this is what cards are in the hand right now:")
+        console.log(this.cards_in_hand)
         let card_names = []
-        for (let card in this.cards_in_hand) {
+        //card is the so must use of
+        for (let card of this.cards_in_hand) {
             card_names.push(card.cardFront)
         }
         return card_names

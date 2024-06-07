@@ -67,6 +67,7 @@ class Game extends Phaser.Scene {
 
     loadOurHand(width, height) {
         this.player_dictionary[this.socket.id] = new PlayerHand(this, width/2, 900-height/2, this.socket.id, width, height)
+        this.player_dictionary[this.socket.id].setDepth(-1);
     }
 
     movePlayerHand(name, width, height) {
@@ -83,9 +84,12 @@ class Game extends Phaser.Scene {
                 break;
             default:
                 console.log("shoo ")
-                throw new Error ("move Player Hand failed lmao")
+                throw new Error ("move Player Hand failed lmao, probably too many players (only 4 for now)")
         }
-        this.socket.emit("playerAdded", name, this.getHandData())
+        console.log("tell others to add self")
+        let our_player_hand = this.player_dictionary[name];
+        let playerData = {'x': our_player_hand.x, 'y': our_player_hand.y, 'name':name, 'width': our_player_hand.width, 'height': our_player_hand.height}
+        this.socket.emit("playerAdded", name, playerData)
     }
 
     setSocket(socket) {
@@ -100,7 +104,9 @@ class Game extends Phaser.Scene {
             console.log("sync data request received")
             let card_data = this.getCardData()
             let hand_data = this.getHandData()
+            console.log("card data to be sent")
             console.log(card_data)
+            console.log("hand data to be sent")
             console.log(hand_data)
             this.socket.emit("sendSync", id, card_data, hand_data)
         })
@@ -108,17 +114,21 @@ class Game extends Phaser.Scene {
 
         this.socket.on("getSync", (card_data, hand_data) => {
             console.log("client received sync data")
+            console.log("card data received")
             console.log(card_data)
+            console.log("hand_data received")
             console.log(hand_data)
-            this.setCardData(card_data)
-            this.setHandData(hand_data)
+            this.setHandData(hand_data) 
+            this.setCardData(card_data) //could cause issues if hand data is not set fast enough
+            
+            
             console.log("game data set")
         })
 
         this.socket.on("playerAdded", (name, playerData) => {
             console.log("new player joined")
             
-            this.player_dictionary[name] = new PlayerHand(this, playerData[name]['x'], playerData[name]['y'], name, playerData[name]['width'], playerData[name]['height'])
+            this.player_dictionary[name] = new PlayerHand(this, playerData['x'], playerData['y'], name, playerData['width'], playerData['height'])
             console.log(this.player_dictionary)
         })
 
@@ -148,7 +158,7 @@ class Game extends Phaser.Scene {
         for (let player_name in this.player_dictionary) {
             let player_object = this.player_dictionary[player_name]
             data_map[player_name] = {
-                'cards' :player_object.getCardNames(),
+                'cards' : player_object.getCardNames(),
                 'x':player_object.x,
                 'y':player_object.y,
                 'width': player_object.width,
@@ -169,7 +179,6 @@ class Game extends Phaser.Scene {
                 'facedown': card_object.facedown
             };
         }
-        console.log(data_map)
         return data_map;
     }
 
@@ -181,8 +190,14 @@ class Game extends Phaser.Scene {
             let current_card_object = this.deck.card_objects[card_key]
             current_card_object.setX(incoming_card_object['x']).setY(incoming_card_object['y'])
             
-            if (incoming_card_object['facedown'] !== current_card_object.facedown){
-                current_card_object.flip_card()
+            if (current_card_object.playerHand) {
+                console.log("if card is in a player hamd, flipping over")
+                if (incoming_card_object.facedown !== false) {
+                    current_card_object.flip_card();
+                }
+            }
+            else if (incoming_card_object['facedown'] !== current_card_object.facedown) {
+                current_card_object.flip_card();
             }
     
             console.log("after card setting")
@@ -202,9 +217,10 @@ class Game extends Phaser.Scene {
     
              
 
-           
-            curr_player_object.setCardObjects(incoming_player_object['cards'])
-            
+            console.log("incoming player cards")
+            console.log(incoming_player_object['cards'])
+            curr_player_object.setCardObjects(incoming_player_object['cards']);
+            curr_player_object.setDepth(-1);
             
             
         }
