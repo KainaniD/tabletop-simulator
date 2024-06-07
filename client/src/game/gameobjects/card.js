@@ -40,8 +40,10 @@ class Card extends Phaser.GameObjects.Image {
 
                 //only send changes if you are not flipping in your own hand
                 if (this.playerHand && (this.scene.socket.id === this.playerHand.name)) {
-                    console.log("flipped in own's hand")               
-                    this.flip_card();
+                    console.log("flipped in own's hand")   
+                    this.flip_card();            
+                    this.playerHand.handRender()
+                
                     return;
                 }
                 this.flip_card(); //flip card, then send changes
@@ -51,7 +53,10 @@ class Card extends Phaser.GameObjects.Image {
         //bring card to top
         this.on('pointerdown', 
             function(pointer, gameObject) {
-                this.scene.children.bringToTop(this);
+                if (! this.playerHand) {
+                    this.scene.children.bringToTop(this);
+                }
+                
             }
         );
 

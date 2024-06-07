@@ -38,7 +38,7 @@ class Game extends Phaser.Scene {
 
     create() {
       
-
+        this.input.dragDistanceThreshold = 1;
         this.input.mouse.disableContextMenu()
         //card_objects_group = newGroup(this, )
         var table_outline = this.add.graphics()
