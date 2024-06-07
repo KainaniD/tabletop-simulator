@@ -55,6 +55,7 @@ class Card extends Phaser.GameObjects.Image {
             function(pointer, gameObject) {
                 if (! this.playerHand) {
                     this.scene.children.bringToTop(this);
+                    this.scene.socket.emit("bringCardToTop", this.cardFront)
                 }
                 
             }

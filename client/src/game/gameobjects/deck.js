@@ -41,11 +41,12 @@ class Deck {
     
     card_objects = {};
     loadCards() {
-        let xoffset = 10;
+        let xoffset = 25;
+        let offsetMult = 0
         for (let value of this.card_values) {
             for (let suite of this.card_suites) {
-                this.card_objects['card'+suite+value] = new Card(this.scene, 50+xoffset, 450, 'card'+suite+value, 'card_back', suite, this.card_to_value[value])
-                xoffset += 20;
+                this.card_objects['card'+suite+value] = new Card(this.scene, 800-(26*xoffset)+xoffset*offsetMult, 450, 'card'+suite+value, 'card_back', suite, this.card_to_value[value])
+                offsetMult += 1;
                 console.log(this.card_objects['card'+suite+value].depth)
             }
         }
@@ -67,6 +68,21 @@ class Deck {
             otherCard.setX(this.card_objects[cardName].x).setY(this.card_objects[cardName].y)
             this.card_objects[cardName].setX(tempX).setY(tempY)
         }
+    }
+    cardXOrganizer(card_pair1, card_pair2) {
+        return card_pair1[1]-card_pair2[1]
+    }
+    organizeDeckHeights () {
+
+        let orderedObjects = [];
+        for (let cardName in this.card_objects) {
+            orderedObjects.push([cardName,this.card_objects[cardName].x])
+        }
+        orderedObjects.sort(this.cardXOrganizer)
+        for (let card_pair of orderedObjects) {
+            this.scene.children.bringToTop(this.card_objects[card_pair[0]])
+        }
+
     }
 
 }

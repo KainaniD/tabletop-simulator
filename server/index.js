@@ -560,6 +560,9 @@ roomIO.on("connection", (socket) => {
             socket.to(room).emit("cardMoved", card_name, x, y, facedown)
         })
 
+        socket.on("bringCardToTop", (cardName) => {
+            socket.to(room).emit("bringCardToTop", cardName)
+        })
         // socket.on("cardAddedToHand", (name, cardFront) => {
         //     console.log(cardFront)
         //     socket.to(room).emit("cardAddedToHand", name, cardFront)
@@ -578,6 +581,7 @@ roomIO.on("connection", (socket) => {
             socket.removeAllListeners("sendSync")
             socket.removeAllListeners('playerAdded')
             socket.removeAllListeners("ownerChanged")
+            socket.removeAllListeners("bringCardToTop")
             let room_list = rooms_with_players[room];
             room_list.splice(room_list.indexOf(socket), 1)
         })

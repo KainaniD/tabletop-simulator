@@ -21,7 +21,11 @@ class Game extends Phaser.Scene {
     preload() {
         this.deck.loadCards();
         console.log("deck loaded")
-        this.deck.shuffleDeck()        
+        this.deck.shuffleDeck()
+        this.deck.shuffleDeck() 
+        this.deck.shuffleDeck() 
+        this.deck.shuffleDeck()
+        this.deck.organizeDeckHeights()         
     
         this.load.on("complete", () => {
 
@@ -146,6 +150,10 @@ class Game extends Phaser.Scene {
             console.log("player object")
             console.log(playerHand)
             card_object.make_hand_changes(playerHand, isRemove)
+        })
+
+        this.socket.on("bringCardToTop", (cardName) => {
+            this.children.bringToTop(this.deck.card_objects[cardName])
         })
 
         this.socket.on("destroyClient", () => {
