@@ -89,9 +89,15 @@ class Game extends Phaser.Scene {
             case 4:
                 this.player_dictionary[name] = new PlayerHand(this, 1600-width/2, 900-height/2, name, width, height)
                 break;
+            case 5: 
+                this.player_dictionary[name] = new PlayerHand(this, 800, height/2, name, width, height)
+                break;
+            case 6: 
+                this.player_dictionary[name] = new PlayerHand(this, 800, 900-height/2, name, width, height)
+                break;
             default:
                 console.log("shoo ")
-                throw new Error ("move Player Hand failed lmao, probably too many players (only 4 for now)")
+                throw new Error ("move Player Hand failed lmao, probably too many players (only 6 for now)")
         }
         console.log("tell others to add self")
         let our_player_hand = this.player_dictionary[name];
