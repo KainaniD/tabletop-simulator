@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { SERVER_URL } from "../urls";
 
 
-let socket = io(SERVER_URL);
+//let socket = io(SERVER_URL);
 // var clientID;
 
 // socket.on('connect', () => {

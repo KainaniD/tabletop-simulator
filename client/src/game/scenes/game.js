@@ -3,12 +3,11 @@ import Card from "../gameobjects/card"
 import Bootloader from "./bootloader";
 import PlayerHand from "../gameobjects/playerHand";
 import Deck from "../gameobjects/deck.js"
-import io from 'socket.io-client'
 
 
 class Game extends Phaser.Scene {
     constructor() {
-        super('game');
+        super({key: 'game'});
         this.deck = new Deck(this);
     }
     card_names = [];
@@ -38,10 +37,14 @@ class Game extends Phaser.Scene {
         
     }
 
-
-
+    //for debugging game destruction
+    killButton;
     create() {
-      
+        // this.killButton = new Phaser.GameObjects.Rectangle(this, 800, 700, 200, 200, 0xff0000)
+        // this.add.existing(this.killButton)
+        // this.killButton.setInteractive()
+        // this.killButton.on('pointerdown', () => this.game.destroy(true))
+        
         this.input.dragDistanceThreshold = 1;
         this.input.mouse.disableContextMenu()
         //card_objects_group = newGroup(this, )
@@ -102,6 +105,8 @@ class Game extends Phaser.Scene {
     }
 
     startSocketEvents(){
+        console.log(this)
+        console.log(this.children)
         this.loadOurHand(this.standardHandWidth, this.standardHandHeight)
         
         this.socket.on("sendSync", (id) => {
@@ -157,8 +162,13 @@ class Game extends Phaser.Scene {
         })
 
         this.socket.on("destroyClient", () => {
-            this.game.destroy(true);
+            this.game.destroy(true, true);
         })
+        this.game.events.on('destroy', ()=>{
+            this.socket.emit("destroyingClient", `destroying client at ${this.socket.id}`)
+        })
+        
+    
     }
 
     getHandData() {

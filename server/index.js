@@ -530,6 +530,7 @@ roomIO.on("connection", (socket) => {
     socket.on("joinRoom", (room) => {           //, callback) => {
         console.log(`User ${socket.id} joining room ${room}`);
         socket.join(room);
+        
         //callback({ status: 'ok' });
         const clients = io.sockets.adapter.rooms.get(room);
         const numClients = clients ? clients.size : 0;
@@ -549,7 +550,9 @@ roomIO.on("connection", (socket) => {
                 rooms_with_players[room][0].emit("sendSync", socket.id)
             })
         }
-
+        console.log(socket.rooms)
+        console.log(rooms_with_players)
+        https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilitychange_event
         socket.on("playerAdded", (name, playerdata) => {
             socket.to(room).emit("playerAdded", name, playerdata)
             console.log("PLAYERDATA SENT")
@@ -571,19 +574,25 @@ roomIO.on("connection", (socket) => {
         socket.on("ownerChanged", (cardFront, playerName, isRemove) => {
             socket.to(room).emit("ownerChanged", cardFront, playerName, isRemove)
         })
+        socket.on("destroyingClient", (message) => console.log(message))
         socket.on("leaveRoom", (room) => {
-            console.log(`left ${room}`)
+            console.log(`${socket.id} left ${room}`)
             socket.emit("destroyClient")
             socket.leave(room);
             socket.removeAllListeners("gameClientConnected")
             socket.removeAllListeners("cardMoved")
             // socket.removeAllListeners("cardAddedToHand")
-            socket.removeAllListeners("sendSync")
             socket.removeAllListeners('playerAdded')
             socket.removeAllListeners("ownerChanged")
             socket.removeAllListeners("bringCardToTop")
             let room_list = rooms_with_players[room];
-            room_list.splice(room_list.indexOf(socket), 1)
+            let socket_index = room_list.indexOf(socket);
+            if (socket_index >= 0) {
+                room_list.splice(socket_index, 1)
+            }
+        
+            //console.log(socket)
+            console.log(rooms_with_players)
         })
 
         
