@@ -106,7 +106,7 @@ app.post("/register", (req, res) => {
 
     if (checkValidEmail) {
         const regexCheck = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        if (!email.match(regexCheck)){
+        if (!email.match(regexCheck)) {
             return res.json({ success: false, message: "your email is invalid" })
         }
     }
@@ -263,8 +263,10 @@ app.get("/currentrequests", (req, res) => {
                             if (friend.status != 4) {
                                 return userModel.findById(friend.requester)
                                     .then((requesterUser) => {
-                                        if (requesterUser.username !== req.user.username) {
-                                            requests.push(requesterUser);
+                                        if (requesterUser) {
+                                            if (requesterUser.username !== req.user.username) {
+                                                requests.push(requesterUser);
+                                            }
                                         }
                                     });
                             }
@@ -606,7 +608,7 @@ roomIO.on("connection", (socket) => {
         const numClients = clients ? clients.size : 0;
 
         //console.log(rooms_with_players)
-        if ((! rooms_with_players[room]) || (rooms_with_players[room].length === 0)) {
+        if ((!rooms_with_players[room]) || (rooms_with_players[room].length === 0)) {
             rooms_with_players[room] = [socket]
         }
         else {
@@ -638,7 +640,7 @@ roomIO.on("connection", (socket) => {
         //     console.log(cardFront)
         //     socket.to(room).emit("cardAddedToHand", name, cardFront)
         // })
-        
+
         socket.on("ownerChanged", (cardFront, playerName, isRemove) => {
             socket.to(room).emit("ownerChanged", cardFront, playerName, isRemove)
         })
