@@ -1,6 +1,11 @@
 Hello! Welcome to our tabletop simulator! This is our 35L final project. 
 
-Made by Bill Su, Patrick Zhou, Keelan Hu, Kainani Dowell, Siddaarth Prasanna
+Made by 
+Bill Su - billbsu <48847251+billbsu@users.noreply.github.com>
+Patrick Zhou - patrickxc.zhou@gmail.com
+Keelan Hu - keelanhu01@g.ucla.edu
+Kainani Dowell - kainanime2@gmail.com
+Siddaarth Prasanna - siddaarth04@gmail.com
 
 Instructions to switch from dev to production:
 
