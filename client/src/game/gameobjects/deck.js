@@ -38,15 +38,19 @@ class Deck {
             }
         }
     }
+    
     card_objects = {};
     loadCards() {
-        var xoffset = 10;
-        for (var value of this.card_values) {
-            for (var suite of this.card_suites) {
-                this.card_objects['card'+suite+value] = new Card(this.scene, 50+xoffset, 100, 'card'+suite+value, 'card_back', suite, this.card_to_value[value])
-                xoffset += 20;
+        let xoffset = 25;
+        let offsetMult = 0
+        for (let value of this.card_values) {
+            for (let suite of this.card_suites) {
+                this.card_objects['card'+suite+value] = new Card(this.scene, 800-(26*xoffset)+xoffset*offsetMult, 450, 'card'+suite+value, 'card_back', suite, this.card_to_value[value])
+                offsetMult += 1;
+                console.log(this.card_objects['card'+suite+value].depth)
             }
         }
+        // this.card_objects['hello'] = 'there'
         //this.card = new Card(this, 200, 100, 'cardClubs4', 'card_back');
         //this.card1 = new Card(this, 100, 100, 'cardClubs3', 'card_back');
     }
@@ -64,6 +68,21 @@ class Deck {
             otherCard.setX(this.card_objects[cardName].x).setY(this.card_objects[cardName].y)
             this.card_objects[cardName].setX(tempX).setY(tempY)
         }
+    }
+    cardXOrganizer(card_pair1, card_pair2) {
+        return card_pair1[1]-card_pair2[1]
+    }
+    organizeDeckHeights () {
+
+        let orderedObjects = [];
+        for (let cardName in this.card_objects) {
+            orderedObjects.push([cardName,this.card_objects[cardName].x])
+        }
+        orderedObjects.sort(this.cardXOrganizer)
+        for (let card_pair of orderedObjects) {
+            this.scene.children.bringToTop(this.card_objects[card_pair[0]])
+        }
+
     }
 
 }
